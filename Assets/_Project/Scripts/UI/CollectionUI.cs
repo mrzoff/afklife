@@ -1,6 +1,8 @@
 using System.Collections.Generic;
+using AfkIsland.CameraControl;
 using AfkIsland.Collection;
 using AfkIsland.Fishing;
+using AfkIsland.Plants;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem.UI;
@@ -9,36 +11,79 @@ using UnityEngine.UI;
 namespace AfkIsland.UI
 {
     /// <summary>
-    /// Stage 8A: runtime uGUI collection modal only (read-only).
-    /// No HUD entry, no bootstrap wiring, no Save / fishing writes.
+    /// Stage 8A/8B: read-only collection modal + Play HUD entry.
+    /// Does not write Save / fishing FSM.
     /// </summary>
     public sealed class CollectionUI : MonoBehaviour
     {
         private CollectionService _collection;
         private FishCatalog _catalog;
+        private FishingController _fishing;
+        private FishingOceanInput _oceanInput;
+        private PlantingSystem _planting;
+        private IsometricCameraController _cameraController;
 
         private Canvas _canvas;
+        private GameObject _entryRoot;
         private GameObject _panelRoot;
         private Text _progressText;
         private RectTransform _listContent;
         private readonly List<GameObject> _rowPool = new(16);
         private bool _built;
+        private bool _playEntryAllowed;
+        private bool _worldSuppressed;
 
         public bool IsOpen => _panelRoot != null && _panelRoot.activeSelf;
 
+        /// <summary>Stage 8A API: bind progress + catalog.</summary>
         public void Configure(CollectionService collection, FishCatalog catalog)
         {
             _collection = collection;
             _catalog = catalog;
             EnsureBuilt();
             Close();
+            SetPlayEntryVisible(false);
+        }
+
+        /// <summary>
+        /// Stage 8B: wire fishing close + world-input suppress without changing fishing FSM.
+        /// </summary>
+        public void WireGameplay(
+            FishingController fishing = null,
+            FishingOceanInput oceanInput = null,
+            PlantingSystem planting = null,
+            IsometricCameraController cameraController = null)
+        {
+            _fishing = fishing;
+            _oceanInput = oceanInput;
+            _planting = planting;
+            _cameraController = cameraController;
+        }
+
+        public void SetPlayEntryVisible(bool visible)
+        {
+            _playEntryAllowed = visible;
+            EnsureBuilt();
+            RefreshEntryVisibility();
+            if (!visible && IsOpen)
+            {
+                Close();
+            }
         }
 
         public void Open()
         {
             EnsureBuilt();
+            if (_fishing != null && _fishing.IsOpen)
+            {
+                // Cancels Wait/Bite with no catch progress (existing RequestClose contract).
+                _fishing.RequestClose();
+            }
+
             RebuildList();
             _panelRoot.SetActive(true);
+            SuppressWorldInput(true);
+            RefreshEntryVisibility();
         }
 
         public void Close()
@@ -47,6 +92,83 @@ namespace AfkIsland.UI
             if (_panelRoot != null)
             {
                 _panelRoot.SetActive(false);
+            }
+
+            SuppressWorldInput(false);
+            RefreshEntryVisibility();
+        }
+
+        private void RefreshEntryVisibility()
+        {
+            if (_entryRoot == null)
+            {
+                return;
+            }
+
+            _entryRoot.SetActive(_playEntryAllowed && !IsOpen);
+        }
+
+        private void Update()
+        {
+            if (!IsOpen)
+            {
+                return;
+            }
+
+            // Keep suppress after fishing RequestClose (FishingOceanInput may restore briefly).
+            ApplyWorldSuppress();
+        }
+
+        private void OnDisable()
+        {
+            SuppressWorldInput(false);
+        }
+
+        private void SuppressWorldInput(bool suppress)
+        {
+            if (suppress == _worldSuppressed)
+            {
+                if (suppress)
+                {
+                    ApplyWorldSuppress();
+                }
+
+                return;
+            }
+
+            if (suppress)
+            {
+                ApplyWorldSuppress();
+            }
+            else if (_playEntryAllowed)
+            {
+                _oceanInput?.SetInputEnabled(true);
+                if (_planting != null)
+                {
+                    _planting.enabled = true;
+                }
+
+                if (_cameraController != null)
+                {
+                    _cameraController.enabled = true;
+                }
+            }
+
+            _worldSuppressed = suppress;
+        }
+
+        private void ApplyWorldSuppress()
+        {
+            // Ocean input off → its Update will not re-enable planting/camera while _inputEnabled is false.
+            _oceanInput?.SetInputEnabled(false);
+            if (_planting != null)
+            {
+                _planting.enabled = false;
+            }
+
+            if (_cameraController != null)
+            {
+                _cameraController.enabled = false;
             }
         }
 
@@ -70,9 +192,33 @@ namespace AfkIsland.UI
             scaler.matchWidthOrHeight = 0.5f;
             canvasGo.AddComponent<GraphicRaycaster>();
 
+            BuildEntryButton(canvasGo.transform);
             BuildPanel(canvasGo.transform);
             _built = true;
             _panelRoot.SetActive(false);
+            _entryRoot.SetActive(false);
+        }
+
+        private void BuildEntryButton(Transform canvas)
+        {
+            _entryRoot = new GameObject("CollectionEntry", typeof(RectTransform));
+            _entryRoot.transform.SetParent(canvas, false);
+            var rt = _entryRoot.GetComponent<RectTransform>();
+            // Top-right: below freeform caption, clear of Ecosystem (top-left) and demo AFK (bottom-right).
+            rt.anchorMin = new Vector2(0.72f, 0.82f);
+            rt.anchorMax = new Vector2(0.97f, 0.89f);
+            rt.offsetMin = Vector2.zero;
+            rt.offsetMax = Vector2.zero;
+
+            var img = _entryRoot.AddComponent<Image>();
+            img.color = new Color(0.16f, 0.36f, 0.34f, 0.95f);
+            var button = _entryRoot.AddComponent<Button>();
+            button.targetGraphic = img;
+            button.onClick.AddListener(Open);
+
+            var label = CreateText(_entryRoot.transform, "Label", 26, FontStyle.Bold, TextAnchor.MiddleCenter);
+            StretchFull(label.rectTransform);
+            label.text = "Коллекция";
         }
 
         private void BuildPanel(Transform canvas)

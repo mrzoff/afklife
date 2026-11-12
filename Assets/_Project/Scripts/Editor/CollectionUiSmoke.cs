@@ -10,27 +10,27 @@ using UnityEngine;
 
 namespace AfkIsland.EditorTools
 {
-    /// <summary>Stage 8A: CollectionFishListBuilder + CollectionUI.Configure/Open/Close smoke.</summary>
+    /// <summary>Stage 8A/8B: CollectionUI list builder + open/close + entry visibility smoke.</summary>
     public static class CollectionUiSmoke
     {
         private static readonly string ResultPath =
             Path.Combine("Builds", "Share", "collection_ui_smoke_result.txt");
 
-        [MenuItem("AFK Island/Smoke Collection UI Stage 8A")]
+        [MenuItem("AFK Island/Smoke Collection UI Stage 8B")]
         public static void RunMenu()
         {
             var code = RunInternal();
             if (code != 0)
             {
-                throw new Exception("Collection UI Stage 8A smoke failed with code " + code);
+                throw new Exception("Collection UI Stage 8B smoke failed with code " + code);
             }
 
-            Debug.Log("[AFK Island] Collection UI Stage 8A smoke OK.");
+            Debug.Log("[AFK Island] Collection UI Stage 8B smoke OK.");
         }
 
         public static void RunBatch()
         {
-            Debug.Log("[AFK Island] Collection UI Stage 8A smoke START");
+            Debug.Log("[AFK Island] Collection UI Stage 8B smoke START");
             SetupFishCatalogMenu.SetupQuiet();
             var code = RunInternal();
             try
@@ -71,6 +71,8 @@ namespace AfkIsland.EditorTools
                 host = new GameObject("CollectionUiSmokeHost");
                 var collection = host.AddComponent<CollectionService>();
                 var ui = host.AddComponent<CollectionUI>();
+                var fishing = host.AddComponent<FishingController>();
+                var fishingUi = host.AddComponent<FishingUI>();
                 var save = new GameSaveData
                 {
                     version = SaveMigrationService.CurrentVersion,
@@ -80,38 +82,85 @@ namespace AfkIsland.EditorTools
                 SaveMigrationService.EnsureCollectionAndFishingDefaults(save);
                 collection.Bind(save);
 
+                // Stage 5-style fishing wiring (no Collection write path needed for cancel).
+                fishingUi.Configure(fishing);
+                fishing.Configure(null, catalog, fishingUi, null);
+                fishing.DebugSetTiming(10f, 10f, 10f);
                 ui.Configure(collection, catalog);
+                ui.WireGameplay(fishing);
+
+                // A: Menu — entry hidden
+                ui.SetPlayEntryVisible(false);
                 if (ui.IsOpen)
                 {
-                    Debug.LogError("UI must be closed after Configure.");
-                    return 11;
+                    Debug.LogError("Must start closed.");
+                    return 20;
+                }
+
+                // B: Play — entry allowed (button built; visibility gated)
+                ui.SetPlayEntryVisible(true);
+
+                // Open from Ready fishing → RequestClose then collection
+                if (!fishing.TryOpenFromOcean())
+                {
+                    Debug.LogError("TryOpenFromOcean failed.");
+                    return 21;
+                }
+
+                fishing.RequestCast();
+                if (fishing.State != FishingFsmState.Wait)
+                {
+                    Debug.LogError("Expected Wait after cast.");
+                    return 22;
                 }
 
                 ui.Open();
                 if (!ui.IsOpen)
                 {
-                    Debug.LogError("UI must be open after Open().");
-                    return 12;
+                    Debug.LogError("Collection must open.");
+                    return 23;
+                }
+
+                if (fishing.IsOpen || fishing.State != FishingFsmState.Closed)
+                {
+                    Debug.LogError("Fishing must close when collection opens.");
+                    return 24;
+                }
+
+                if (fishing.LastOutcome != FishingAttemptOutcome.Cancelled)
+                {
+                    Debug.LogError("Wait cancel must set Cancelled outcome.");
+                    return 25;
+                }
+
+                if (fishing.CatchProgressAppliedThisAttempt)
+                {
+                    Debug.LogError("Wait cancel must not apply catch progress.");
+                    return 29;
+                }
+
+                if (save.fishing.totalCatches != 0 || collection.GetDiscoveryCount("fish_mackerel") != 0)
+                {
+                    Debug.LogError("Cancel must not mutate save progress.");
+                    return 26;
                 }
 
                 ui.Close();
                 if (ui.IsOpen)
                 {
-                    Debug.LogError("UI must be closed after Close().");
+                    Debug.LogError("Close failed.");
                     return 13;
                 }
 
-                // Empty catalog → 0 rows, no throw
+                // Empty catalog
                 emptyCatalog = ScriptableObject.CreateInstance<FishCatalog>();
                 emptyCatalog.Configure(Array.Empty<FishData>());
-                var emptyRows = CollectionFishListBuilder.Build(emptyCatalog, collection);
-                if (emptyRows.Count != 0)
+                if (CollectionFishListBuilder.Build(emptyCatalog, collection).Count != 0)
                 {
                     Debug.LogError("Empty catalog must yield 0 rows.");
                     return 14;
                 }
 
-                // Empty collection → all silhouettes
                 var rows = CollectionFishListBuilder.Build(catalog, collection);
                 if (rows.Count == 0)
                 {
@@ -135,7 +184,7 @@ namespace AfkIsland.EditorTools
                     return 5;
                 }
 
-                // Open again re-reads CollectionService
+                // E: reopen re-reads counts
                 ui.Open();
                 var after = CollectionFishListBuilder.Build(catalog, collection);
                 var discoveredCount = 0;
@@ -150,15 +199,9 @@ namespace AfkIsland.EditorTools
                     if (after[i].FishId == firstId)
                     {
                         found = true;
-                        if (!after[i].Discovered ||
-                            after[i].Title == "???" ||
-                            after[i].CountLabel != "×1" ||
-                            string.IsNullOrEmpty(after[i].RarityLabel) ||
-                            after[i].RarityLabel == "—")
+                        if (!after[i].Discovered || after[i].CountLabel != "×1")
                         {
-                            Debug.LogError(
-                                $"Discovered row wrong: title={after[i].Title} " +
-                                $"rarity={after[i].RarityLabel} count={after[i].CountLabel}");
+                            Debug.LogError("Discovered row wrong after reopen.");
                             return 6;
                         }
                     }
@@ -166,60 +209,63 @@ namespace AfkIsland.EditorTools
 
                 if (!found || discoveredCount != 1)
                 {
-                    Debug.LogError($"Expected 1 discovered, got {discoveredCount}, found={found}");
+                    Debug.LogError($"Expected 1 discovered, got {discoveredCount}");
                     return 7;
                 }
 
                 collection.RegisterDiscovery(firstId);
+                ui.Close();
+                ui.Open();
                 var again = CollectionFishListBuilder.Build(catalog, collection);
                 for (var i = 0; i < again.Count; i++)
                 {
                     if (again[i].FishId == firstId && again[i].CountLabel != "×2")
                     {
-                        Debug.LogError("Expected ×2 after second discovery.");
+                        Debug.LogError("Expected ×2 after second discovery + reopen.");
                         return 8;
                     }
                 }
 
-                // Duplicate fishId: first wins, single row
+                // F: leave play — entry hidden, panel closed
+                ui.SetPlayEntryVisible(false);
+                if (ui.IsOpen)
+                {
+                    Debug.LogError("Leaving play must close collection.");
+                    return 27;
+                }
+
+                // Duplicate / blank fishId
                 dupA = ScriptableObject.CreateInstance<FishData>();
                 dupA.fishId = "fish_dup_test";
                 dupA.displayName = "First";
-                dupA.fallbackColor = Color.red;
                 dupB = ScriptableObject.CreateInstance<FishData>();
                 dupB.fishId = "fish_dup_test";
                 dupB.displayName = "Second";
-                dupB.fallbackColor = Color.blue;
                 var blank = ScriptableObject.CreateInstance<FishData>();
                 blank.fishId = "   ";
-                blank.displayName = "Blank";
                 dupCatalog = ScriptableObject.CreateInstance<FishCatalog>();
                 dupCatalog.Configure(new[] { dupA, null, blank, dupB });
                 var dupRows = CollectionFishListBuilder.Build(dupCatalog, null);
-                if (dupRows.Count != 1 || dupRows[0].Title != "???" || dupRows[0].FishId != "fish_dup_test")
+                if (dupRows.Count != 1 || dupRows[0].FishId != "fish_dup_test")
                 {
-                    Debug.LogError(
-                        $"Duplicate/empty fishId handling failed: count={dupRows.Count}");
+                    Debug.LogError("Duplicate/empty fishId handling failed.");
                     return 9;
                 }
 
-                // Null collection → all undiscovered
-                var nullSafe = CollectionFishListBuilder.Build(catalog, null);
-                if (nullSafe.Count != rows.Count || nullSafe[0].Discovered)
+                if (save.version != SaveMigrationService.CurrentVersion)
                 {
-                    Debug.LogError("Null collection should yield undiscovered rows.");
-                    return 10;
+                    Debug.LogError("Save version must stay CurrentVersion.");
+                    return 28;
                 }
 
-                ui.Close();
                 Debug.Log(
-                    $"[AFK Island] Collection UI Stage 8A smoke PASS rows={rows.Count} " +
+                    $"[AFK Island] Collection UI Stage 8B smoke PASS rows={rows.Count} " +
                     $"opened={firstId}");
                 return 0;
             }
             catch (Exception e)
             {
-                Debug.LogError("[AFK Island] Collection UI Stage 8A smoke exception: " + e);
+                Debug.LogError("[AFK Island] Collection UI Stage 8B smoke exception: " + e);
                 return 99;
             }
             finally

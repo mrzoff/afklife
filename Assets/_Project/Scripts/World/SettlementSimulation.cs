@@ -488,7 +488,17 @@ namespace AfkIsland.World
                         continue;
                     }
 
-                    var score = NeighborSettlementScore(save, growth.chunkX, growth.chunkZ, i);
+                    if (next == (byte)SettlementStage.Hut)
+                {
+                    var hutCenter = GrowthWorldPlacement.CellCenterWorld(growth.chunkX, growth.chunkZ, i);
+                    if (SettlementCellQuery.IsHutFootprintBlocked(
+                            save, hutCenter.x, hutCenter.z, SettlementCellQuery.DefaultHutCenterSpacing))
+                    {
+                        continue;
+                    }
+                }
+
+                var score = NeighborSettlementScore(save, growth.chunkX, growth.chunkZ, i);
                     stoneCells.Add((growth, i, score));
                 }
             }
@@ -695,6 +705,16 @@ namespace AfkIsland.World
             if (!allowed)
             {
                 return false;
+            }
+
+            if (c.toStage == (byte)SettlementStage.Hut)
+            {
+                var hutCenter = GrowthWorldPlacement.CellCenterWorld(c.chunkX, c.chunkZ, c.cellIndex);
+                if (SettlementCellQuery.IsHutFootprintBlocked(
+                        save, hutCenter.x, hutCenter.z, SettlementCellQuery.DefaultHutCenterSpacing))
+                {
+                    return false;
+                }
             }
 
             settle[c.cellIndex] = c.toStage;

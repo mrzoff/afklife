@@ -10,7 +10,7 @@
 
 - Added `AnimalData.modelForwardYawOffset` so a species can correct its authored model forward axis without changing the world movement vector.
 - Bird catalog uses a 180° correction to compensate for the 180° local yaw in `Animal_Bird.prefab`.
-- Reduced bird visual scale from 1.0 to 0.58.
+- Reduced bird visual scale from 1.0 to 0.25 after checking the source mesh dimensions; with the prefab's 0.34 child scale this brings the bird to roughly half a metre in length.
 - Reduced move speed from 0.85 to 0.42 m/s and wander radius from 3.2 to 1.7 m.
 - Increased idle interval from 1.5–4 s to 3–6.5 s to make birds less restless.
 - Both AnimalData asset copies were updated (Resources and ScriptableObjects).

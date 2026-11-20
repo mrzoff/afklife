@@ -103,7 +103,7 @@ namespace AfkIsland.World
 
                     // A candidate survives only if it is the deterministic local minimum
                     // among all eligible candidates inside the exclusion radius. This gives
-                    // a stable maximal independent set without per-chunk mutable state.
+                    // a stable blue-noise subset without per-chunk mutable state.
                     for (var dz = -neighborRange; dz <= neighborRange && !blocked; dz++)
                     {
                         for (var dx = -neighborRange; dx <= neighborRange; dx++)

@@ -519,7 +519,7 @@ namespace AfkIsland.World
                     return false;
                 }
 
-                if (IsNearHut(point.x, point.y, 2.0f))
+                if (IsNearHut(point.x, point.y, SettlementCellQuery.DefaultTreeHutClearance))
                 {
                     return false;
                 }

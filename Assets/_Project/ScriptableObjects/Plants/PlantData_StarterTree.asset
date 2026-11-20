@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c504ed4d57766284f86084d70b9c921d, type: 3}
+  m_Name: PlantData_StarterTree
+  m_EditorClassIdentifier: Assembly-CSharp::AfkIsland.Plants.PlantData
+  plantId: starter_tree
+  displayName: Starter Tree
+  growthStagePrefabs:
+  - {fileID: 6063971835044620264, guid: 7d655eae54de8324db0d76061ae2e33e, type: 3}
+  - {fileID: 8454098165429256615, guid: f6319c6fd696e38409598913bca1150a, type: 3}
+  - {fileID: 3957752281697806518, guid: c0fcac60eab40ce4e942fc7638e25f52, type: 3}
+  - {fileID: 8043361505425652697, guid: 772ddcf81c798dd428662f85a6c0ace1, type: 3}
+  stageDurationsSeconds:
+  - 20
+  - 40
+  - 60
+  - 90

@@ -21,6 +21,7 @@ namespace AfkIsland.Core
         [SerializeField] private IslandExpansionFeedback islandExpansionFeedback;
         [SerializeField] private IslandMeshVisualizer islandMeshVisualizer;
         [SerializeField] private HomeSettlementVisualizer homeSettlementVisualizer;
+        [SerializeField] private ResidentDirector residentDirector;
         [SerializeField] private PrototypeWorldGrowthDebug prototypeWorldGrowthDebug;
         [SerializeField] private MainMenuHud mainMenuHud;
         [SerializeField] private PlantingSystem plantingSystem;
@@ -37,7 +38,9 @@ namespace AfkIsland.Core
         [SerializeField] private FishingController fishingController;
         [SerializeField] private FishingUI fishingUI;
         [SerializeField] private FishingOceanInput fishingOceanInput;
+        [SerializeField] private FishingPondInput fishingPondInput;
         [SerializeField] private FishCatalog fishCatalog;
+        [SerializeField] private IsometricCameraController cameraController;
 
         public CollectionService Collection => collectionService;
         public CollectionUI CollectionScreen => collectionUI;
@@ -61,7 +64,8 @@ namespace AfkIsland.Core
             DayNightWeatherVisual weatherVisual = null,
             EcosystemHud ecoHud = null,
             WorldVisualEnvironment visualEnv = null,
-            WorldAtmosphereVfx atmosphere = null)
+            WorldAtmosphereVfx atmosphere = null,
+            ResidentDirector residents = null)
         {
             saveService = save;
             offlineGrowth = offline;
@@ -74,6 +78,7 @@ namespace AfkIsland.Core
             islandExpansionFeedback = expansionFeedback;
             islandMeshVisualizer = meshVisualizer;
             homeSettlementVisualizer = settlementVisualizer;
+            residentDirector = residents;
             prototypeWorldGrowthDebug = growthDebug;
             returnReportHud = reportHud;
             animalSpawner = animals;
@@ -97,6 +102,8 @@ namespace AfkIsland.Core
                 ?? gameObject.AddComponent<IslandMeshVisualizer>();
             homeSettlementVisualizer ??= GetComponent<HomeSettlementVisualizer>()
                 ?? gameObject.AddComponent<HomeSettlementVisualizer>();
+            residentDirector ??= GetComponent<ResidentDirector>()
+                ?? gameObject.AddComponent<ResidentDirector>();
             prototypeWorldGrowthDebug ??= GetComponent<PrototypeWorldGrowthDebug>()
                 ?? gameObject.AddComponent<PrototypeWorldGrowthDebug>();
             chunkManager ??= GetComponent<ChunkManager>() ?? gameObject.AddComponent<ChunkManager>();
@@ -106,8 +113,9 @@ namespace AfkIsland.Core
                 ?? gameObject.AddComponent<DayNightWeatherVisual>();
             worldVisualEnvironment ??= GetComponent<WorldVisualEnvironment>()
                 ?? gameObject.AddComponent<WorldVisualEnvironment>();
-            worldAtmosphereVfx ??= GetComponent<WorldAtmosphereVfx>()
-                ?? gameObject.AddComponent<WorldAtmosphereVfx>();
+            // Stage 11E-1: atmosphere must live on its own root — never on GameSystems
+            // (Plants/Animals are children and would pan with the camera).
+            worldAtmosphereVfx = WorldAtmosphereVfx.EnsureIsolatedInstance();
             waterSurfaceApplicator ??= GetComponent<WaterSurfaceApplicator>()
                 ?? gameObject.AddComponent<WaterSurfaceApplicator>();
             ecosystemHud ??= GetComponent<EcosystemHud>() ?? gameObject.AddComponent<EcosystemHud>();
@@ -121,6 +129,8 @@ namespace AfkIsland.Core
                 ?? gameObject.AddComponent<FishingUI>();
             fishingOceanInput ??= GetComponent<FishingOceanInput>()
                 ?? gameObject.AddComponent<FishingOceanInput>();
+            fishingPondInput ??= GetComponent<FishingPondInput>()
+                ?? gameObject.AddComponent<FishingPondInput>();
             fishCatalog ??= Resources.Load<FishCatalog>("FishCatalog");
 
             if (plantingSystem != null)
@@ -155,6 +165,7 @@ namespace AfkIsland.Core
             islandExpansionFeedback?.Configure(saveService, chunkManager, worldGrowthService);
             islandMeshVisualizer?.Configure(saveService, chunkManager);
             homeSettlementVisualizer?.Configure(saveService, chunkManager);
+            residentDirector?.Configure(saveService);
             prototypeWorldGrowthDebug?.Configure(
                 saveService,
                 chunkManager,
@@ -174,13 +185,18 @@ namespace AfkIsland.Core
             fishingController?.Configure(saveService, fishCatalog, fishingUI, collectionService);
             var cam = Camera.main;
             var isoCam = cam != null ? cam.GetComponent<IsometricCameraController>() : null;
+            cameraController = isoCam ?? cameraController;
             fishingOceanInput?.Configure(fishingController, cam, isoCam, plantingSystem);
             FishingOceanInput.EnsureOceanHitProxy();
             fishingOceanInput?.SetInputEnabled(false);
+            fishingPondInput?.Configure(fishingController, cam, isoCam, plantingSystem);
+            FishingPondInput.EnsurePondHitProxy();
+            fishingPondInput?.SetInputEnabled(false);
 
             // Stage 8B: Collection HUD entry + world suppress (same bootstrap instance).
             collectionUI?.Configure(collectionService, fishCatalog);
-            collectionUI?.WireGameplay(fishingController, fishingOceanInput, plantingSystem, isoCam);
+            collectionUI?.WireGameplay(
+                fishingController, fishingOceanInput, plantingSystem, cameraController, fishingPondInput);
             collectionUI?.SetPlayEntryVisible(false);
 
             if (onlineGrowthTicker != null && plantingSystem != null)
@@ -210,17 +226,38 @@ namespace AfkIsland.Core
         public void ContinueGame()
         {
             var ok = worldGrowthService != null && worldGrowthService.ApplyOfflineSession();
-            if (!ok && offlineGrowth != null)
+            // CIF-A4: never fall back to ApplyOnStartup after a partial/failed offline pass —
+            // that path used to mutate live plants before/without a clean commit.
+            if (!ok && worldGrowthService == null && offlineGrowth != null)
             {
                 offlineGrowth.ApplyOnStartup();
             }
+            else if (!ok)
+            {
+                Debug.LogWarning(
+                    "[AFK Island] Offline session failed; visuals stay on last authoritative save. " +
+                    (worldGrowthService != null ? worldGrowthService.LastCombinedReport : string.Empty));
+            }
 
+            // Visual rebuilds read authoritative snapshot only (commit already applied plants on success).
             islandExpansionFeedback?.RefreshFromSession();
             islandMeshVisualizer?.RebuildFromSave();
             homeSettlementVisualizer?.RebuildFromSave();
+            residentDirector?.RebuildFromSave();
             animalSpawner?.RestoreFromSave();
             dayNightWeatherVisual?.ApplyFromSave();
             mainMenuHud?.Hide();
+
+            if (!ok)
+            {
+                SetGameplayEnabled(false);
+                if (returnSummaryHud != null && worldGrowthService != null)
+                {
+                    returnSummaryHud.ShowText(worldGrowthService.LastCombinedReport);
+                }
+
+                return;
+            }
 
             var report = worldGrowthService != null ? worldGrowthService.LastReturnReport : null;
             if (report != null && returnReportHud != null)
@@ -262,6 +299,7 @@ namespace AfkIsland.Core
             islandExpansionFeedback?.RefreshFromSession();
             islandMeshVisualizer?.RebuildFromSave();
             homeSettlementVisualizer?.RebuildFromSave();
+            residentDirector?.RebuildFromSave();
             animalSpawner?.RestoreFromSave();
             dayNightWeatherVisual?.ApplyFromSave();
             EnterPlay();
@@ -285,6 +323,14 @@ namespace AfkIsland.Core
             animalSpawner?.RestoreFromSave();
             dayNightWeatherVisual?.ApplyFromSave();
             ecosystemHud?.SetVisible(true);
+            // Stage 11E: after AFK pan/zoom into void-tree pockets, always re-center on play.
+            if (cameraController == null)
+            {
+                var cam = Camera.main;
+                cameraController = cam != null ? cam.GetComponent<IsometricCameraController>() : null;
+            }
+
+            cameraController?.ResetToIslandCenter();
             SetGameplayEnabled(true);
             collectionUI?.SetPlayEntryVisible(true);
         }
@@ -301,7 +347,20 @@ namespace AfkIsland.Core
                 onlineGrowthTicker.enabled = enabled;
             }
 
+            // CIF-B1: freeze camera off-play (menu / return report), not only planting/fishing.
+            if (cameraController == null)
+            {
+                var cam = Camera.main;
+                cameraController = cam != null ? cam.GetComponent<IsometricCameraController>() : null;
+            }
+
+            if (cameraController != null)
+            {
+                cameraController.enabled = enabled;
+            }
+
             fishingOceanInput?.SetInputEnabled(enabled);
+            fishingPondInput?.SetInputEnabled(enabled);
             if (!enabled && fishingController != null && fishingController.IsOpen)
             {
                 fishingController.RequestClose();

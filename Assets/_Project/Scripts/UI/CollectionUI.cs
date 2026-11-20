@@ -20,6 +20,7 @@ namespace AfkIsland.UI
         private FishCatalog _catalog;
         private FishingController _fishing;
         private FishingOceanInput _oceanInput;
+        private FishingPondInput _pondInput;
         private PlantingSystem _planting;
         private IsometricCameraController _cameraController;
 
@@ -52,10 +53,12 @@ namespace AfkIsland.UI
             FishingController fishing = null,
             FishingOceanInput oceanInput = null,
             PlantingSystem planting = null,
-            IsometricCameraController cameraController = null)
+            IsometricCameraController cameraController = null,
+            FishingPondInput pondInput = null)
         {
             _fishing = fishing;
             _oceanInput = oceanInput;
+            _pondInput = pondInput;
             _planting = planting;
             _cameraController = cameraController;
         }
@@ -143,6 +146,7 @@ namespace AfkIsland.UI
             else if (_playEntryAllowed)
             {
                 _oceanInput?.SetInputEnabled(true);
+                _pondInput?.SetInputEnabled(true);
                 if (_planting != null)
                 {
                     _planting.enabled = true;
@@ -159,8 +163,9 @@ namespace AfkIsland.UI
 
         private void ApplyWorldSuppress()
         {
-            // Ocean input off → its Update will not re-enable planting/camera while _inputEnabled is false.
+            // Water inputs off → Update will not re-enable planting/camera while _inputEnabled is false.
             _oceanInput?.SetInputEnabled(false);
+            _pondInput?.SetInputEnabled(false);
             if (_planting != null)
             {
                 _planting.enabled = false;
@@ -183,9 +188,13 @@ namespace AfkIsland.UI
 
             var canvasGo = new GameObject("CollectionCanvas", typeof(RectTransform));
             canvasGo.transform.SetParent(transform, false);
+            canvasGo.transform.localPosition = Vector3.zero;
+            canvasGo.transform.localRotation = Quaternion.identity;
+            canvasGo.transform.localScale = Vector3.one;
             _canvas = canvasGo.AddComponent<Canvas>();
             _canvas.renderMode = RenderMode.ScreenSpaceOverlay;
             _canvas.sortingOrder = 90;
+            _canvas.pixelPerfect = false;
             var scaler = canvasGo.AddComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
             scaler.referenceResolution = new Vector2(1080f, 1920f);
@@ -204,9 +213,10 @@ namespace AfkIsland.UI
             _entryRoot = new GameObject("CollectionEntry", typeof(RectTransform));
             _entryRoot.transform.SetParent(canvas, false);
             var rt = _entryRoot.GetComponent<RectTransform>();
-            // Top-right: below freeform caption, clear of Ecosystem (top-left) and demo AFK (bottom-right).
-            rt.anchorMin = new Vector2(0.72f, 0.82f);
-            rt.anchorMax = new Vector2(0.97f, 0.89f);
+            // Upper-right but clear of freeform caption (~top 64px) which steals ADB/OS taps.
+            // Also inset from right rail; clear of Ecosystem (top-left) and demo AFK (left, under eco).
+            rt.anchorMin = new Vector2(0.68f, 0.70f);
+            rt.anchorMax = new Vector2(0.92f, 0.80f);
             rt.offsetMin = Vector2.zero;
             rt.offsetMax = Vector2.zero;
 

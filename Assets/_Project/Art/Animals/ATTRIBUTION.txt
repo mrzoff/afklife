@@ -1,0 +1,7 @@
+AFK Island animal visuals — external models
+===========================================
+bird: Quaternius Animals Pack (CC0) — Bird_Quaternius.obj/.fbx
+frog: Drummyfish 3D Frog via OpenGameArt (CC0) — Frog_Drummyfish.obj/.png
+butterfly: Butterfly_AFK.obj project-authored low-poly (Body/Wing_L/Wing_R)
+          + Butterfly_WingPlane_OGA.* Sara / OpenGameArt Butterfly (CC-BY)
+Purpose: replace procedural P0 primitives. FaunaSimulation unchanged.

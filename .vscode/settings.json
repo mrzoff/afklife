@@ -1,0 +1,15 @@
+{
+  "terminal.integrated.env.windows": {
+    "ANDROID_HOME": "${env:LOCALAPPDATA}\\Android\\Sdk",
+    "PATH": "${env:LOCALAPPDATA}\\Android\\Sdk\\platform-tools;${env:PATH}"
+  },
+  "files.exclude": {
+    "**/.utmp": true
+  },
+  "search.exclude": {
+    "**/Library/**": true,
+    "**/Temp/**": true,
+    "**/Logs/**": true,
+    "**/.utmp/**": true
+  }
+}

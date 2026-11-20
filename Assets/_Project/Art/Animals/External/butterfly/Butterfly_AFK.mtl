@@ -1,0 +1,4 @@
+newmtl Body
+Kd 0.25 0.18 0.12
+newmtl Wing
+Kd 0.95 0.55 0.18

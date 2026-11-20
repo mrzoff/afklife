@@ -1,0 +1,14 @@
+{
+  "$schema": "https://app.tmp_not_exist_for_test.ru/config.json",
+  // GigaCode MCP config (VS Code plugin reads .gigacode_vsc/gigacode.jsonc)
+  // Add org MCP (Jira/Confluence) when available. Device pipeline uses shell scripts, not MCP.
+  "mcpServers": {
+    // Example local MCP (disabled until you have a real server):
+    // "filesystem": {
+    //   "command": "npx",
+    //   "args": ["-y", "@modelcontextprotocol/server-filesystem", "D:\\afk\\AFKIsland"],
+    //   "env": {},
+    //   "cwd": "D:\\afk\\AFKIsland"
+    // }
+  }
+}

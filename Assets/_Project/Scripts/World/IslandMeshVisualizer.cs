@@ -26,6 +26,8 @@ namespace AfkIsland.World
         private GameObject[] _decorPrefabs;
         private string _lastSignature;
         private GameSaveData _cachedData;
+        private readonly Dictionary<long, byte[]> _stageSamples = new();
+        private readonly Dictionary<long, byte[]> _biomeSamples = new();
 
         private sealed class ChunkView
         {
@@ -47,6 +49,7 @@ namespace AfkIsland.World
         {
             data ??= saveService != null ? saveService.AuthoritativeSnapshot : null;
             _cachedData = data;
+            RebuildSampleCaches(data);
             if (data?.worldGrowth?.chunks == null || chunkManager == null)
             {
                 ClearAll();
@@ -69,6 +72,7 @@ namespace AfkIsland.World
             var size = chunkManager.ChunkSizeMeters;
             var changed = new HashSet<long>();
             var pending = new List<(ChunkGrowthSaveData growth, byte[] stages, long key, string chunkSig, int seed)>();
+            var worldSeed = data.worldGrowth.growthSeed;
 
             foreach (var growth in data.worldGrowth.chunks)
             {
@@ -93,7 +97,7 @@ namespace AfkIsland.World
                     ? growth.growthSeed
                     : growth.chunkX * 73856093 ^ growth.chunkZ * 19349663;
                 var chunkSig =
-                    $"{growth.stageMaskBase64}:{growth.settlementMaskBase64}:{seed}:{ChunkTerrainMesher.Subdiv}:r{ChunkTerrainMesher.MesherRevision}";
+                    $"{growth.stageMaskBase64}:{growth.biomeMaskBase64}:{growth.settlementMaskBase64}:{seed}:{worldSeed}:{ChunkTerrainMesher.Subdiv}:r{ChunkTerrainMesher.MesherRevision}";
                 pending.Add((growth, stages, key, chunkSig, seed));
 
                 _views.TryGetValue(key, out var existing);
@@ -180,39 +184,72 @@ namespace AfkIsland.World
             }
         }
 
-        private byte SampleWorldStage(int worldCellX, int worldCellZ)
+        private void RebuildSampleCaches(GameSaveData data)
         {
-            // Must match GrowthWorldPlacement.SampleStage — especially isLegacyBase → Moss.
-            // Otherwise SDF treats the authored home as water and tears neighbor shores.
-            return GrowthWorldPlacement.SampleStage(_cachedData, worldCellX, worldCellZ);
-        }
-
-        private BiomeType SampleWorldBiome(int worldCellX, int worldCellZ)
-        {
-            var data = _cachedData;
+            _stageSamples.Clear();
+            _biomeSamples.Clear();
             if (data?.worldGrowth?.chunks == null)
             {
-                return BiomeType.None;
+                return;
             }
 
+            foreach (var growth in data.worldGrowth.chunks)
+            {
+                if (growth == null)
+                {
+                    continue;
+                }
+
+                var key = Pack(growth.chunkX, growth.chunkZ);
+                byte[] stages;
+                if (growth.isLegacyBase)
+                {
+                    stages = new byte[ChunkMaskCodec.CellCount];
+                    for (var i = 0; i < stages.Length; i++)
+                    {
+                        stages[i] = (byte)CellStage.Moss;
+                    }
+                }
+                else if (!ChunkMaskCodec.TryDecodeBase64(growth.stageMaskBase64, out stages, out _))
+                {
+                    stages = Array.Empty<byte>();
+                }
+
+                _stageSamples[key] = stages;
+                _biomeSamples[key] = BiomeMaskCodec.DecodeOrEmpty(growth.biomeMaskBase64);
+            }
+        }
+
+        private byte SampleWorldStage(int worldCellX, int worldCellZ)
+        {
             var grid = ChunkMaskCodec.GridSize;
             var chunkX = FloorDiv(worldCellX, grid);
             var chunkZ = FloorDiv(worldCellZ, grid);
             var lx = worldCellX - chunkX * grid;
             var lz = worldCellZ - chunkZ * grid;
-
-            foreach (var growth in data.worldGrowth.chunks)
+            if (!_stageSamples.TryGetValue(Pack(chunkX, chunkZ), out var stages))
             {
-                if (growth == null || growth.chunkX != chunkX || growth.chunkZ != chunkZ)
-                {
-                    continue;
-                }
-
-                var biomes = BiomeMaskCodec.DecodeOrEmpty(growth.biomeMaskBase64);
-                return (BiomeType)biomes[ChunkMaskCodec.CellIndex(lx, lz)];
+                return (byte)CellStage.Void;
             }
 
-            return BiomeType.None;
+            var index = ChunkMaskCodec.CellIndex(lx, lz);
+            return index >= 0 && index < stages.Length ? stages[index] : (byte)CellStage.Void;
+        }
+
+        private BiomeType SampleWorldBiome(int worldCellX, int worldCellZ)
+        {
+            var grid = ChunkMaskCodec.GridSize;
+            var chunkX = FloorDiv(worldCellX, grid);
+            var chunkZ = FloorDiv(worldCellZ, grid);
+            var lx = worldCellX - chunkX * grid;
+            var lz = worldCellZ - chunkZ * grid;
+            if (!_biomeSamples.TryGetValue(Pack(chunkX, chunkZ), out var biomes))
+            {
+                return BiomeType.None;
+            }
+
+            var index = ChunkMaskCodec.CellIndex(lx, lz);
+            return index >= 0 && index < biomes.Length ? (BiomeType)biomes[index] : BiomeType.None;
         }
 
         private static int FloorDiv(int a, int b)
@@ -441,10 +478,8 @@ namespace AfkIsland.World
                     return 0f;
                 }
 
-                var broad = WorldScatterField.Hash01(worldSeed, Mathf.FloorToInt(point.x / 13f),
-                    Mathf.FloorToInt(point.y / 13f), 113u);
-                var detail = WorldScatterField.Hash01(worldSeed, Mathf.FloorToInt(point.x / 5f),
-                    Mathf.FloorToInt(point.y / 5f), 127u);
+                var broad = WorldScatterField.SampleValueNoise(point.x, point.y, 18f, worldSeed, 113u);
+                var detail = WorldScatterField.SampleValueNoise(point.x, point.y, 7f, worldSeed, 127u);
                 return 0.28f * Mathf.Lerp(0.72f, 1.18f, broad) * Mathf.Lerp(0.82f, 1.12f, detail);
             }
 
@@ -894,11 +929,11 @@ namespace AfkIsland.World
                     continue;
                 }
 
-                parts.Add($"{growth.chunkX}:{growth.chunkZ}:{growth.stageMaskBase64}:{growth.settlementMaskBase64}");
+                parts.Add($"{growth.chunkX}:{growth.chunkZ}:{growth.stageMaskBase64}:{growth.biomeMaskBase64}:{growth.settlementMaskBase64}:{growth.growthSeed}");
             }
 
             parts.Sort();
-            return string.Join("|", parts);
+            return $"{data.worldGrowth.growthSeed}|{string.Join("|", parts)}";
         }
 
         private static bool HasChangedNeighbor(int chunkX, int chunkZ, HashSet<long> changed)

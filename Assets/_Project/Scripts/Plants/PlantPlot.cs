@@ -8,6 +8,7 @@ namespace AfkIsland.Plants
         [SerializeField] private bool occupied;
         [SerializeField] private PlantInstance currentPlant;
         [SerializeField] private Renderer markerRenderer;
+        [SerializeField] private bool showAvailableMarker;
 
         public string PlotId => plotId;
         public bool IsOccupied => occupied;
@@ -93,6 +94,13 @@ namespace AfkIsland.Plants
         private void SetAvailableVisual(bool available)
         {
             if (markerRenderer == null)
+            {
+                return;
+            }
+
+            // Keep the plot collider interactive, but do not show floating green pads by default.
+            markerRenderer.enabled = showAvailableMarker && available;
+            if (!showAvailableMarker)
             {
                 return;
             }

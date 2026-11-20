@@ -132,9 +132,18 @@ namespace AfkIsland.EditorTools
                 return false;
             }
 
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(
+                "Assets/_Project/Art/Animals/Prefabs/Animal_Bird.prefab");
+            var model = prefab != null ? prefab.transform.Find("Visual/Bird_Quaternius") : null;
+            if (model == null || Mathf.Abs(Mathf.DeltaAngle(model.localEulerAngles.y, 180f)) > 1f)
+            {
+                Debug.LogError("Bird prefab's expected 180-degree model-forward offset was not found.");
+                return false;
+            }
+
             var corrected = Quaternion.LookRotation(Vector3.forward, Vector3.up) *
                            Quaternion.Euler(0f, bird.modelForwardYawOffset, 0f) *
-                           Quaternion.Euler(0f, 180f, 0f) * Vector3.forward;
+                           model.localRotation * Vector3.forward;
             if (Vector3.Dot(corrected.normalized, Vector3.forward) < 0.99f)
             {
                 Debug.LogError("Bird model yaw correction does not align its forward axis with travel.");

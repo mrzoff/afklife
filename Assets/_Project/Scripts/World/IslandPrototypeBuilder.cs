@@ -10,6 +10,7 @@ namespace AfkIsland.World
     public sealed class IslandPrototypeBuilder : MonoBehaviour
     {
         [SerializeField] private bool buildOnAwake = true;
+        private static readonly Vector3 AuthoredCedarPosition = new(-3.1f, 1.85f, -1.4f);
 
         private void Awake()
         {
@@ -88,6 +89,12 @@ namespace AfkIsland.World
             }
 
             var tree = settlement.Find("SettlementTree");
+            if (tree != null)
+            {
+                // Keep the authored cedar clear of Hut_A while staying on the rounded yard.
+                tree.localPosition = AuthoredCedarPosition;
+            }
+
             if (tree != null && tree.Find("Canopy") != null)
             {
                 var prefab = Resources.Load<GameObject>("AfkIsland/Decor/JapaneseCedar");
@@ -592,7 +599,7 @@ namespace AfkIsland.World
             // One shade tree at the edge of the yard (Stage 9.1 Polyeler; primitive fallback).
             var tree = new GameObject("SettlementTree");
             tree.transform.SetParent(root.transform, false);
-            tree.transform.localPosition = new Vector3(-2.4f, 1.85f, -0.4f);
+            tree.transform.localPosition = AuthoredCedarPosition;
             var cedar = Resources.Load<GameObject>("AfkIsland/Decor/JapaneseCedar");
             if (cedar != null)
             {

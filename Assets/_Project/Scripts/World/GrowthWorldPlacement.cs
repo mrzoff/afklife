@@ -14,8 +14,8 @@ namespace AfkIsland.World
         public const float VisualYBase = 0.08f;
 
         /// <summary>
-        /// Authored home silhouette (IslandPrototypeBuilder BaseRock 18×14), inset so wild
-        /// plants do not spawn on mask cells that sit in open ocean around the sculpted island.
+        /// Conservative elliptical inset of the organic authored home island (BaseRock 18×14),
+        /// so wild plants do not spawn in ocean-facing corner cells.
         /// </summary>
         public const float AuthoredHomeHalfX = 7.25f;
         public const float AuthoredHomeHalfZ = 5.75f;
@@ -24,14 +24,14 @@ namespace AfkIsland.World
 
         public static bool IsInsideAuthoredHomeFootprint(Vector3 worldPos)
         {
-            return Mathf.Abs(worldPos.x) <= AuthoredHomeHalfX &&
-                   Mathf.Abs(worldPos.z) <= AuthoredHomeHalfZ;
+            return IsInsideAuthoredHomeFootprint(worldPos.x, worldPos.z);
         }
 
         public static bool IsInsideAuthoredHomeFootprint(float worldX, float worldZ)
         {
-            return Mathf.Abs(worldX) <= AuthoredHomeHalfX &&
-                   Mathf.Abs(worldZ) <= AuthoredHomeHalfZ;
+            var nx = worldX / AuthoredHomeHalfX;
+            var nz = worldZ / AuthoredHomeHalfZ;
+            return nx * nx + nz * nz <= 1f;
         }
 
         public static int GridSize => ChunkMaskCodec.GridSize;

@@ -77,6 +77,145 @@ namespace AfkIsland.World
                    IsHut(save, chunkX, chunkZ, cellIndex);
         }
 
+        public const float DefaultHutCenterSpacing = 3.2f;
+        public const float DefaultTreeHutClearance = 2.2f;
+
+        /// <summary>
+        /// True when a visual or new hut footprint would overlap an existing generated hut
+        /// or either authored starter hut. This is a read-only query; it never changes the save.
+        /// </summary>
+        public static bool IsHutFootprintBlocked(
+            GameSaveData save,
+            float worldX,
+            float worldZ,
+            float minimumCenterSpacing)
+        {
+            var spacing = Mathf.Max(0.1f, minimumCenterSpacing);
+            if (IsNearAuthoredStarterHut(worldX, worldZ, spacing))
+            {
+                return true;
+            }
+
+            if (save?.worldGrowth?.chunks == null)
+            {
+                return false;
+            }
+
+            var minDistanceSq = spacing * spacing;
+            foreach (var growth in save.worldGrowth.chunks)
+            {
+                if (growth == null ||
+                    !ChunkMaskCodec.TryDecodeBase64(growth.settlementMaskBase64, out var settle, out _))
+                {
+                    continue;
+                }
+
+                for (var i = 0; i < settle.Length; i++)
+                {
+                    if (settle[i] != (byte)SettlementStage.Hut)
+                    {
+                        continue;
+                    }
+
+                    var hut = GrowthWorldPlacement.CellCenterWorld(growth.chunkX, growth.chunkZ, i);
+                    var dx = hut.x - worldX;
+                    var dz = hut.z - worldZ;
+                    if (dx * dx + dz * dz < minDistanceSq)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Deterministically suppresses legacy overlapping hut visuals without rewriting Save v8.
+        /// For an overlap cluster, the hut with the lowest world-cell Z/X key remains visible.
+        /// </summary>
+        public static bool IsHutVisualSuppressed(
+            GameSaveData save,
+            int chunkX,
+            int chunkZ,
+            int cellIndex,
+            float minimumCenterSpacing = DefaultHutCenterSpacing)
+        {
+            if (cellIndex < 0 || cellIndex >= ChunkMaskCodec.CellCount)
+            {
+                return true;
+            }
+
+            var center = GrowthWorldPlacement.CellCenterWorld(chunkX, chunkZ, cellIndex);
+            var spacing = Mathf.Max(0.1f, minimumCenterSpacing);
+            if (IsNearAuthoredStarterHut(center.x, center.z, spacing))
+            {
+                return true;
+            }
+
+            if (save?.worldGrowth?.chunks == null)
+            {
+                return false;
+            }
+
+            ChunkMaskCodec.IndexToLocal(cellIndex, out var candidateX, out var candidateZ);
+            var candidateWorldX = chunkX * ChunkMaskCodec.GridSize + candidateX;
+            var candidateWorldZ = chunkZ * ChunkMaskCodec.GridSize + candidateZ;
+            var minDistanceSq = spacing * spacing;
+
+            foreach (var growth in save.worldGrowth.chunks)
+            {
+                if (growth == null ||
+                    !ChunkMaskCodec.TryDecodeBase64(growth.settlementMaskBase64, out var settle, out _))
+                {
+                    continue;
+                }
+
+                for (var i = 0; i < settle.Length; i++)
+                {
+                    if (settle[i] != (byte)SettlementStage.Hut ||
+                        (growth.chunkX == chunkX && growth.chunkZ == chunkZ && i == cellIndex))
+                    {
+                        continue;
+                    }
+
+                    var other = GrowthWorldPlacement.CellCenterWorld(growth.chunkX, growth.chunkZ, i);
+                    var dx = other.x - center.x;
+                    var dz = other.z - center.z;
+                    if (dx * dx + dz * dz >= minDistanceSq)
+                    {
+                        continue;
+                    }
+
+                    ChunkMaskCodec.IndexToLocal(i, out var otherX, out var otherZ);
+                    var otherWorldX = growth.chunkX * ChunkMaskCodec.GridSize + otherX;
+                    var otherWorldZ = growth.chunkZ * ChunkMaskCodec.GridSize + otherZ;
+                    if (otherWorldZ < candidateWorldZ ||
+                        (otherWorldZ == candidateWorldZ && otherWorldX < candidateWorldX))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        private static bool IsNearAuthoredStarterHut(float worldX, float worldZ, float clearance)
+        {
+            var clearanceSq = clearance * clearance;
+            var dxA = worldX + 1.6f;
+            var dzA = worldZ - 0.9f;
+            if (dxA * dxA + dzA * dzA < clearanceSq)
+            {
+                return true;
+            }
+
+            var dxB = worldX - 1.8f;
+            var dzB = worldZ + 0.2f;
+            return dxB * dxB + dzB * dzB < clearanceSq;
+        }
+
         /// <summary>wild_{chunkX}_{chunkZ}_{cellIndex}. Indexes outside the 16×16 mask are not cells.</summary>
         public static bool TryParseWildCell(string plotId, out int chunkX, out int chunkZ, out int cellIndex)
         {

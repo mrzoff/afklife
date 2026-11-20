@@ -14,5 +14,7 @@ namespace AfkIsland.Animals
         public float idleSecondsMax = 4f;
         public float wanderRadius = 1.8f;
         public Vector3 visualScale = new(0.25f, 0.25f, 0.25f);
+        [Tooltip("Yaw correction from the animal root's +Z direction to the model's authored forward direction.")]
+        public float modelForwardYawOffset = 0f;
     }
 }

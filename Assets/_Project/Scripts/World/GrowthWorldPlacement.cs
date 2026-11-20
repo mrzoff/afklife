@@ -14,8 +14,8 @@ namespace AfkIsland.World
         public const float VisualYBase = 0.08f;
 
         /// <summary>
-        /// Authored home silhouette (IslandPrototypeBuilder BaseRock 18×14), inset so wild
-        /// plants do not spawn on mask cells that sit in open ocean around the sculpted island.
+        /// Conservative elliptical inset of the organic authored home island (BaseRock 18×14),
+        /// so wild plants do not spawn in ocean-facing corner cells.
         /// </summary>
         public const float AuthoredHomeHalfX = 7.25f;
         public const float AuthoredHomeHalfZ = 5.75f;

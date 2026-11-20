@@ -73,7 +73,7 @@ namespace AfkIsland.World
             var size = chunkManager.ChunkSizeMeters;
             var changed = new HashSet<long>();
             var pending = new List<(ChunkGrowthSaveData growth, byte[] stages, long key, string chunkSig, int seed)>();
-            var worldSeed = data.worldGrowth.growthSeed;
+            var worldSeed = ResolveWorldScatterSeed(data);
 
             foreach (var growth in data.worldGrowth.chunks)
             {
@@ -453,7 +453,7 @@ namespace AfkIsland.World
 
             var origin = GrowthWorldPlacement.ChunkOriginXZ(growth.chunkX, growth.chunkZ, chunkSize);
             var bounds = new Rect(origin.x, origin.y, chunkSize, chunkSize);
-            var worldSeed = _cachedData.worldGrowth.growthSeed;
+            var worldSeed = ResolveWorldScatterSeed(_cachedData);
             if (worldSeed == 0)
             {
                 worldSeed = unchecked((int)0x11B0A11);
@@ -467,7 +467,7 @@ namespace AfkIsland.World
 
             float DensityAt(Vector2 point)
             {
-                if (!TryGetWorldCell(point.x, point.y, out var cx, out var cz, out var stage, out var biome))
+                if (!TryGetWorldCell(point.x, point.y, out _, out _, out var stage, out var biome))
                 {
                     return 0f;
                 }
@@ -573,6 +573,28 @@ namespace AfkIsland.World
             stage = SampleWorldStage(worldCellX, worldCellZ);
             biome = SampleWorldBiome(worldCellX, worldCellZ);
             return stage != (byte)CellStage.Void;
+        }
+
+        private static int ResolveWorldScatterSeed(GameSaveData data)
+        {
+            // WorldGrowthSaveData.growthSeed advances during simulation. It must not drive
+            // persistent visual placement or trees would jump after every offline session.
+            if (data?.chunks != null)
+            {
+                for (var i = 0; i < data.chunks.Count; i++)
+                {
+                    var chunk = data.chunks[i];
+                    if (chunk != null && chunk.chunkX == IslandChunk.HomeChunkX &&
+                        chunk.chunkZ == IslandChunk.HomeChunkZ && chunk.randomSeed != 0)
+                    {
+                        return chunk.randomSeed;
+                    }
+                }
+            }
+
+            // Legacy saves can have a zero home randomSeed. A fixed fallback keeps their
+            // world-space scatter stable without adding fields or migrating Save v8.
+            return unchecked((int)0x11B0A11);
         }
 
         private void CollectSavedPlantBlockers(List<Vector2> into)
@@ -932,7 +954,7 @@ namespace AfkIsland.World
             }
 
             parts.Sort();
-            return $"{data.worldGrowth.growthSeed}|{string.Join("|", parts)}";
+            return $"{ResolveWorldScatterSeed(data)}|{string.Join("|", parts)}";
         }
 
         private static bool HasChangedNeighbor(int chunkX, int chunkZ, HashSet<long> changed)

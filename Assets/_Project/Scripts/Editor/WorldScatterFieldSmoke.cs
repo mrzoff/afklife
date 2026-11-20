@@ -59,6 +59,12 @@ namespace AfkIsland.EditorTools
                     WorldScatterField.DefaultTreeMinimumSpacing,
                     WorldScatterField.DefaultCandidateSpacing,
                     Density, Valid, null, repeat);
+                if (all.Count == 0)
+                {
+                    Debug.LogError("Expected a non-empty scatter result for a positive-density field.");
+                    return 9;
+                }
+
                 if (!SamePoints(all, repeat))
                 {
                     Debug.LogError("Determinism failed: identical input produced different points.");

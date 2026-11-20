@@ -184,6 +184,24 @@ namespace AfkIsland.EditorTools
 
         private static bool CheckOrganicPlatformMesh()
         {
+            var cedarField = typeof(IslandPrototypeBuilder).GetField(
+                "AuthoredCedarPosition",
+                BindingFlags.NonPublic | BindingFlags.Static);
+            if (cedarField == null)
+            {
+                Debug.LogError("Authored starter cedar position was not found.");
+                return false;
+            }
+
+            var cedarPosition = (Vector3)cedarField.GetValue(null);
+            if (Vector2.Distance(
+                    new Vector2(cedarPosition.x, cedarPosition.z), new Vector2(-1.6f, 0.9f)) < 2.5f ||
+                !GrowthWorldPlacement.IsInsideAuthoredHomeFootprint(cedarPosition.x, cedarPosition.z))
+            {
+                Debug.LogError("Authored cedar is too close to Hut_A or outside the safe home footprint.");
+                return false;
+            }
+
             var method = typeof(IslandPrototypeBuilder).GetMethod(
                 "BuildOrganicPlatformMesh",
                 BindingFlags.NonPublic | BindingFlags.Static);

@@ -78,6 +78,7 @@ namespace AfkIsland.World
         }
 
         public const float DefaultHutCenterSpacing = 3.2f;
+        public const float DefaultTreeHutClearance = 2.2f;
 
         /// <summary>
         /// True when a visual or new hut footprint would overlap an existing generated hut

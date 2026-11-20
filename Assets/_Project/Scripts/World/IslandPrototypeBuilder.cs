@@ -446,7 +446,11 @@ namespace AfkIsland.World
             var phase = (seed & 1023) * 0.0061f;
             var amplitude = platformName == "BaseRock" ? 0.12f :
                 platformName == "MidPlateau" ? 0.095f :
-                platformName == "SettlementYard" ? 0.075f : 0.11f;
+                platformName == "SettlementYard" ? 0.10f : 0.11f;
+            // The yard uses a soft superellipse so authored fence posts remain on its flat top.
+            // Other layers stay closer to an oval island silhouette.
+            var exponent = platformName == "SettlementYard" ? 3f : 2f;
+            var coordinatePower = 2f / exponent;
 
             vertices[0] = new Vector3(0f, 0.5f, 0f);
             var topStart = 1;
@@ -464,8 +468,10 @@ namespace AfkIsland.World
                     Mathf.Sin(angle * 5f - phase * 1.7f) * amplitude * 0.32f +
                     Mathf.Sin(angle * 9f + phase * 0.7f) * amplitude * 0.20f;
 
-                var x = Mathf.Cos(angle) * 0.5f * shape;
-                var z = Mathf.Sin(angle) * 0.5f * shape;
+                var cosine = Mathf.Cos(angle);
+                var sine = Mathf.Sin(angle);
+                var x = Mathf.Sign(cosine) * Mathf.Pow(Mathf.Abs(cosine), coordinatePower) * 0.5f * shape;
+                var z = Mathf.Sign(sine) * Mathf.Pow(Mathf.Abs(sine), coordinatePower) * 0.5f * shape;
                 vertices[topStart + i] = new Vector3(x, 0.5f, z);
                 vertices[middleStart + i] = new Vector3(x * 0.96f, 0.02f, z * 0.96f);
                 vertices[bottomStart + i] = new Vector3(x * 0.82f, -0.5f, z * 0.82f);

@@ -109,7 +109,7 @@ namespace AfkIsland.World
                 if (view.signature == chunkSig)
                 {
                     view.root.SetActive(true);
-                    CountHomeStages(growth, settle, ref homePaths, ref homeHuts);
+                    CountHomeStages(data, growth, settle, ref homePaths, ref homeHuts);
                     continue;
                 }
 
@@ -212,7 +212,11 @@ namespace AfkIsland.World
                         break;
                     case SettlementStage.Hut:
                         PlacePath(parent, local, i, yaw);
-                        PlaceHut(parent, local, i, yaw);
+                        if (!SettlementCellQuery.IsHutVisualSuppressed(
+                                _cachedData, growth.chunkX, growth.chunkZ, i))
+                        {
+                            PlaceHut(parent, local, i, yaw);
+                        }
                         break;
                 }
             }
@@ -304,7 +308,7 @@ namespace AfkIsland.World
                 hut.transform.localPosition = local;
                 hut.transform.localRotation = Quaternion.Euler(0f, yaw, 0f);
                 // Larger + taller than forest mid-layer so roofs punch through trees.
-                hut.transform.localScale = Vector3.one * 1.28f;
+                hut.transform.localScale = Vector3.one;
                 return;
             }
 
@@ -312,7 +316,7 @@ namespace AfkIsland.World
             fallback.transform.SetParent(parent, false);
             fallback.transform.localPosition = local;
             fallback.transform.localRotation = Quaternion.Euler(0f, yaw, 0f);
-            fallback.transform.localScale = Vector3.one * 1.35f;
+            fallback.transform.localScale = Vector3.one;
 
             var body = GameObject.CreatePrimitive(PrimitiveType.Cube);
             body.name = "Body";
@@ -486,6 +490,7 @@ namespace AfkIsland.World
         }
 
         private static void CountHomeStages(
+            GameSaveData save,
             ChunkGrowthSaveData growth,
             byte[] settle,
             ref int paths,
@@ -503,7 +508,8 @@ namespace AfkIsland.World
                     paths++;
                 }
 
-                if (settle[i] == (byte)SettlementStage.Hut)
+                if (settle[i] == (byte)SettlementStage.Hut &&
+                    !SettlementCellQuery.IsHutVisualSuppressed(save, growth.chunkX, growth.chunkZ, i))
                 {
                     huts++;
                 }

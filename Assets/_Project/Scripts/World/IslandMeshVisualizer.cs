@@ -480,7 +480,7 @@ namespace AfkIsland.World
 
             var blockers = new List<Vector2>(32)
             {
-                new Vector2(-2.4f, -0.4f) // authored yard cedar
+                new Vector2(-3.1f, -1.4f) // authored yard cedar
             };
             CollectSavedPlantBlockers(blockers);
 

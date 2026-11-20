@@ -20,5 +20,5 @@ MonoBehaviour:
   idleSecondsMin: 3
   idleSecondsMax: 6.5
   wanderRadius: 1.7
-  visualScale: {x: 0.58, y: 0.58, z: 0.58}
+  visualScale: {x: 0.25, y: 0.25, z: 0.25}
   modelForwardYawOffset: 180

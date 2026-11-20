@@ -160,6 +160,32 @@ namespace AfkIsland.World
             }
         }
 
+        /// <summary>Continuous deterministic value noise in world space, with smooth interpolation.</summary>
+        public static float SampleValueNoise(float worldX, float worldZ, float scale, int seed, uint salt = 0u)
+        {
+            if (scale <= 0f)
+            {
+                return 0.5f;
+            }
+
+            var x = worldX / scale;
+            var z = worldZ / scale;
+            var x0 = Mathf.FloorToInt(x);
+            var z0 = Mathf.FloorToInt(z);
+            var tx = Smooth01(x - x0);
+            var tz = Smooth01(z - z0);
+            var a = Hash01(seed, x0, z0, salt);
+            var b = Hash01(seed, x0 + 1, z0, salt);
+            var c = Hash01(seed, x0, z0 + 1, salt);
+            var d = Hash01(seed, x0 + 1, z0 + 1, salt);
+            return Mathf.Lerp(Mathf.Lerp(a, b, tx), Mathf.Lerp(c, d, tx), tz);
+        }
+
+        private static float Smooth01(float value)
+        {
+            return value * value * (3f - 2f * value);
+        }
+
         public static float Hash01(int seed, int x, int z, uint salt = 0u)
         {
             return (Hash(seed, x, z, salt) & 0x00FFFFFFu) / 16777215f;

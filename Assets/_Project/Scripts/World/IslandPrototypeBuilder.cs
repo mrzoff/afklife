@@ -436,7 +436,7 @@ namespace AfkIsland.World
         {
             const int segments = 64;
             var vertices = new Vector3[2 + segments * 3];
-            var triangles = new int[segments * 12];
+            var triangles = new int[segments * 18];
             var seed = 17;
             for (var i = 0; i < platformName.Length; i++)
             {

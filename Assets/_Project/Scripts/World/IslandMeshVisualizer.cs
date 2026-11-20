@@ -29,6 +29,7 @@ namespace AfkIsland.World
         private GameSaveData _cachedData;
         private readonly Dictionary<long, byte[]> _stageSamples = new();
         private readonly Dictionary<long, byte[]> _biomeSamples = new();
+        private readonly List<Vector2> _hutCenters = new();
 
         private sealed class ChunkView
         {
@@ -189,6 +190,7 @@ namespace AfkIsland.World
         {
             _stageSamples.Clear();
             _biomeSamples.Clear();
+            _hutCenters.Clear();
             if (data?.worldGrowth?.chunks == null)
             {
                 return;
@@ -218,6 +220,18 @@ namespace AfkIsland.World
 
                 _stageSamples[key] = stages;
                 _biomeSamples[key] = BiomeMaskCodec.DecodeOrEmpty(growth.biomeMaskBase64);
+
+                if (ChunkMaskCodec.TryDecodeBase64(growth.settlementMaskBase64, out var settlement, out _))
+                {
+                    for (var i = 0; i < settlement.Length; i++)
+                    {
+                        if (settlement[i] == (byte)SettlementStage.Hut)
+                        {
+                            var center = GrowthWorldPlacement.CellCenterWorld(growth.chunkX, growth.chunkZ, i);
+                            _hutCenters.Add(new Vector2(center.x, center.z));
+                        }
+                    }
+                }
             }
         }
 
@@ -417,6 +431,11 @@ namespace AfkIsland.World
                 var propWorldX = cellWorld.x + jitterX;
                 var propWorldZ = cellWorld.z + jitterZ;
 
+                if (IsNearHut(propWorldX, propWorldZ, 1.75f))
+                {
+                    continue;
+                }
+
                 if (WaterSourceLayout.BlocksTrunk(
                         propWorldX, propWorldZ, WaterSourceLayout.TrunkRadius(scale)))
                 {
@@ -500,8 +519,7 @@ namespace AfkIsland.World
                     return false;
                 }
 
-                if (SettlementCellQuery.IsHutFootprintBlocked(
-                        _cachedData, point.x, point.y, 2.0f))
+                if (IsNearHut(point.x, point.y, 2.0f))
                 {
                     return false;
                 }
@@ -557,6 +575,22 @@ namespace AfkIsland.World
                 VegetationWindApplicator.ApplyToInstance(inst, false, prefab.name);
                 inst.name = $"Tree_{point.GridX}_{point.GridZ}";
             }
+        }
+
+        private bool IsNearHut(float worldX, float worldZ, float minimumDistance)
+        {
+            var minDistanceSq = minimumDistance * minimumDistance;
+            for (var i = 0; i < _hutCenters.Count; i++)
+            {
+                var dx = _hutCenters[i].x - worldX;
+                var dz = _hutCenters[i].y - worldZ;
+                if (dx * dx + dz * dz < minDistanceSq)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private bool TryGetWorldCell(

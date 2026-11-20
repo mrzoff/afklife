@@ -107,7 +107,7 @@ namespace AfkIsland.Plants
 
             var shader = Shader.Find("Universal Render Pipeline/Lit") ?? Shader.Find("Standard");
             var mat = new Material(shader);
-            // Free plots are always green; never leave scene-baked blue/cyan markers.
+            // Optional available-plot affordance; disabled by default to keep the starter island clean.
             var color = available
                 ? new Color(0.25f, 0.85f, 0.3f, 0.85f)
                 : new Color(0.45f, 0.45f, 0.45f, 0.25f);

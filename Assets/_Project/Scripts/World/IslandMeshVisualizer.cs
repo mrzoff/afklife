@@ -954,7 +954,48 @@ namespace AfkIsland.World
             }
 
             parts.Sort();
-            return $"{ResolveWorldScatterSeed(data)}|{string.Join("|", parts)}";
+
+            // Existing saved plants are hard blockers for new decorative tree trunks.
+            // Include their canonical positions so a planting/removal rebuilds scatter.
+            var plantParts = new List<string>();
+            var hasChunkPlants = false;
+            if (data.chunks != null)
+            {
+                foreach (var chunk in data.chunks)
+                {
+                    if (chunk?.plants == null)
+                    {
+                        continue;
+                    }
+
+                    for (var i = 0; i < chunk.plants.Count; i++)
+                    {
+                        var plant = chunk.plants[i];
+                        if (plant == null)
+                        {
+                            continue;
+                        }
+
+                        hasChunkPlants = true;
+                        plantParts.Add($"{plant.instanceId}:{plant.posX:R}:{plant.posZ:R}");
+                    }
+                }
+            }
+
+            if (!hasChunkPlants && data.plants != null)
+            {
+                for (var i = 0; i < data.plants.Count; i++)
+                {
+                    var plant = data.plants[i];
+                    if (plant != null)
+                    {
+                        plantParts.Add($"{plant.instanceId}:{plant.posX:R}:{plant.posZ:R}");
+                    }
+                }
+            }
+
+            plantParts.Sort(StringComparer.Ordinal);
+            return $"{ResolveWorldScatterSeed(data)}|{string.Join("|", parts)}|plants:{string.Join("|", plantParts)}";
         }
 
         private static bool HasChangedNeighbor(int chunkX, int chunkZ, HashSet<long> changed)

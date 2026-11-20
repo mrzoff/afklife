@@ -242,8 +242,7 @@ namespace AfkIsland.Plants
                 ? SaveService.Instance.AuthoritativeSnapshot
                 : null;
             return save != null &&
-                   SettlementCellQuery.IsHutFootprintBlocked(
-                       save, worldPosition.x, worldPosition.z, 2.0f);
+                   SettlementCellQuery.IsHutAtWorldXZ(save, worldPosition.x, worldPosition.z);
         }
 
         private void TryPlantAtScreen(Vector2 screenPos)

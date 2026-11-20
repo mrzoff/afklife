@@ -25,6 +25,8 @@ namespace AfkIsland.World
                 }
             }
 
+            // Upgrade already-authored scenes as well as newly built islands.
+            UpgradeOrganicIslandPlatforms(transform.Find("Island"));
             StripDecorativeWaterColliders();
             AlignAuthoredWaterSource();
             // Stage 10B/11E: after WaterSource exists and root colliders are stripped, attach child hit proxy.
@@ -369,7 +371,153 @@ namespace AfkIsland.World
             CreateScaledCube(root.transform, "ShoreSand_S", new Vector3(0f, 0.35f, -6.2f), new Vector3(9f, 0.35f, 2.2f),
                 new Color(0.76f, 0.70f, 0.48f));
 
+            UpgradeOrganicIslandPlatforms(root.transform);
             return root;
+        }
+
+        /// <summary>
+        /// Replaces the hard rectangular starter slabs with rounded, irregular platform meshes.
+        /// Top surfaces remain flat so existing settlement, plots, pond and gameplay coordinates stay valid.
+        /// </summary>
+        private static void UpgradeOrganicIslandPlatforms(Transform island)
+        {
+            if (island == null)
+            {
+                return;
+            }
+
+            var names = new[] { "BaseRock", "MidPlateau", "SettlementYard", "ShoreSand_N", "ShoreSand_S" };
+            for (var n = 0; n < names.Length; n++)
+            {
+                var platform = island.Find(names[n]);
+                if (platform == null)
+                {
+                    continue;
+                }
+
+                var filter = platform.GetComponent<MeshFilter>();
+                if (filter == null ||
+                    (filter.sharedMesh != null && filter.sharedMesh.name.StartsWith("AFK_Organic_")))
+                {
+                    continue;
+                }
+
+                var mesh = BuildOrganicPlatformMesh(names[n]);
+                filter.sharedMesh = mesh;
+
+                var oldBox = platform.GetComponent<BoxCollider>();
+                if (oldBox != null)
+                {
+                    if (Application.isPlaying) Destroy(oldBox);
+                    else DestroyImmediate(oldBox);
+                }
+
+                var oldMeshCollider = platform.GetComponent<MeshCollider>();
+                if (names[n] == "SettlementYard")
+                {
+                    if (oldMeshCollider != null)
+                    {
+                        if (Application.isPlaying) Destroy(oldMeshCollider);
+                        else DestroyImmediate(oldMeshCollider);
+                    }
+
+                    continue;
+                }
+
+                var meshCollider = oldMeshCollider != null
+                    ? oldMeshCollider
+                    : platform.gameObject.AddComponent<MeshCollider>();
+                meshCollider.sharedMesh = null;
+                meshCollider.sharedMesh = mesh;
+            }
+        }
+
+        private static Mesh BuildOrganicPlatformMesh(string platformName)
+        {
+            const int segments = 64;
+            var vertices = new Vector3[2 + segments * 3];
+            var triangles = new int[segments * 12];
+            var seed = 17;
+            for (var i = 0; i < platformName.Length; i++)
+            {
+                seed = unchecked(seed * 31 + platformName[i]);
+            }
+
+            var phase = (seed & 1023) * 0.0061f;
+            var amplitude = platformName == "BaseRock" ? 0.12f :
+                platformName == "MidPlateau" ? 0.095f :
+                platformName == "SettlementYard" ? 0.075f : 0.11f;
+
+            vertices[0] = new Vector3(0f, 0.5f, 0f);
+            var topStart = 1;
+            var middleStart = topStart + segments;
+            var bottomStart = middleStart + segments;
+            var bottomCenter = bottomStart + segments;
+            vertices[bottomCenter] = new Vector3(0f, -0.5f, 0f);
+
+            for (var i = 0; i < segments; i++)
+            {
+                var angle = (Mathf.PI * 2f * i) / segments;
+                var shape =
+                    1f +
+                    Mathf.Sin(angle * 3f + phase) * amplitude * 0.48f +
+                    Mathf.Sin(angle * 5f - phase * 1.7f) * amplitude * 0.32f +
+                    Mathf.Sin(angle * 9f + phase * 0.7f) * amplitude * 0.20f;
+
+                var x = Mathf.Cos(angle) * 0.5f * shape;
+                var z = Mathf.Sin(angle) * 0.5f * shape;
+                vertices[topStart + i] = new Vector3(x, 0.5f, z);
+                vertices[middleStart + i] = new Vector3(x * 0.96f, 0.02f, z * 0.96f);
+                vertices[bottomStart + i] = new Vector3(x * 0.82f, -0.5f, z * 0.82f);
+            }
+
+            var t = 0;
+            for (var i = 0; i < segments; i++)
+            {
+                var next = (i + 1) % segments;
+                var top = topStart + i;
+                var topNext = topStart + next;
+                var middle = middleStart + i;
+                var middleNext = middleStart + next;
+                var bottom = bottomStart + i;
+                var bottomNext = bottomStart + next;
+
+                // Top fan faces upward.
+                triangles[t++] = 0;
+                triangles[t++] = topNext;
+                triangles[t++] = top;
+
+                // Two sloped side bands.
+                triangles[t++] = top;
+                triangles[t++] = topNext;
+                triangles[t++] = middle;
+                triangles[t++] = topNext;
+                triangles[t++] = middleNext;
+                triangles[t++] = middle;
+
+                triangles[t++] = middle;
+                triangles[t++] = middleNext;
+                triangles[t++] = bottom;
+                triangles[t++] = middleNext;
+                triangles[t++] = bottomNext;
+                triangles[t++] = bottom;
+
+                // Bottom fan faces downward.
+                triangles[t++] = bottomCenter;
+                triangles[t++] = bottom;
+                triangles[t++] = bottomNext;
+            }
+
+            var mesh = new Mesh
+            {
+                name = "AFK_Organic_" + platformName,
+                hideFlags = HideFlags.DontSave
+            };
+            mesh.vertices = vertices;
+            mesh.triangles = triangles;
+            mesh.RecalculateNormals();
+            mesh.RecalculateBounds();
+            return mesh;
         }
 
         private void CreateStarterSettlement(Transform island)

@@ -291,7 +291,7 @@ namespace AfkIsland.World
                 var child = view.decorRoot.GetChild(i);
                 if (child != null)
                 {
-                    Object.Destroy(child.gameObject);
+                    UnityEngine.Object.Destroy(child.gameObject);
                 }
             }
         }

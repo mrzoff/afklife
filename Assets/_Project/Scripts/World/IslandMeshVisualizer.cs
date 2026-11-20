@@ -500,7 +500,8 @@ namespace AfkIsland.World
                     return false;
                 }
 
-                if (SettlementCellQuery.IsHutFootprintBlocked(\n                        _cachedData, point.x, point.y, 2.0f))
+                if (SettlementCellQuery.IsHutFootprintBlocked(
+                        _cachedData, point.x, point.y, 2.0f))
                 {
                     return false;
                 }

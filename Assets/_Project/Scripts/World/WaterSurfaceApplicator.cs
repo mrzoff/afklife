@@ -133,7 +133,7 @@ namespace AfkIsland.World
 
         private static GameObject FindNamed(string objectName)
         {
-            var all = FindObjectsByType<Transform>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+            var all = FindObjectsByType<Transform>(FindObjectsInactive.Exclude);
             for (var i = 0; i < all.Length; i++)
             {
                 if (all[i] != null && all[i].name == objectName)

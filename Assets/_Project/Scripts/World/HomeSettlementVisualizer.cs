@@ -117,7 +117,7 @@ namespace AfkIsland.World
                 view.signature = chunkSig;
                 PlaceChunkProps(view.root.transform, growth, settle, size);
                 view.root.SetActive(true);
-                CountHomeStages(growth, settle, ref homePaths, ref homeHuts);
+                CountHomeStages(data, growth, settle, ref homePaths, ref homeHuts);
             }
 
             var remove = new List<long>();

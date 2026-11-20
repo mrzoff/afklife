@@ -24,6 +24,7 @@ The save data and fauna population simulation are unchanged. The actual model fa
 - Existing overlapping hut entries in old saves are not rewritten. `HomeSettlementVisualizer` deterministically suppresses overlapping visuals, keeping the lowest world-cell Z/X key in a conflict.
 - Suppressed hut visuals are excluded from the authored-home fade count.
 - `IslandMeshVisualizer` builds a per-rebuild cache of hut centers. Decorative bushes/rocks and tall trees are excluded from the hut footprint without repeatedly decoding every settlement mask during scatter.
+- The authored starter cedar is moved to a clear yard-edge position, away from Hut_A; the scatter blocker follows the new position.
 
 This is a visual/placement correction only. Save v8, existing settlement masks and existing plant coordinates are unchanged.
 

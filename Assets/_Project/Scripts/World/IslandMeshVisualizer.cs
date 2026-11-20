@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using AfkIsland.Save;
 using UnityEngine;
@@ -297,7 +298,6 @@ namespace AfkIsland.World
                 view.decorRoot = go.transform;
             }
 
-            var placed = 0;
             var seed = growth.growthSeed != 0
                 ? growth.growthSeed
                 : growth.chunkX * 73856093 ^ growth.chunkZ * 19349663;
@@ -385,7 +385,7 @@ namespace AfkIsland.World
                 // Hut cell keeps its roof. Only low rocks may stay; tall canopy and bushes go.
                 if (settlement != null && i < settlement.Length &&
                     settlement[i] == (byte)SettlementStage.Hut &&
-                    (isTall || IsScrubDecor(prefab.name)))
+                    IsScrubDecor(prefab.name))
                 {
                     continue;
                 }
@@ -435,7 +435,6 @@ namespace AfkIsland.World
                 inst.transform.localScale = Vector3.one * scale;
                 VegetationWindApplicator.ApplyToInstance(inst, isRock, prefab.name);
                 inst.name = $"Decor_{growth.chunkX}_{growth.chunkZ}_{i}";
-                placed++;
             }
 
             RebuildTallTrees(view, growth, chunkSize, plants);

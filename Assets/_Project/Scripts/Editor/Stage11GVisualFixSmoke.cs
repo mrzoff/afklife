@@ -123,7 +123,7 @@ namespace AfkIsland.EditorTools
                 return false;
             }
 
-            if (bird.visualScale.x > 0.7f || bird.moveSpeed > 0.5f ||
+            if (bird.visualScale.x > 0.3f || bird.moveSpeed > 0.5f ||
                 bird.wanderRadius > 2f || bird.modelForwardYawOffset != 180f)
             {
                 Debug.LogError(

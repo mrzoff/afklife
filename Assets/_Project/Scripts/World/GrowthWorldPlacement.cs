@@ -24,14 +24,14 @@ namespace AfkIsland.World
 
         public static bool IsInsideAuthoredHomeFootprint(Vector3 worldPos)
         {
-            return Mathf.Abs(worldPos.x) <= AuthoredHomeHalfX &&
-                   Mathf.Abs(worldPos.z) <= AuthoredHomeHalfZ;
+            return IsInsideAuthoredHomeFootprint(worldPos.x, worldPos.z);
         }
 
         public static bool IsInsideAuthoredHomeFootprint(float worldX, float worldZ)
         {
-            return Mathf.Abs(worldX) <= AuthoredHomeHalfX &&
-                   Mathf.Abs(worldZ) <= AuthoredHomeHalfZ;
+            var nx = worldX / AuthoredHomeHalfX;
+            var nz = worldZ / AuthoredHomeHalfZ;
+            return nx * nx + nz * nz <= 1f;
         }
 
         public static int GridSize => ChunkMaskCodec.GridSize;

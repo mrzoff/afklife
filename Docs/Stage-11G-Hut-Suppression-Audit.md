@@ -184,8 +184,8 @@ Path → Hut   если  alongRoad && (grownInland || сосед-хижина)
 
 | Параметр | Значение |
 |---|---|
-| `HutVisualFootprintMeters` | 0.9 |
-| `HutVisualUniformScale` | 0.56 (Hut_A ~1.59 → ~0.89 м) |
+| `HutVisualFootprintMeters` | 0.98 |
+| `HutVisualUniformScale` | 0.62 (Hut_A ~1.59 → ~0.99 м; поднято с 0.56 после ночного Play Mode) |
 | `DefaultHutVisualCenterSpacing` | 0.95 м (ортогональные соседи 1.0 м оба рисуются) |
 | `DefaultHutCenterSpacing` | 3.2 м без изменений — только рост новых хижин |
 | Save / HUD / ResidentRoster | без изменений; маска по-прежнему 64 Hut |

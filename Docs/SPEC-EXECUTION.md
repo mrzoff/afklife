@@ -8,10 +8,10 @@
 **Фактический статус 11G (не путать с контрактом 11G-A):**
 - 11G-A — аудит и контракт приняты.
 - 11G-B + visual fixes — код в ветке; batchmode compile/smoke PASS (Unity 6000.6.5f1).
-- Hut suppression: вариант **D** (масштаб 0.56 / footprint ~0.9 м, visual spacing 0.95 м). Batchmode и Play Mode: **64/64** Hut_*. Save v8 не трогаем.
-- Play Mode probe (Editor): Forest fixture → Hut 64 / Tree 30 / Decor 14 / Path 217; `save056` → Hut 64 / Tree 0 / Decor 91, **120/120** исходных растений без сдвига XZ (+3 новых от AFK). RebuildDecor реально отработал. Скрины: `Builds/playmode-acceptance.png`, `Builds/playmode-save056.png`.
-- Читаемость мелких хижин ночью слабая — дневной кадр ещё желателен; Android device-pass и 0.6.57 — **не закрыты**.
-- Эталон `save056` по-прежнему 0 scatter-деревьев; деревья смотреть на Forest fixture.
+- Hut suppression: вариант **D**, scale **0.62** / footprint ~0.98 м, visual spacing 0.95 м. Play Mode: **64/64** Hut_*. Save v8 не трогаем.
+- Play Mode probe: Forest → Hut 64 / Tree ~27; `save056` → Hut 64 / Tree 0, **120/120** растений без сдвига XZ. RebuildDecor ок. Скрины в `Builds/playmode-*.png`.
+- Сборка целится в **0.6.57 / versionCode 87**. Android device-pass ещё не закрыт.
+- Эталон `save056` — 0 scatter-деревьев; деревья на Forest fixture.
 
 `Docs/TZ-FAST-PROGRESSION.md` учитывается в дальнейшей разработке и сейчас не выполняется. Темп симуляции не менять, пока этот документ не утверждён и не начат его аудит.
 

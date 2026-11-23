@@ -92,13 +92,14 @@ namespace AfkIsland.World
         public const float DefaultHutVisualCenterSpacing = 0.95f;
 
         /// <summary>Target max XZ footprint of a drawn hut after uniform scale (option D).</summary>
-        public const float HutVisualFootprintMeters = 0.9f;
+        public const float HutVisualFootprintMeters = 0.98f;
 
         /// <summary>
         /// Uniform scale applied to Hut_A (authored ~1.59 m wide) so the footprint fits
         /// <see cref="HutVisualFootprintMeters"/> and neighbouring 1 m cells do not intersect.
+        /// 0.62 ≈ 0.99 m — readable vs 0.56, still under one cell.
         /// </summary>
-        public const float HutVisualUniformScale = 0.56f;
+        public const float HutVisualUniformScale = 0.62f;
 
         public const float DefaultTreeHutClearance = 2.2f;
 

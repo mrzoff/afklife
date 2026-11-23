@@ -1,8 +1,8 @@
 # Stage 11G-B — implementation report
 
 **Repository:** `mrzoff/afklife`  
-**Branch:** `feature/stage-11g-b-organic-trees`  
-**Base:** `main`  
+**Branch:** `fix/stage-11g-visual-overlap-and-start-area`  
+**Base:** `main` (feature work continued on the fix branch)  
 **Scope:** Organic placement of tall decorative trees only  
 **Status:** IMPLEMENTED IN BRANCH — EDITOR SMOKE / UNITY BUILD / DEVICE PASS PENDING
 
@@ -72,21 +72,24 @@ Checks:
 | Check | Status |
 |---|---|
 | Source diff reviewed against `main` | DONE |
-| New scatter Editor Smoke authored | DONE — NOT EXECUTED |
-| Unity C# compilation | NOT RUN |
-| Unity Editor Smoke | NOT RUN |
-| `Builds/save056.json` before/after comparison | NOT RUN |
-| 20-chunk RebuildDecor timing | NOT RUN |
+| New scatter Editor Smoke authored | DONE; batchmode run reported PASS |
+| Unity C# compilation | PASS — Unity 6000.6.5f1 batchmode, 0 errors; pre-existing warnings only |
+| Unity Editor Smoke | Batchmode PASS for Organic Tree Placement (11G-B) and Visual Fixes; Play Mode not verified |
+| `Builds/save056.json` before/after comparison | NOT CONFIRMED by available report |
+| `WorldScatterField.Generate` benchmark | DONE: D1 median 0.9 ms / 0 points; D2 synthetic stress median 48.8 ms / 115 points over 19 chunks |
+| Full 20-chunk `RebuildDecor` timing | NOT MEASURED; benchmark isolates Generate only |
 | BlueStacks / device visual pass | NOT RUN |
 
 ## Acceptance still required
 
-Do not mark 11G-B accepted until the Editor Smoke is executed in Unity and the following are verified on the reference save:
+Do not mark 11G-B accepted until Play Mode and device checks are completed and the following are verified on a suitable Forest fixture:
 - 120 existing plant coordinates remain byte-for-byte/value-for-value unchanged;
 - no decorative trees on shore, water, WaterSource or hut footprints;
 - tree roots align with terrain visually (target error <= 2 cm);
 - no visible chunk seams or density striping;
 - stable placement after restart and after offline growth;
-- measured rebuild time and mobile performance are acceptable.
+- full `RebuildDecor` cost and mobile performance are acceptable.
+
+The reference `Builds/save056.json` currently produces zero scattered trees, so it cannot visually validate tree placement. A separate Forest fixture is required. Batchmode smoke results do not replace Play Mode verification of the actual `RebuildDecor` call, scene WaterSource position, prefabs, colliders or visuals.
 
 A Unity Editor/device run is required before merging this branch into `main`.

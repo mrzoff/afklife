@@ -1,0 +1,3664 @@
+{
+    "version": 8,
+    "lastSaveUtc": 1795206949,
+    "plants": [
+        {
+            "instanceId": "4f9cea378d3042abbf192c2cceeaa3d8",
+            "plantId": "starter_tree",
+            "plotId": "plot_01",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": -1.5,
+            "posY": 1.8799999952316284,
+            "posZ": 1.2000000476837158
+        },
+        {
+            "instanceId": "49523faf8d31452eba8d018fe98ad9ab",
+            "plantId": "starter_tree",
+            "plotId": "plot_02",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": 1.399999976158142,
+            "posY": 1.8799999952316284,
+            "posZ": 1.0
+        },
+        {
+            "instanceId": "1fe41f5446c646e7ad26164bef63dc14",
+            "plantId": "starter_tree",
+            "plotId": "plot_03",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": 0.0,
+            "posY": 1.8799999952316284,
+            "posZ": -1.600000023841858
+        },
+        {
+            "instanceId": "1e46b745a8e6408fbf43483af877dc53",
+            "plantId": "starter_tree",
+            "plotId": "plot_04",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": 2.200000047683716,
+            "posY": 1.8799999952316284,
+            "posZ": -0.4000000059604645
+        },
+        {
+            "instanceId": "p_wild_0_0_1000",
+            "plantId": "starter_tree",
+            "plotId": "wild_0_0_1000",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": -2.200000047683716,
+            "posY": 1.899999976158142,
+            "posZ": 1.600000023841858
+        },
+        {
+            "instanceId": "p_wild_1_0_128",
+            "plantId": "starter_tree",
+            "plotId": "wild_1_0_128",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": 8.5,
+            "posY": 0.7199999690055847,
+            "posZ": 0.5
+        },
+        {
+            "instanceId": "p_wild_1_0_64",
+            "plantId": "starter_tree",
+            "plotId": "wild_1_0_64",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": 8.5,
+            "posY": 0.7199999690055847,
+            "posZ": -3.5
+        },
+        {
+            "instanceId": "p_wild_1_0_193",
+            "plantId": "starter_tree",
+            "plotId": "wild_1_0_193",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": 9.5,
+            "posY": 0.7199999690055847,
+            "posZ": 4.5
+        },
+        {
+            "instanceId": "p_wild_1_0_149",
+            "plantId": "starter_tree",
+            "plotId": "wild_1_0_149",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": 13.5,
+            "posY": 0.7199999690055847,
+            "posZ": 1.5
+        },
+        {
+            "instanceId": "p_wild_1_0_0",
+            "plantId": "starter_tree",
+            "plotId": "wild_1_0_0",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": 8.5,
+            "posY": 0.7199999690055847,
+            "posZ": -7.5
+        },
+        {
+            "instanceId": "p_wild_1_0_99",
+            "plantId": "starter_tree",
+            "plotId": "wild_1_0_99",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": 11.5,
+            "posY": 0.7199999690055847,
+            "posZ": -1.5
+        },
+        {
+            "instanceId": "p_wild_1_0_35",
+            "plantId": "starter_tree",
+            "plotId": "wild_1_0_35",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": 11.5,
+            "posY": 0.7199999690055847,
+            "posZ": -5.5
+        },
+        {
+            "instanceId": "p_wild_1_0_199",
+            "plantId": "starter_tree",
+            "plotId": "wild_1_0_199",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": 15.5,
+            "posY": 0.7199999690055847,
+            "posZ": 4.5
+        },
+        {
+            "instanceId": "p_wild_1_0_120",
+            "plantId": "starter_tree",
+            "plotId": "wild_1_0_120",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": 16.5,
+            "posY": 0.7199999690055847,
+            "posZ": -0.5
+        },
+        {
+            "instanceId": "p_wild_1_0_70",
+            "plantId": "starter_tree",
+            "plotId": "wild_1_0_70",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": 14.5,
+            "posY": 0.7199999690055847,
+            "posZ": -3.5
+        },
+        {
+            "instanceId": "p_wild_1_0_170",
+            "plantId": "starter_tree",
+            "plotId": "wild_1_0_170",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": 18.5,
+            "posY": 0.7199999690055847,
+            "posZ": 2.5
+        },
+        {
+            "instanceId": "p_wild_1_0_74",
+            "plantId": "starter_tree",
+            "plotId": "wild_1_0_74",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": 18.5,
+            "posY": 0.7199999690055847,
+            "posZ": -3.5
+        },
+        {
+            "instanceId": "p_wild_1_0_124",
+            "plantId": "starter_tree",
+            "plotId": "wild_1_0_124",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": 20.5,
+            "posY": 0.7199999690055847,
+            "posZ": -0.5
+        },
+        {
+            "instanceId": "p_wild_1_0_28",
+            "plantId": "starter_tree",
+            "plotId": "wild_1_0_28",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": 20.5,
+            "posY": 0.7199999690055847,
+            "posZ": -6.5
+        },
+        {
+            "instanceId": "p_wild_1_0_78",
+            "plantId": "starter_tree",
+            "plotId": "wild_1_0_78",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": 22.5,
+            "posY": 0.7199999690055847,
+            "posZ": -3.5
+        },
+        {
+            "instanceId": "p_wild_1_0_174",
+            "plantId": "starter_tree",
+            "plotId": "wild_1_0_174",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": 22.5,
+            "posY": 0.7199999690055847,
+            "posZ": 2.5
+        },
+        {
+            "instanceId": "p_wild_0_-1_249",
+            "plantId": "starter_tree",
+            "plotId": "wild_0_-1_249",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": 1.5,
+            "posY": 0.7199999690055847,
+            "posZ": -8.5
+        },
+        {
+            "instanceId": "p_wild_0_-1_242",
+            "plantId": "starter_tree",
+            "plotId": "wild_0_-1_242",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": -5.5,
+            "posY": 0.7199999690055847,
+            "posZ": -8.5
+        },
+        {
+            "instanceId": "p_wild_0_-1_214",
+            "plantId": "starter_tree",
+            "plotId": "wild_0_-1_214",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": -1.5,
+            "posY": 0.7199999690055847,
+            "posZ": -10.5
+        },
+        {
+            "instanceId": "p_wild_0_-1_237",
+            "plantId": "starter_tree",
+            "plotId": "wild_0_-1_237",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": 5.5,
+            "posY": 0.7199999690055847,
+            "posZ": -9.5
+        },
+        {
+            "instanceId": "p_wild_0_-1_186",
+            "plantId": "starter_tree",
+            "plotId": "wild_0_-1_186",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": 2.5,
+            "posY": 0.7199999690055847,
+            "posZ": -12.5
+        },
+        {
+            "instanceId": "p_wild_0_-1_149",
+            "plantId": "starter_tree",
+            "plotId": "wild_0_-1_149",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": -2.5,
+            "posY": 0.7199999690055847,
+            "posZ": -14.5
+        },
+        {
+            "instanceId": "p_wild_0_-1_140",
+            "plantId": "starter_tree",
+            "plotId": "wild_0_-1_140",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": 4.5,
+            "posY": 0.7199999690055847,
+            "posZ": -15.5
+        },
+        {
+            "instanceId": "p_wild_0_-1_191",
+            "plantId": "starter_tree",
+            "plotId": "wild_0_-1_191",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": 7.5,
+            "posY": 0.7199999690055847,
+            "posZ": -12.5
+        },
+        {
+            "instanceId": "p_wild_0_-1_120",
+            "plantId": "starter_tree",
+            "plotId": "wild_0_-1_120",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": 0.5,
+            "posY": 0.7199999690055847,
+            "posZ": -16.5
+        },
+        {
+            "instanceId": "p_wild_0_-1_128",
+            "plantId": "starter_tree",
+            "plotId": "wild_0_-1_128",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": -7.5,
+            "posY": 0.7199999690055847,
+            "posZ": -15.5
+        },
+        {
+            "instanceId": "p_wild_0_-1_178",
+            "plantId": "starter_tree",
+            "plotId": "wild_0_-1_178",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": -5.5,
+            "posY": 0.7199999690055847,
+            "posZ": -12.5
+        },
+        {
+            "instanceId": "p_wild_0_-1_58",
+            "plantId": "starter_tree",
+            "plotId": "wild_0_-1_58",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": 2.5,
+            "posY": 0.7199999690055847,
+            "posZ": -20.5
+        },
+        {
+            "instanceId": "p_wild_0_-1_99",
+            "plantId": "starter_tree",
+            "plotId": "wild_0_-1_99",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": -4.5,
+            "posY": 0.7199999690055847,
+            "posZ": -17.5
+        },
+        {
+            "instanceId": "p_wild_0_-1_70",
+            "plantId": "starter_tree",
+            "plotId": "wild_0_-1_70",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": -1.5,
+            "posY": 0.7199999690055847,
+            "posZ": -19.5
+        },
+        {
+            "instanceId": "p_wild_0_-1_95",
+            "plantId": "starter_tree",
+            "plotId": "wild_0_-1_95",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": 7.5,
+            "posY": 0.7199999690055847,
+            "posZ": -18.5
+        },
+        {
+            "instanceId": "p_wild_0_-1_8",
+            "plantId": "starter_tree",
+            "plotId": "wild_0_-1_8",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": 0.5,
+            "posY": 0.7199999690055847,
+            "posZ": -23.5
+        },
+        {
+            "instanceId": "p_wild_0_-1_20",
+            "plantId": "starter_tree",
+            "plotId": "wild_0_-1_20",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": -3.5,
+            "posY": 0.7199999690055847,
+            "posZ": -22.5
+        },
+        {
+            "instanceId": "p_wild_0_-1_29",
+            "plantId": "starter_tree",
+            "plotId": "wild_0_-1_29",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": 5.5,
+            "posY": 0.7199999690055847,
+            "posZ": -22.5
+        },
+        {
+            "instanceId": "p_wild_0_1_2",
+            "plantId": "starter_tree",
+            "plotId": "wild_0_1_2",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": -5.5,
+            "posY": 0.7199999690055847,
+            "posZ": 8.5
+        },
+        {
+            "instanceId": "p_wild_0_1_14",
+            "plantId": "starter_tree",
+            "plotId": "wild_0_1_14",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": 6.5,
+            "posY": 0.7199999690055847,
+            "posZ": 8.5
+        },
+        {
+            "instanceId": "p_wild_0_1_7",
+            "plantId": "starter_tree",
+            "plotId": "wild_0_1_7",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": -0.5,
+            "posY": 0.7199999690055847,
+            "posZ": 8.5
+        },
+        {
+            "instanceId": "p_wild_0_1_52",
+            "plantId": "starter_tree",
+            "plotId": "wild_0_1_52",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": -3.5,
+            "posY": 0.7199999690055847,
+            "posZ": 11.5
+        },
+        {
+            "instanceId": "p_wild_0_1_43",
+            "plantId": "starter_tree",
+            "plotId": "wild_0_1_43",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": 3.5,
+            "posY": 0.7199999690055847,
+            "posZ": 10.5
+        },
+        {
+            "instanceId": "p_wild_0_1_118",
+            "plantId": "starter_tree",
+            "plotId": "wild_0_1_118",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": -1.5,
+            "posY": 0.7199999690055847,
+            "posZ": 15.5
+        },
+        {
+            "instanceId": "p_wild_0_1_110",
+            "plantId": "starter_tree",
+            "plotId": "wild_0_1_110",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": 6.5,
+            "posY": 0.7199999690055847,
+            "posZ": 14.5
+        },
+        {
+            "instanceId": "p_wild_0_1_89",
+            "plantId": "starter_tree",
+            "plotId": "wild_0_1_89",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": 1.5,
+            "posY": 0.7199999690055847,
+            "posZ": 13.5
+        },
+        {
+            "instanceId": "p_wild_0_1_179",
+            "plantId": "starter_tree",
+            "plotId": "wild_0_1_179",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": -4.5,
+            "posY": 0.7199999690055847,
+            "posZ": 19.5
+        },
+        {
+            "instanceId": "p_wild_0_1_168",
+            "plantId": "starter_tree",
+            "plotId": "wild_0_1_168",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": 0.5,
+            "posY": 0.7199999690055847,
+            "posZ": 18.5
+        },
+        {
+            "instanceId": "p_wild_0_1_113",
+            "plantId": "starter_tree",
+            "plotId": "wild_0_1_113",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": -6.5,
+            "posY": 0.7199999690055847,
+            "posZ": 15.5
+        },
+        {
+            "instanceId": "p_wild_0_1_139",
+            "plantId": "starter_tree",
+            "plotId": "wild_0_1_139",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": 3.5,
+            "posY": 0.7199999690055847,
+            "posZ": 16.5
+        },
+        {
+            "instanceId": "p_wild_0_1_175",
+            "plantId": "starter_tree",
+            "plotId": "wild_0_1_175",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": 7.5,
+            "posY": 0.7199999690055847,
+            "posZ": 18.5
+        },
+        {
+            "instanceId": "p_wild_0_1_229",
+            "plantId": "starter_tree",
+            "plotId": "wild_0_1_229",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": -2.5,
+            "posY": 0.7199999690055847,
+            "posZ": 22.5
+        },
+        {
+            "instanceId": "p_wild_0_1_208",
+            "plantId": "starter_tree",
+            "plotId": "wild_0_1_208",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": -7.5,
+            "posY": 0.7199999690055847,
+            "posZ": 21.5
+        },
+        {
+            "instanceId": "p_wild_0_1_218",
+            "plantId": "starter_tree",
+            "plotId": "wild_0_1_218",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": 2.5,
+            "posY": 0.7199999690055847,
+            "posZ": 21.5
+        },
+        {
+            "instanceId": "p_wild_-1_0_143",
+            "plantId": "starter_tree",
+            "plotId": "wild_-1_0_143",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": -8.5,
+            "posY": 0.7199999690055847,
+            "posZ": 0.5
+        },
+        {
+            "instanceId": "p_wild_-1_0_30",
+            "plantId": "starter_tree",
+            "plotId": "wild_-1_0_30",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": -9.5,
+            "posY": 0.7199999690055847,
+            "posZ": -6.5
+        },
+        {
+            "instanceId": "p_wild_-1_0_108",
+            "plantId": "starter_tree",
+            "plotId": "wild_-1_0_108",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": -11.5,
+            "posY": 0.7199999690055847,
+            "posZ": -1.5
+        },
+        {
+            "instanceId": "p_wild_-1_0_223",
+            "plantId": "starter_tree",
+            "plotId": "wild_-1_0_223",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": -8.5,
+            "posY": 0.7199999690055847,
+            "posZ": 5.5
+        },
+        {
+            "instanceId": "p_wild_-1_0_170",
+            "plantId": "starter_tree",
+            "plotId": "wild_-1_0_170",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": -13.5,
+            "posY": 0.7199999690055847,
+            "posZ": 2.5
+        },
+        {
+            "instanceId": "p_wild_-1_0_120",
+            "plantId": "starter_tree",
+            "plotId": "wild_-1_0_120",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": -15.5,
+            "posY": 0.7199999690055847,
+            "posZ": -0.5
+        },
+        {
+            "instanceId": "p_wild_-1_0_199",
+            "plantId": "starter_tree",
+            "plotId": "wild_-1_0_199",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": -16.5,
+            "posY": 0.7199999690055847,
+            "posZ": 4.5
+        },
+        {
+            "instanceId": "p_wild_-1_0_234",
+            "plantId": "starter_tree",
+            "plotId": "wild_-1_0_234",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": -13.5,
+            "posY": 0.7199999690055847,
+            "posZ": 6.5
+        },
+        {
+            "instanceId": "p_wild_-1_0_57",
+            "plantId": "starter_tree",
+            "plotId": "wild_-1_0_57",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": -14.5,
+            "posY": 0.7199999690055847,
+            "posZ": -4.5
+        },
+        {
+            "instanceId": "p_wild_-1_0_149",
+            "plantId": "starter_tree",
+            "plotId": "wild_-1_0_149",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": -18.5,
+            "posY": 0.7199999690055847,
+            "posZ": 1.5
+        },
+        {
+            "instanceId": "p_wild_-1_0_69",
+            "plantId": "starter_tree",
+            "plotId": "wild_-1_0_69",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": -18.5,
+            "posY": 0.7199999690055847,
+            "posZ": -3.5
+        },
+        {
+            "instanceId": "p_wild_-1_0_7",
+            "plantId": "starter_tree",
+            "plotId": "wild_-1_0_7",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": -16.5,
+            "posY": 0.7199999690055847,
+            "posZ": -7.5
+        },
+        {
+            "instanceId": "p_wild_-1_0_195",
+            "plantId": "starter_tree",
+            "plotId": "wild_-1_0_195",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": -20.5,
+            "posY": 0.7199999690055847,
+            "posZ": 4.5
+        },
+        {
+            "instanceId": "p_wild_-1_0_98",
+            "plantId": "starter_tree",
+            "plotId": "wild_-1_0_98",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": -21.5,
+            "posY": 0.7199999690055847,
+            "posZ": -1.5
+        },
+        {
+            "instanceId": "p_wild_-1_0_245",
+            "plantId": "starter_tree",
+            "plotId": "wild_-1_0_245",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": -18.5,
+            "posY": 0.7199999690055847,
+            "posZ": 7.5
+        },
+        {
+            "instanceId": "p_wild_-1_0_34",
+            "plantId": "starter_tree",
+            "plotId": "wild_-1_0_34",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": -21.5,
+            "posY": 0.7199999690055847,
+            "posZ": -5.5
+        },
+        {
+            "instanceId": "p_wild_1_1_48",
+            "plantId": "starter_tree",
+            "plotId": "wild_1_1_48",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": 8.5,
+            "posY": 0.7199999690055847,
+            "posZ": 11.5
+        },
+        {
+            "instanceId": "p_wild_1_1_2",
+            "plantId": "starter_tree",
+            "plotId": "wild_1_1_2",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": 10.5,
+            "posY": 0.7199999690055847,
+            "posZ": 8.5
+        },
+        {
+            "instanceId": "p_wild_1_1_98",
+            "plantId": "starter_tree",
+            "plotId": "wild_1_1_98",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": 10.5,
+            "posY": 0.7199999690055847,
+            "posZ": 14.5
+        },
+        {
+            "instanceId": "p_wild_1_1_6",
+            "plantId": "starter_tree",
+            "plotId": "wild_1_1_6",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": 14.5,
+            "posY": 0.7199999690055847,
+            "posZ": 8.5
+        },
+        {
+            "instanceId": "p_wild_1_1_69",
+            "plantId": "starter_tree",
+            "plotId": "wild_1_1_69",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": 13.5,
+            "posY": 0.7199999690055847,
+            "posZ": 12.5
+        },
+        {
+            "instanceId": "p_wild_1_1_135",
+            "plantId": "starter_tree",
+            "plotId": "wild_1_1_135",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": 15.5,
+            "posY": 0.7199999690055847,
+            "posZ": 16.5
+        },
+        {
+            "instanceId": "p_wild_1_1_163",
+            "plantId": "starter_tree",
+            "plotId": "wild_1_1_163",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": 11.5,
+            "posY": 0.7199999690055847,
+            "posZ": 18.5
+        },
+        {
+            "instanceId": "p_wild_1_1_26",
+            "plantId": "starter_tree",
+            "plotId": "wild_1_1_26",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": 18.5,
+            "posY": 0.7199999690055847,
+            "posZ": 9.5
+        },
+        {
+            "instanceId": "p_wild_1_1_209",
+            "plantId": "starter_tree",
+            "plotId": "wild_1_1_209",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": 9.5,
+            "posY": 0.7199999690055847,
+            "posZ": 21.5
+        },
+        {
+            "instanceId": "p_wild_1_1_89",
+            "plantId": "starter_tree",
+            "plotId": "wild_1_1_89",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": 17.5,
+            "posY": 0.7199999690055847,
+            "posZ": 13.5
+        },
+        {
+            "instanceId": "p_wild_1_1_139",
+            "plantId": "starter_tree",
+            "plotId": "wild_1_1_139",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": 19.5,
+            "posY": 0.7199999690055847,
+            "posZ": 16.5
+        },
+        {
+            "instanceId": "p_wild_-1_-1_223",
+            "plantId": "starter_tree",
+            "plotId": "wild_-1_-1_223",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": -8.5,
+            "posY": 0.7199999690055847,
+            "posZ": -10.5
+        },
+        {
+            "instanceId": "p_wild_-1_-1_235",
+            "plantId": "starter_tree",
+            "plotId": "wild_-1_-1_235",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": -12.5,
+            "posY": 0.7199999690055847,
+            "posZ": -9.5
+        },
+        {
+            "instanceId": "p_wild_-1_-1_200",
+            "plantId": "starter_tree",
+            "plotId": "wild_-1_-1_200",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": -15.5,
+            "posY": 0.7199999690055847,
+            "posZ": -11.5
+        },
+        {
+            "instanceId": "p_wild_-1_-1_173",
+            "plantId": "starter_tree",
+            "plotId": "wild_-1_-1_173",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": -10.5,
+            "posY": 0.7199999690055847,
+            "posZ": -13.5
+        },
+        {
+            "instanceId": "p_wild_-1_-1_119",
+            "plantId": "starter_tree",
+            "plotId": "wild_-1_-1_119",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": -16.5,
+            "posY": 0.7199999690055847,
+            "posZ": -16.5
+        },
+        {
+            "instanceId": "p_wild_-1_-1_108",
+            "plantId": "starter_tree",
+            "plotId": "wild_-1_-1_108",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": -11.5,
+            "posY": 0.7199999690055847,
+            "posZ": -17.5
+        },
+        {
+            "instanceId": "p_wild_-1_-1_79",
+            "plantId": "starter_tree",
+            "plotId": "wild_-1_-1_79",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": -8.5,
+            "posY": 0.7199999690055847,
+            "posZ": -19.5
+        },
+        {
+            "instanceId": "p_wild_-1_-1_114",
+            "plantId": "starter_tree",
+            "plotId": "wild_-1_-1_114",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": -21.5,
+            "posY": 0.7199999690055847,
+            "posZ": -16.5
+        },
+        {
+            "instanceId": "p_wild_-1_-1_180",
+            "plantId": "starter_tree",
+            "plotId": "wild_-1_-1_180",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": -19.5,
+            "posY": 0.7199999690055847,
+            "posZ": -12.5
+        },
+        {
+            "instanceId": "p_wild_-1_-1_54",
+            "plantId": "starter_tree",
+            "plotId": "wild_-1_-1_54",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": -17.5,
+            "posY": 0.7199999690055847,
+            "posZ": -20.5
+        },
+        {
+            "instanceId": "p_wild_1_-1_210",
+            "plantId": "starter_tree",
+            "plotId": "wild_1_-1_210",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": 10.5,
+            "posY": 0.7199999690055847,
+            "posZ": -10.5
+        },
+        {
+            "instanceId": "p_wild_1_-1_245",
+            "plantId": "starter_tree",
+            "plotId": "wild_1_-1_245",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": 13.5,
+            "posY": 0.7199999690055847,
+            "posZ": -8.5
+        },
+        {
+            "instanceId": "p_wild_1_-1_129",
+            "plantId": "starter_tree",
+            "plotId": "wild_1_-1_129",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": 9.5,
+            "posY": 0.7199999690055847,
+            "posZ": -15.5
+        },
+        {
+            "instanceId": "p_wild_1_-1_182",
+            "plantId": "starter_tree",
+            "plotId": "wild_1_-1_182",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": 14.5,
+            "posY": 0.7199999690055847,
+            "posZ": -12.5
+        },
+        {
+            "instanceId": "p_wild_1_-1_249",
+            "plantId": "starter_tree",
+            "plotId": "wild_1_-1_249",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": 17.5,
+            "posY": 0.7199999690055847,
+            "posZ": -8.5
+        },
+        {
+            "instanceId": "p_wild_1_-1_118",
+            "plantId": "starter_tree",
+            "plotId": "wild_1_-1_118",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": 14.5,
+            "posY": 0.7199999690055847,
+            "posZ": -16.5
+        },
+        {
+            "instanceId": "p_wild_1_-1_153",
+            "plantId": "starter_tree",
+            "plotId": "wild_1_-1_153",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": 17.5,
+            "posY": 0.7199999690055847,
+            "posZ": -14.5
+        },
+        {
+            "instanceId": "p_wild_-1_1_63",
+            "plantId": "starter_tree",
+            "plotId": "wild_-1_1_63",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": -8.5,
+            "posY": 0.7199999690055847,
+            "posZ": 11.5
+        },
+        {
+            "instanceId": "p_wild_-1_1_13",
+            "plantId": "starter_tree",
+            "plotId": "wild_-1_1_13",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": -10.5,
+            "posY": 0.7199999690055847,
+            "posZ": 8.5
+        },
+        {
+            "instanceId": "p_wild_-1_1_157",
+            "plantId": "starter_tree",
+            "plotId": "wild_-1_1_157",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": -10.5,
+            "posY": 0.7199999690055847,
+            "posZ": 17.5
+        },
+        {
+            "instanceId": "p_wild_-1_1_40",
+            "plantId": "starter_tree",
+            "plotId": "wild_-1_1_40",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": -15.5,
+            "posY": 0.7199999690055847,
+            "posZ": 10.5
+        },
+        {
+            "instanceId": "p_wild_-1_1_75",
+            "plantId": "starter_tree",
+            "plotId": "wild_-1_1_75",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": -12.5,
+            "posY": 0.7199999690055847,
+            "posZ": 12.5
+        },
+        {
+            "instanceId": "p_wild_-1_1_86",
+            "plantId": "starter_tree",
+            "plotId": "wild_-1_1_86",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": -17.5,
+            "posY": 0.7199999690055847,
+            "posZ": 13.5
+        },
+        {
+            "instanceId": "p_wild_-1_1_35",
+            "plantId": "starter_tree",
+            "plotId": "wild_-1_1_35",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": -20.5,
+            "posY": 0.7199999690055847,
+            "posZ": 10.5
+        },
+        {
+            "instanceId": "p_wild_0_2_8",
+            "plantId": "starter_tree",
+            "plotId": "wild_0_2_8",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": 0.5,
+            "posY": 0.7199999690055847,
+            "posZ": 24.5
+        },
+        {
+            "instanceId": "p_wild_0_2_2",
+            "plantId": "starter_tree",
+            "plotId": "wild_0_2_2",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": -5.5,
+            "posY": 0.7199999690055847,
+            "posZ": 24.5
+        },
+        {
+            "instanceId": "p_wild_-2_0_79",
+            "plantId": "starter_tree",
+            "plotId": "wild_-2_0_79",
+            "stage": 3,
+            "growthProgress": 1.0,
+            "posX": -24.5,
+            "posY": 0.7199999690055847,
+            "posZ": -3.5
+        }
+    ],
+    "chunks": [
+        {
+            "chunkX": 0,
+            "chunkZ": 0,
+            "isUnlocked": true,
+            "biomeId": "starter_island",
+            "randomSeed": 0,
+            "lastSimulatedUtc": 1795206949,
+            "plants": [
+                {
+                    "instanceId": "4f9cea378d3042abbf192c2cceeaa3d8",
+                    "plantId": "starter_tree",
+                    "plotId": "plot_01",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": -1.5,
+                    "posY": 1.8799999952316284,
+                    "posZ": 1.2000000476837158
+                },
+                {
+                    "instanceId": "49523faf8d31452eba8d018fe98ad9ab",
+                    "plantId": "starter_tree",
+                    "plotId": "plot_02",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": 1.399999976158142,
+                    "posY": 1.8799999952316284,
+                    "posZ": 1.0
+                },
+                {
+                    "instanceId": "1fe41f5446c646e7ad26164bef63dc14",
+                    "plantId": "starter_tree",
+                    "plotId": "plot_03",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": 0.0,
+                    "posY": 1.8799999952316284,
+                    "posZ": -1.600000023841858
+                },
+                {
+                    "instanceId": "1e46b745a8e6408fbf43483af877dc53",
+                    "plantId": "starter_tree",
+                    "plotId": "plot_04",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": 2.200000047683716,
+                    "posY": 1.8799999952316284,
+                    "posZ": -0.4000000059604645
+                },
+                {
+                    "instanceId": "p_wild_0_0_1000",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_0_0_1000",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": -2.200000047683716,
+                    "posY": 1.899999976158142,
+                    "posZ": 1.600000023841858
+                }
+            ]
+        },
+        {
+            "chunkX": 1,
+            "chunkZ": 0,
+            "isUnlocked": true,
+            "biomeId": "wild_expansion",
+            "randomSeed": 31,
+            "lastSimulatedUtc": 1794510178,
+            "plants": [
+                {
+                    "instanceId": "p_wild_1_0_128",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_1_0_128",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": 8.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": 0.5
+                },
+                {
+                    "instanceId": "p_wild_1_0_64",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_1_0_64",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": 8.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": -3.5
+                },
+                {
+                    "instanceId": "p_wild_1_0_193",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_1_0_193",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": 9.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": 4.5
+                },
+                {
+                    "instanceId": "p_wild_1_0_149",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_1_0_149",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": 13.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": 1.5
+                },
+                {
+                    "instanceId": "p_wild_1_0_0",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_1_0_0",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": 8.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": -7.5
+                },
+                {
+                    "instanceId": "p_wild_1_0_99",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_1_0_99",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": 11.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": -1.5
+                },
+                {
+                    "instanceId": "p_wild_1_0_35",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_1_0_35",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": 11.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": -5.5
+                },
+                {
+                    "instanceId": "p_wild_1_0_199",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_1_0_199",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": 15.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": 4.5
+                },
+                {
+                    "instanceId": "p_wild_1_0_120",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_1_0_120",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": 16.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": -0.5
+                },
+                {
+                    "instanceId": "p_wild_1_0_70",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_1_0_70",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": 14.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": -3.5
+                },
+                {
+                    "instanceId": "p_wild_1_0_170",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_1_0_170",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": 18.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": 2.5
+                },
+                {
+                    "instanceId": "p_wild_1_0_74",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_1_0_74",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": 18.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": -3.5
+                },
+                {
+                    "instanceId": "p_wild_1_0_124",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_1_0_124",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": 20.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": -0.5
+                },
+                {
+                    "instanceId": "p_wild_1_0_28",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_1_0_28",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": 20.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": -6.5
+                },
+                {
+                    "instanceId": "p_wild_1_0_78",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_1_0_78",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": 22.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": -3.5
+                },
+                {
+                    "instanceId": "p_wild_1_0_174",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_1_0_174",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": 22.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": 2.5
+                }
+            ]
+        },
+        {
+            "chunkX": 0,
+            "chunkZ": -1,
+            "isUnlocked": true,
+            "biomeId": "wild_expansion",
+            "randomSeed": -17,
+            "lastSimulatedUtc": 1794510178,
+            "plants": [
+                {
+                    "instanceId": "p_wild_0_-1_249",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_0_-1_249",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": 1.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": -8.5
+                },
+                {
+                    "instanceId": "p_wild_0_-1_242",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_0_-1_242",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": -5.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": -8.5
+                },
+                {
+                    "instanceId": "p_wild_0_-1_214",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_0_-1_214",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": -1.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": -10.5
+                },
+                {
+                    "instanceId": "p_wild_0_-1_237",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_0_-1_237",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": 5.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": -9.5
+                },
+                {
+                    "instanceId": "p_wild_0_-1_186",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_0_-1_186",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": 2.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": -12.5
+                },
+                {
+                    "instanceId": "p_wild_0_-1_149",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_0_-1_149",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": -2.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": -14.5
+                },
+                {
+                    "instanceId": "p_wild_0_-1_140",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_0_-1_140",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": 4.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": -15.5
+                },
+                {
+                    "instanceId": "p_wild_0_-1_191",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_0_-1_191",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": 7.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": -12.5
+                },
+                {
+                    "instanceId": "p_wild_0_-1_120",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_0_-1_120",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": 0.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": -16.5
+                },
+                {
+                    "instanceId": "p_wild_0_-1_128",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_0_-1_128",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": -7.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": -15.5
+                },
+                {
+                    "instanceId": "p_wild_0_-1_178",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_0_-1_178",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": -5.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": -12.5
+                },
+                {
+                    "instanceId": "p_wild_0_-1_58",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_0_-1_58",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": 2.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": -20.5
+                },
+                {
+                    "instanceId": "p_wild_0_-1_99",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_0_-1_99",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": -4.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": -17.5
+                },
+                {
+                    "instanceId": "p_wild_0_-1_70",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_0_-1_70",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": -1.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": -19.5
+                },
+                {
+                    "instanceId": "p_wild_0_-1_95",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_0_-1_95",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": 7.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": -18.5
+                },
+                {
+                    "instanceId": "p_wild_0_-1_8",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_0_-1_8",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": 0.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": -23.5
+                },
+                {
+                    "instanceId": "p_wild_0_-1_20",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_0_-1_20",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": -3.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": -22.5
+                },
+                {
+                    "instanceId": "p_wild_0_-1_29",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_0_-1_29",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": 5.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": -22.5
+                }
+            ]
+        },
+        {
+            "chunkX": 0,
+            "chunkZ": 1,
+            "isUnlocked": true,
+            "biomeId": "wild_expansion",
+            "randomSeed": 17,
+            "lastSimulatedUtc": 1794510178,
+            "plants": [
+                {
+                    "instanceId": "p_wild_0_1_2",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_0_1_2",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": -5.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": 8.5
+                },
+                {
+                    "instanceId": "p_wild_0_1_14",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_0_1_14",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": 6.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": 8.5
+                },
+                {
+                    "instanceId": "p_wild_0_1_7",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_0_1_7",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": -0.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": 8.5
+                },
+                {
+                    "instanceId": "p_wild_0_1_52",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_0_1_52",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": -3.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": 11.5
+                },
+                {
+                    "instanceId": "p_wild_0_1_43",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_0_1_43",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": 3.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": 10.5
+                },
+                {
+                    "instanceId": "p_wild_0_1_118",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_0_1_118",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": -1.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": 15.5
+                },
+                {
+                    "instanceId": "p_wild_0_1_110",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_0_1_110",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": 6.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": 14.5
+                },
+                {
+                    "instanceId": "p_wild_0_1_89",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_0_1_89",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": 1.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": 13.5
+                },
+                {
+                    "instanceId": "p_wild_0_1_179",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_0_1_179",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": -4.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": 19.5
+                },
+                {
+                    "instanceId": "p_wild_0_1_168",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_0_1_168",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": 0.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": 18.5
+                },
+                {
+                    "instanceId": "p_wild_0_1_113",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_0_1_113",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": -6.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": 15.5
+                },
+                {
+                    "instanceId": "p_wild_0_1_139",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_0_1_139",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": 3.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": 16.5
+                },
+                {
+                    "instanceId": "p_wild_0_1_175",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_0_1_175",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": 7.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": 18.5
+                },
+                {
+                    "instanceId": "p_wild_0_1_229",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_0_1_229",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": -2.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": 22.5
+                },
+                {
+                    "instanceId": "p_wild_0_1_208",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_0_1_208",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": -7.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": 21.5
+                },
+                {
+                    "instanceId": "p_wild_0_1_218",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_0_1_218",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": 2.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": 21.5
+                }
+            ]
+        },
+        {
+            "chunkX": -1,
+            "chunkZ": 0,
+            "isUnlocked": true,
+            "biomeId": "wild_expansion",
+            "randomSeed": -31,
+            "lastSimulatedUtc": 1794510181,
+            "plants": [
+                {
+                    "instanceId": "p_wild_-1_0_143",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_-1_0_143",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": -8.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": 0.5
+                },
+                {
+                    "instanceId": "p_wild_-1_0_30",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_-1_0_30",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": -9.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": -6.5
+                },
+                {
+                    "instanceId": "p_wild_-1_0_108",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_-1_0_108",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": -11.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": -1.5
+                },
+                {
+                    "instanceId": "p_wild_-1_0_223",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_-1_0_223",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": -8.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": 5.5
+                },
+                {
+                    "instanceId": "p_wild_-1_0_170",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_-1_0_170",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": -13.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": 2.5
+                },
+                {
+                    "instanceId": "p_wild_-1_0_120",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_-1_0_120",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": -15.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": -0.5
+                },
+                {
+                    "instanceId": "p_wild_-1_0_199",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_-1_0_199",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": -16.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": 4.5
+                },
+                {
+                    "instanceId": "p_wild_-1_0_234",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_-1_0_234",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": -13.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": 6.5
+                },
+                {
+                    "instanceId": "p_wild_-1_0_57",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_-1_0_57",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": -14.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": -4.5
+                },
+                {
+                    "instanceId": "p_wild_-1_0_149",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_-1_0_149",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": -18.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": 1.5
+                },
+                {
+                    "instanceId": "p_wild_-1_0_69",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_-1_0_69",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": -18.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": -3.5
+                },
+                {
+                    "instanceId": "p_wild_-1_0_7",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_-1_0_7",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": -16.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": -7.5
+                },
+                {
+                    "instanceId": "p_wild_-1_0_195",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_-1_0_195",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": -20.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": 4.5
+                },
+                {
+                    "instanceId": "p_wild_-1_0_98",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_-1_0_98",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": -21.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": -1.5
+                },
+                {
+                    "instanceId": "p_wild_-1_0_245",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_-1_0_245",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": -18.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": 7.5
+                },
+                {
+                    "instanceId": "p_wild_-1_0_34",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_-1_0_34",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": -21.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": -5.5
+                }
+            ]
+        },
+        {
+            "chunkX": 1,
+            "chunkZ": 1,
+            "isUnlocked": true,
+            "biomeId": "wild_expansion",
+            "randomSeed": 48,
+            "lastSimulatedUtc": 1794510182,
+            "plants": [
+                {
+                    "instanceId": "p_wild_1_1_48",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_1_1_48",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": 8.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": 11.5
+                },
+                {
+                    "instanceId": "p_wild_1_1_2",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_1_1_2",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": 10.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": 8.5
+                },
+                {
+                    "instanceId": "p_wild_1_1_98",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_1_1_98",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": 10.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": 14.5
+                },
+                {
+                    "instanceId": "p_wild_1_1_6",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_1_1_6",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": 14.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": 8.5
+                },
+                {
+                    "instanceId": "p_wild_1_1_69",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_1_1_69",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": 13.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": 12.5
+                },
+                {
+                    "instanceId": "p_wild_1_1_135",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_1_1_135",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": 15.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": 16.5
+                },
+                {
+                    "instanceId": "p_wild_1_1_163",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_1_1_163",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": 11.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": 18.5
+                },
+                {
+                    "instanceId": "p_wild_1_1_26",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_1_1_26",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": 18.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": 9.5
+                },
+                {
+                    "instanceId": "p_wild_1_1_209",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_1_1_209",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": 9.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": 21.5
+                },
+                {
+                    "instanceId": "p_wild_1_1_89",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_1_1_89",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": 17.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": 13.5
+                },
+                {
+                    "instanceId": "p_wild_1_1_139",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_1_1_139",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": 19.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": 16.5
+                }
+            ]
+        },
+        {
+            "chunkX": -1,
+            "chunkZ": -1,
+            "isUnlocked": true,
+            "biomeId": "wild_expansion",
+            "randomSeed": -48,
+            "lastSimulatedUtc": 1794510182,
+            "plants": [
+                {
+                    "instanceId": "p_wild_-1_-1_223",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_-1_-1_223",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": -8.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": -10.5
+                },
+                {
+                    "instanceId": "p_wild_-1_-1_235",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_-1_-1_235",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": -12.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": -9.5
+                },
+                {
+                    "instanceId": "p_wild_-1_-1_200",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_-1_-1_200",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": -15.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": -11.5
+                },
+                {
+                    "instanceId": "p_wild_-1_-1_173",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_-1_-1_173",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": -10.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": -13.5
+                },
+                {
+                    "instanceId": "p_wild_-1_-1_119",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_-1_-1_119",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": -16.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": -16.5
+                },
+                {
+                    "instanceId": "p_wild_-1_-1_108",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_-1_-1_108",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": -11.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": -17.5
+                },
+                {
+                    "instanceId": "p_wild_-1_-1_79",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_-1_-1_79",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": -8.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": -19.5
+                },
+                {
+                    "instanceId": "p_wild_-1_-1_114",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_-1_-1_114",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": -21.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": -16.5
+                },
+                {
+                    "instanceId": "p_wild_-1_-1_180",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_-1_-1_180",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": -19.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": -12.5
+                },
+                {
+                    "instanceId": "p_wild_-1_-1_54",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_-1_-1_54",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": -17.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": -20.5
+                }
+            ]
+        },
+        {
+            "chunkX": 1,
+            "chunkZ": -1,
+            "isUnlocked": true,
+            "biomeId": "wild_expansion",
+            "randomSeed": 14,
+            "lastSimulatedUtc": 1794510184,
+            "plants": [
+                {
+                    "instanceId": "p_wild_1_-1_210",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_1_-1_210",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": 10.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": -10.5
+                },
+                {
+                    "instanceId": "p_wild_1_-1_245",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_1_-1_245",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": 13.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": -8.5
+                },
+                {
+                    "instanceId": "p_wild_1_-1_129",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_1_-1_129",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": 9.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": -15.5
+                },
+                {
+                    "instanceId": "p_wild_1_-1_182",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_1_-1_182",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": 14.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": -12.5
+                },
+                {
+                    "instanceId": "p_wild_1_-1_249",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_1_-1_249",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": 17.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": -8.5
+                },
+                {
+                    "instanceId": "p_wild_1_-1_118",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_1_-1_118",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": 14.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": -16.5
+                },
+                {
+                    "instanceId": "p_wild_1_-1_153",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_1_-1_153",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": 17.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": -14.5
+                }
+            ]
+        },
+        {
+            "chunkX": -1,
+            "chunkZ": 1,
+            "isUnlocked": true,
+            "biomeId": "wild_expansion",
+            "randomSeed": -14,
+            "lastSimulatedUtc": 1794510184,
+            "plants": [
+                {
+                    "instanceId": "p_wild_-1_1_63",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_-1_1_63",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": -8.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": 11.5
+                },
+                {
+                    "instanceId": "p_wild_-1_1_13",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_-1_1_13",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": -10.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": 8.5
+                },
+                {
+                    "instanceId": "p_wild_-1_1_157",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_-1_1_157",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": -10.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": 17.5
+                },
+                {
+                    "instanceId": "p_wild_-1_1_40",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_-1_1_40",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": -15.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": 10.5
+                },
+                {
+                    "instanceId": "p_wild_-1_1_75",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_-1_1_75",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": -12.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": 12.5
+                },
+                {
+                    "instanceId": "p_wild_-1_1_86",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_-1_1_86",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": -17.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": 13.5
+                },
+                {
+                    "instanceId": "p_wild_-1_1_35",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_-1_1_35",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": -20.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": 10.5
+                }
+            ]
+        },
+        {
+            "chunkX": 0,
+            "chunkZ": 2,
+            "isUnlocked": true,
+            "biomeId": "wild_expansion",
+            "randomSeed": 34,
+            "lastSimulatedUtc": 1794510205,
+            "plants": [
+                {
+                    "instanceId": "p_wild_0_2_8",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_0_2_8",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": 0.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": 24.5
+                },
+                {
+                    "instanceId": "p_wild_0_2_2",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_0_2_2",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": -5.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": 24.5
+                }
+            ]
+        },
+        {
+            "chunkX": 0,
+            "chunkZ": -2,
+            "isUnlocked": true,
+            "biomeId": "wild_expansion",
+            "randomSeed": -34,
+            "lastSimulatedUtc": 1794510207,
+            "plants": []
+        },
+        {
+            "chunkX": 2,
+            "chunkZ": 0,
+            "isUnlocked": true,
+            "biomeId": "wild_expansion",
+            "randomSeed": 62,
+            "lastSimulatedUtc": 1794510213,
+            "plants": []
+        },
+        {
+            "chunkX": -2,
+            "chunkZ": 0,
+            "isUnlocked": true,
+            "biomeId": "wild_expansion",
+            "randomSeed": -62,
+            "lastSimulatedUtc": 1794510217,
+            "plants": [
+                {
+                    "instanceId": "p_wild_-2_0_79",
+                    "plantId": "starter_tree",
+                    "plotId": "wild_-2_0_79",
+                    "stage": 3,
+                    "growthProgress": 1.0,
+                    "posX": -24.5,
+                    "posY": 0.7199999690055847,
+                    "posZ": -3.5
+                }
+            ]
+        },
+        {
+            "chunkX": -1,
+            "chunkZ": 2,
+            "isUnlocked": true,
+            "biomeId": "wild_expansion",
+            "randomSeed": 3,
+            "lastSimulatedUtc": 1794510219,
+            "plants": []
+        },
+        {
+            "chunkX": -2,
+            "chunkZ": -1,
+            "isUnlocked": true,
+            "biomeId": "wild_expansion",
+            "randomSeed": -79,
+            "lastSimulatedUtc": 1794510221,
+            "plants": []
+        },
+        {
+            "chunkX": -1,
+            "chunkZ": -2,
+            "isUnlocked": true,
+            "biomeId": "wild_expansion",
+            "randomSeed": -65,
+            "lastSimulatedUtc": 1794510227,
+            "plants": []
+        },
+        {
+            "chunkX": 2,
+            "chunkZ": -1,
+            "isUnlocked": true,
+            "biomeId": "wild_expansion",
+            "randomSeed": 45,
+            "lastSimulatedUtc": 1794510229,
+            "plants": []
+        }
+    ],
+    "worldGrowth": {
+        "lastSimulationUtc": 1795115029,
+        "totalSimulatedSeconds": 16934404,
+        "edgeGrowthProgress": 1801.0,
+        "growthSectorWeights": [
+            0.1226159930229187,
+            0.12313740700483322,
+            0.12261589616537094,
+            0.09588564187288284,
+            0.08081380277872086,
+            0.1454838663339615,
+            0.12261572480201721,
+            0.18683172762393951
+        ],
+        "growthSeed": -662033692,
+        "totalExpandedArea": 2062.0,
+        "natureColonizationWatermarkUtc": 1795115029,
+        "settlementWatermarkUtc": 1795115029,
+        "chunks": [
+            {
+                "chunkX": 0,
+                "chunkZ": 0,
+                "stageMaskBase64": "JEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmS",
+                "biomeMaskBase64": "VVVVVf3//3/9//9//f//f/3//3/9//9//f//f/3//3/9//9//f//f/3//3/9//9//f//f/3//3/9//9/VVVVVQ==",
+                "settlementMaskBase64": "AgBJAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABIAAAAAABJAAAgACBJAABAACBJAgAAAABJAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAiSQAAAAA",
+                "cellProgress": [],
+                "growthSeed": 0,
+                "isLegacyBase": true
+            },
+            {
+                "chunkX": 1,
+                "chunkZ": 0,
+                "stageMaskBase64": "JEmSJEmSJEmSJEmSJEmSJEkSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEkSJEmSJIkAJEmSJJkA",
+                "biomeMaskBase64": "VVVVVdVVXVVVVVUVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVdVVVVVVVVVVVVVVVVVVVRVdVVUEVVVVBQ==",
+                "settlementMaskBase64": "kgIAAAAASQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUQAAAAAAkgIAAAAAlAQAAAAAkgQAAAAAkQIAAAAASAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAASQAAAAAAkgIAAAAA",
+                "cellProgress": [
+                    {
+                        "cellIndex": 252,
+                        "progressQ16": 0
+                    },
+                    {
+                        "cellIndex": 237,
+                        "progressQ16": 0
+                    },
+                    {
+                        "cellIndex": 253,
+                        "progressQ16": 0
+                    }
+                ],
+                "growthSeed": 73856093,
+                "isLegacyBase": false
+            },
+            {
+                "chunkX": 0,
+                "chunkZ": -1,
+                "stageMaskBase64": "DEmSJEkSZEiSJEkSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmS",
+                "biomeMaskBase64": "VVVVFVVVVRVVVVVVVVVVVVVVVVVVdVVVVVVVVVVVVVVVVVVVV1VXVVVVVVVVVVVVVVVVVVVVVVVVV1VVVVVVVQ==",
+                "settlementMaskBase64": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAkAAAAAQBJAQAAChBJCgAAEiBJEgAgEhBRCgAg",
+                "cellProgress": [
+                    {
+                        "cellIndex": 18,
+                        "progressQ16": 0
+                    },
+                    {
+                        "cellIndex": 1,
+                        "progressQ16": 0
+                    }
+                ],
+                "growthSeed": -19349663,
+                "isLegacyBase": false
+            },
+            {
+                "chunkX": 0,
+                "chunkZ": 1,
+                "stageMaskBase64": "JEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEkSJEmSJAmSJEmSJEky",
+                "biomeMaskBase64": "1VVVVVVVVVVVVVVVVVVVVVVVdVVVVVVVVVVVVVVVVVXVVVVVXVVVVVVVVVVVVVVdVVVVVVVVVRVVVVVUVVV1VQ==",
+                "settlementMaskBase64": "kqgAAABAkqQAAABEkhQAAABEkgQAAAAgSQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAA",
+                "cellProgress": [
+                    {
+                        "cellIndex": 255,
+                        "progressQ16": 0
+                    }
+                ],
+                "growthSeed": 19349663,
+                "isLegacyBase": false
+            },
+            {
+                "chunkX": -1,
+                "chunkZ": 0,
+                "stageMaskBase64": "JEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSIEmSJEmSIEmSJEmSJEmSJEmSJEmSJEmSIEmSJEmSIEmSJEmSIEmSJEmS",
+                "biomeMaskBase64": "VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV1VVVVFVVVVRVVVVVVVVVVVVVVVRVVVVUVVVVVFVVVQ==",
+                "settlementMaskBase64": "AAAAAIBIAAAAAAAkAAAAAAAAAAAAABAFAAAAACIpAAAAACJJAAAAACJRAAAAABBJAAAAAAApAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAg",
+                "cellProgress": [
+                    {
+                        "cellIndex": 110,
+                        "progressQ16": 0
+                    },
+                    {
+                        "cellIndex": 93,
+                        "progressQ16": 0
+                    },
+                    {
+                        "cellIndex": 77,
+                        "progressQ16": 0
+                    },
+                    {
+                        "cellIndex": 76,
+                        "progressQ16": 0
+                    },
+                    {
+                        "cellIndex": 61,
+                        "progressQ16": 0
+                    }
+                ],
+                "growthSeed": -73856093,
+                "isLegacyBase": false
+            },
+            {
+                "chunkX": 1,
+                "chunkZ": 1,
+                "stageMaskBase64": "JEmSJEkAJEmSJEkCJEmSJEkCJEmSJEkCJEmSJEkCJEmSJJkEJEmSJAkEJEmSJEkCJEmSJEkAJEmSJEkAJEmSJAkAJEmSDAAAJEmSBAAAJEkCAAAAJEEAAAAATAAAAAAA",
+                "biomeMaskBase64": "VVVVAVVVVQVVXVUFVVVVBVVVVQVVVVUVVVVVEFVVVQVVVVUBVV1VAVVVVQBVVQUAVVUBAFUFAAAVAQAAFQAAAA==",
+                "settlementMaskBase64": "kgQAAAAAlAQAAAAAkgQAAAAAkggAAAAASQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "cellProgress": [
+                    {
+                        "cellIndex": 242,
+                        "progressQ16": 0
+                    },
+                    {
+                        "cellIndex": 93,
+                        "progressQ16": 0
+                    },
+                    {
+                        "cellIndex": 241,
+                        "progressQ16": 0
+                    },
+                    {
+                        "cellIndex": 94,
+                        "progressQ16": 0
+                    },
+                    {
+                        "cellIndex": 110,
+                        "progressQ16": 0
+                    },
+                    {
+                        "cellIndex": 185,
+                        "progressQ16": 0
+                    },
+                    {
+                        "cellIndex": 92,
+                        "progressQ16": 0
+                    }
+                ],
+                "growthSeed": 88192194,
+                "isLegacyBase": false
+            },
+            {
+                "chunkX": -1,
+                "chunkZ": -1,
+                "stageMaskBase64": "AAAAAAAgAAAABICQAECSZJCQAEKSJEmSCECSJEmSJBmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSCEiSJEmSAEiSJEmSIECSJEmSIEmSJEmSJEmSJEmS",
+                "biomeMaskBase64": "AAAAQAAAAVQAVRVVQFVVVQRVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVEVVVVQFVVXQRVVVVUVVVVVVVVVQ==",
+                "settlementMaskBase64": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIBEAAAAAAApAAAAAABJAAAAAACJ",
+                "cellProgress": [
+                    {
+                        "cellIndex": 15,
+                        "progressQ16": 0
+                    },
+                    {
+                        "cellIndex": 65,
+                        "progressQ16": 0
+                    },
+                    {
+                        "cellIndex": 44,
+                        "progressQ16": 0
+                    },
+                    {
+                        "cellIndex": 84,
+                        "progressQ16": 0
+                    },
+                    {
+                        "cellIndex": 45,
+                        "progressQ16": 0
+                    },
+                    {
+                        "cellIndex": 51,
+                        "progressQ16": 0
+                    },
+                    {
+                        "cellIndex": 42,
+                        "progressQ16": 0
+                    },
+                    {
+                        "cellIndex": 177,
+                        "progressQ16": 0
+                    },
+                    {
+                        "cellIndex": 29,
+                        "progressQ16": 0
+                    }
+                ],
+                "growthSeed": 88192194,
+                "isLegacyBase": false
+            },
+            {
+                "chunkX": 1,
+                "chunkZ": -1,
+                "stageMaskBase64": "IAAAAAAAZAAAAAAAJAAAAAAAJAEAAAAAJAkAAAAAJAmABAAAJEmSBAAAJEmSZAAAJEmSJAkAJEmSJEkAJEmSJAkAJEmSJAkAJEmSJAAAJEmSJEMAJEmSJEkSJEmSJEmS",
+                "biomeMaskBase64": "BAAAABUAAAAFAAAAFQAAAFUAAABVQAEAVVUBAFVVFQBVVVUAVVVVAVVVVQBVVVUAVVUFAFVVVQFV1VUVVVVVVQ==",
+                "settlementMaskBase64": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAASAAAAAAAkgIAAAAAkgQAAAAAogAAAAAA",
+                "cellProgress": [
+                    {
+                        "cellIndex": 18,
+                        "progressQ16": 0
+                    },
+                    {
+                        "cellIndex": 122,
+                        "progressQ16": 0
+                    },
+                    {
+                        "cellIndex": 219,
+                        "progressQ16": 0
+                    }
+                ],
+                "growthSeed": -88192196,
+                "isLegacyBase": false
+            },
+            {
+                "chunkX": -1,
+                "chunkZ": 1,
+                "stageMaskBase64": "IEmSJEmSCEmSJEmSAEmSJEmSAEmSJEmSAEiSJEmSQEiSJEmSAEKSJEmSAACSIUmSAIAEJEiSAAAAAEmSAAAAIEmSAAAAJEmSAAAAAAiSAAAAAACQAAAAAACQAAAAAICQ",
+                "biomeMaskBase64": "VFVVVVRVVVVQVVVVUFVVVUBVVVVQVVVVQFVVVQBUVVUAFEVVAABQ1QAAVFUAAFVVAABAVAAAAFAAAABQAAAAVA==",
+                "settlementMaskBase64": "AAAAAABEAAAAAIBIAAAAAICIAAAAAABJAAAAAIAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "cellProgress": [
+                    {
+                        "cellIndex": 82,
+                        "progressQ16": 0
+                    },
+                    {
+                        "cellIndex": 99,
+                        "progressQ16": 0
+                    },
+                    {
+                        "cellIndex": 120,
+                        "progressQ16": 0
+                    },
+                    {
+                        "cellIndex": 133,
+                        "progressQ16": 0
+                    },
+                    {
+                        "cellIndex": 253,
+                        "progressQ16": 0
+                    },
+                    {
+                        "cellIndex": 134,
+                        "progressQ16": 0
+                    },
+                    {
+                        "cellIndex": 17,
+                        "progressQ16": 0
+                    }
+                ],
+                "growthSeed": -88192196,
+                "isLegacyBase": false
+            },
+            {
+                "chunkX": 0,
+                "chunkZ": 2,
+                "stageMaskBase64": "JEmSJEkEJEmSJMMAYEiSJAEAAACSJAMAAAAAIQEAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "biomeMaskBase64": "VVVVEVVVVQVUVRUAAFRVAAAAFQAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+                "settlementMaskBase64": "ABBIAQAAAAAgAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "cellProgress": [
+                    {
+                        "cellIndex": 34,
+                        "progressQ16": 0
+                    },
+                    {
+                        "cellIndex": 72,
+                        "progressQ16": 0
+                    },
+                    {
+                        "cellIndex": 29,
+                        "progressQ16": 0
+                    },
+                    {
+                        "cellIndex": 59,
+                        "progressQ16": 0
+                    },
+                    {
+                        "cellIndex": 14,
+                        "progressQ16": 0
+                    },
+                    {
+                        "cellIndex": 27,
+                        "progressQ16": 0
+                    }
+                ],
+                "growthSeed": 38699326,
+                "isLegacyBase": false
+            },
+            {
+                "chunkX": 0,
+                "chunkZ": -2,
+                "stageMaskBase64": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAkAAAiQIQkAABiQJEkA",
+                "biomeMaskBase64": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAUABAUFUAQFFVAQ==",
+                "settlementMaskBase64": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgQAAA",
+                "cellProgress": [
+                    {
+                        "cellIndex": 232,
+                        "progressQ16": 0
+                    },
+                    {
+                        "cellIndex": 202,
+                        "progressQ16": 0
+                    },
+                    {
+                        "cellIndex": 244,
+                        "progressQ16": 0
+                    }
+                ],
+                "growthSeed": -38699326,
+                "isLegacyBase": false
+            },
+            {
+                "chunkX": 2,
+                "chunkZ": 0,
+                "stageMaskBase64": "BAAAAAAAAAAAAAAAIAAAAAAAJAAAAAAAZAAAAAAABAAAAAAABAAAAAAAAAAAAAAAJAAAAAAAJAAAAAAACQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "biomeMaskBase64": "AQAAAAAAAAAEAAAABQAAABUAAAABAAAAAQAAAAAAAAAFAAAABQAAAAUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+                "settlementMaskBase64": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "cellProgress": [
+                    {
+                        "cellIndex": 66,
+                        "progressQ16": 0
+                    },
+                    {
+                        "cellIndex": 160,
+                        "progressQ16": 0
+                    },
+                    {
+                        "cellIndex": 161,
+                        "progressQ16": 0
+                    }
+                ],
+                "growthSeed": 147712186,
+                "isLegacyBase": false
+            },
+            {
+                "chunkX": -2,
+                "chunkZ": 0,
+                "stageMaskBase64": "AAAAAACQAAAAAACQAAAAAECSAAAAAACSAAAAAACQAAAAAACQAAAAAACQAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "biomeMaskBase64": "AAAAUAAAAFAAAABVAAAAVAAAAFAAAABQAAAAUAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+                "settlementMaskBase64": "AAAAAAAAAAAAAAAgAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "cellProgress": [],
+                "growthSeed": -147712186,
+                "isLegacyBase": false
+            },
+            {
+                "chunkX": -1,
+                "chunkZ": 2,
+                "stageMaskBase64": "AAAAAICQAAAAAAAQAAAAAIAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "biomeMaskBase64": "AAAAVAAAABAAAAAUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+                "settlementMaskBase64": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "cellProgress": [
+                    {
+                        "cellIndex": 46,
+                        "progressQ16": 0
+                    },
+                    {
+                        "cellIndex": 13,
+                        "progressQ16": 0
+                    },
+                    {
+                        "cellIndex": 45,
+                        "progressQ16": 0
+                    }
+                ],
+                "growthSeed": -103314787,
+                "isLegacyBase": false
+            },
+            {
+                "chunkX": -2,
+                "chunkZ": -1,
+                "stageMaskBase64": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAACEAAAAAICQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAE",
+                "biomeMaskBase64": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAUAAAAFQAAAAAAAAAAAAAAAAAAAAAAAAAEA==",
+                "settlementMaskBase64": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "cellProgress": [
+                    {
+                        "cellIndex": 254,
+                        "progressQ16": 0
+                    },
+                    {
+                        "cellIndex": 158,
+                        "progressQ16": 0
+                    },
+                    {
+                        "cellIndex": 173,
+                        "progressQ16": 0
+                    }
+                ],
+                "growthSeed": 166373415,
+                "isLegacyBase": false
+            },
+            {
+                "chunkX": -1,
+                "chunkZ": -2,
+                "stageMaskBase64": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACA",
+                "biomeMaskBase64": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQA==",
+                "settlementMaskBase64": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "cellProgress": [],
+                "growthSeed": 103314785,
+                "isLegacyBase": false
+            },
+            {
+                "chunkX": 2,
+                "chunkZ": -1,
+                "stageMaskBase64": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAA",
+                "biomeMaskBase64": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAA==",
+                "settlementMaskBase64": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "cellProgress": [
+                    {
+                        "cellIndex": 240,
+                        "progressQ16": 0
+                    }
+                ],
+                "growthSeed": -166373413,
+                "isLegacyBase": false
+            }
+        ],
+        "events": [
+            {
+                "eventId": "fertile_land",
+                "instanceId": "evt_fertile_land_1795114978_0_-1_5",
+                "status": 4,
+                "createdUtc": 1795114978,
+                "expiresUtc": 1795719778,
+                "rewardSeed": -1795114995,
+                "rewardClaimed": false,
+                "chunkX": 0,
+                "chunkZ": -1,
+                "localX": 7.0,
+                "localZ": 15.0,
+                "titleRu": "Появился участок плодородной земли",
+                "detailRu": "У края острова сформировалось +5 клеток плодородной почвы.",
+                "cellsAffected": 5
+            },
+            {
+                "eventId": "moss_cover",
+                "instanceId": "evt_moss_cover_1795114978_0_1_3",
+                "status": 4,
+                "createdUtc": 1795114978,
+                "expiresUtc": 1795719778,
+                "rewardSeed": 1795113797,
+                "rewardClaimed": false,
+                "chunkX": 0,
+                "chunkZ": 1,
+                "localX": 3.0,
+                "localZ": 0.0,
+                "titleRu": "Новая территория покрылась мхом",
+                "detailRu": "Влажные участки земли мягко затянуло мхом. Затронуто клеток: 1.",
+                "cellsAffected": 1
+            },
+            {
+                "eventId": "young_plants",
+                "instanceId": "evt_young_plants_1795114981_-1_0_76",
+                "status": 4,
+                "createdUtc": 1795114981,
+                "expiresUtc": 1795719781,
+                "rewardSeed": 1795109433,
+                "rewardClaimed": false,
+                "chunkX": -1,
+                "chunkZ": 0,
+                "localX": 12.0,
+                "localZ": 4.0,
+                "titleRu": "Появилась группа молодых растений",
+                "detailRu": "Корни дали всходы — молодая зелень на свежей земле. Затронуто клеток: 5.",
+                "cellsAffected": 5
+            },
+            {
+                "eventId": "rock_zone",
+                "instanceId": "evt_rock_zone_1795114981_0_-1_249",
+                "status": 4,
+                "createdUtc": 1795114981,
+                "expiresUtc": 1795719781,
+                "rewardSeed": 1795081664,
+                "rewardClaimed": false,
+                "chunkX": 0,
+                "chunkZ": -1,
+                "localX": 9.0,
+                "localZ": 15.0,
+                "titleRu": "Образовалась небольшая каменная зона",
+                "detailRu": "Часть новой земли оголилась — почва и камни у поверхности. Затронуто клеток: 1.",
+                "cellsAffected": 1
+            },
+            {
+                "eventId": "extra_trees",
+                "instanceId": "evt_extra_trees_1795114981_-1_0_110",
+                "status": 4,
+                "createdUtc": 1795114981,
+                "expiresUtc": 1795719781,
+                "rewardSeed": 1795157363,
+                "rewardClaimed": false,
+                "chunkX": -1,
+                "chunkZ": 0,
+                "localX": 14.0,
+                "localZ": 6.0,
+                "titleRu": "Проросли дополнительные деревья",
+                "detailRu": "На новой земле несколько участков стали густой растительностью. Затронуто клеток: 5.",
+                "cellsAffected": 5
+            }
+        ]
+    },
+    "ecosystem": {
+        "humidity": 1.0,
+        "fertility": 1.0,
+        "biodiversity": 1.0,
+        "balance": 1.0
+    },
+    "weather": {
+        "timeOfDay01": 0.5000462532043457,
+        "weatherId": "fog",
+        "lastAdvanceUtc": 1795115029,
+        "rainHours": 36.0,
+        "windEvents": 13,
+        "fogHours": 23.0
+    },
+    "animals": [
+        {
+            "instanceId": "a_butterfly_29f03ae1",
+            "animalId": "butterfly",
+            "posX": -1.2817002534866333,
+            "posY": 2.0999999046325684,
+            "posZ": 1.2090460062026978,
+            "state": 0,
+            "spawnedUtc": 1795114978,
+            "habitatChunkX": 0,
+            "habitatChunkZ": 0,
+            "generation": 0,
+            "populationId": "p_butterfly_0_0_9843f1ff"
+        },
+        {
+            "instanceId": "a_bird_012c9c7c",
+            "animalId": "bird",
+            "posX": -2.176591396331787,
+            "posY": 2.25,
+            "posZ": -0.5897341966629028,
+            "state": 0,
+            "spawnedUtc": 1795114978,
+            "habitatChunkX": 0,
+            "habitatChunkZ": 0,
+            "generation": 0,
+            "populationId": "p_bird_0_0_653c1064"
+        },
+        {
+            "instanceId": "a_butterfly_a2093a44",
+            "animalId": "butterfly",
+            "posX": -1.0266082286834717,
+            "posY": 2.0999999046325684,
+            "posZ": 1.0553123950958252,
+            "state": 0,
+            "spawnedUtc": 1795114978,
+            "habitatChunkX": 0,
+            "habitatChunkZ": 0,
+            "generation": 0,
+            "populationId": "p_butterfly_0_0_9843f1ff"
+        },
+        {
+            "instanceId": "a_butterfly_eebaf7b1",
+            "animalId": "butterfly",
+            "posX": -2.2515687942504883,
+            "posY": 2.0999999046325684,
+            "posZ": -0.6142770051956177,
+            "state": 0,
+            "spawnedUtc": 1795114978,
+            "habitatChunkX": 0,
+            "habitatChunkZ": 0,
+            "generation": 0,
+            "populationId": "p_butterfly_0_0_9843f1ff"
+        },
+        {
+            "instanceId": "a_frog_5bc70fde",
+            "animalId": "frog",
+            "posX": 0.28863006830215454,
+            "posY": 1.9499999284744263,
+            "posZ": -1.5486723184585571,
+            "state": 0,
+            "spawnedUtc": 1795114978,
+            "habitatChunkX": 0,
+            "habitatChunkZ": 0,
+            "generation": 0,
+            "populationId": "p_frog_0_0_fb041095"
+        },
+        {
+            "instanceId": "a_butterfly_7c60ba1b",
+            "animalId": "butterfly",
+            "posX": -6.513546466827393,
+            "posY": 0.9199999570846558,
+            "posZ": -16.62246322631836,
+            "state": 0,
+            "spawnedUtc": 1795114978,
+            "habitatChunkX": 0,
+            "habitatChunkZ": -1,
+            "generation": 0,
+            "populationId": "p_butterfly_0_-1_d9e45962"
+        },
+        {
+            "instanceId": "a_frog_eb1a5dc8",
+            "animalId": "frog",
+            "posX": 1.022825002670288,
+            "posY": 1.9499999284744263,
+            "posZ": 0.9616706371307373,
+            "state": 0,
+            "spawnedUtc": 1795114978,
+            "habitatChunkX": 0,
+            "habitatChunkZ": 0,
+            "generation": 0,
+            "populationId": "p_frog_0_0_fb041095"
+        },
+        {
+            "instanceId": "a_bird_b18d1d81",
+            "animalId": "bird",
+            "posX": -1.8956830501556396,
+            "posY": 2.25,
+            "posZ": -0.3761301040649414,
+            "state": 0,
+            "spawnedUtc": 1795114978,
+            "habitatChunkX": 0,
+            "habitatChunkZ": 0,
+            "generation": 0,
+            "populationId": "p_bird_0_0_653c1064"
+        },
+        {
+            "instanceId": "a_bird_eba9405b",
+            "animalId": "bird",
+            "posX": 1.2267907857894897,
+            "posY": 2.25,
+            "posZ": 0.6893360018730164,
+            "state": 0,
+            "spawnedUtc": 1795114978,
+            "habitatChunkX": 0,
+            "habitatChunkZ": 0,
+            "generation": 0,
+            "populationId": "p_bird_0_0_653c1064"
+        },
+        {
+            "instanceId": "a_bird_b109786e",
+            "animalId": "bird",
+            "posX": 10.648451805114746,
+            "posY": 1.0699999332427979,
+            "posZ": -11.753328323364258,
+            "state": 0,
+            "spawnedUtc": 1795114978,
+            "habitatChunkX": 1,
+            "habitatChunkZ": -1,
+            "generation": 0,
+            "populationId": "p_bird_1_-1_9958f233"
+        },
+        {
+            "instanceId": "a_frog_00d3c89f",
+            "animalId": "frog",
+            "posX": -0.04801906645298004,
+            "posY": 1.9499999284744263,
+            "posZ": -1.1599206924438477,
+            "state": 0,
+            "spawnedUtc": 1795114978,
+            "habitatChunkX": 0,
+            "habitatChunkZ": 0,
+            "generation": 1,
+            "populationId": "p_frog_0_0_fb041095"
+        },
+        {
+            "instanceId": "a_frog_efb70f60",
+            "animalId": "frog",
+            "posX": 8.430122375488281,
+            "posY": 0.7699999809265137,
+            "posZ": 0.7959088087081909,
+            "state": 0,
+            "spawnedUtc": 1795114978,
+            "habitatChunkX": 1,
+            "habitatChunkZ": 0,
+            "generation": 0,
+            "populationId": "p_frog_1_0_98bf30af"
+        },
+        {
+            "instanceId": "a_butterfly_a3afe882",
+            "animalId": "butterfly",
+            "posX": 8.251335144042969,
+            "posY": 0.9199999570846558,
+            "posZ": 0.5727540850639343,
+            "state": 0,
+            "spawnedUtc": 1795114981,
+            "habitatChunkX": 1,
+            "habitatChunkZ": 0,
+            "generation": 0,
+            "populationId": "p_butterfly_1_0_8e90f80a"
+        },
+        {
+            "instanceId": "a_bird_741ebaa4",
+            "animalId": "bird",
+            "posX": -1.4081008434295654,
+            "posY": 1.0699999332427979,
+            "posZ": -8.415667533874512,
+            "state": 0,
+            "spawnedUtc": 1795114981,
+            "habitatChunkX": 0,
+            "habitatChunkZ": -1,
+            "generation": 0,
+            "populationId": "p_bird_0_-1_eed6e73c"
+        },
+        {
+            "instanceId": "a_frog_abf710ba",
+            "animalId": "frog",
+            "posX": 8.310918807983398,
+            "posY": 0.7699999809265137,
+            "posZ": 0.7391248941421509,
+            "state": 0,
+            "spawnedUtc": 1795114981,
+            "habitatChunkX": 1,
+            "habitatChunkZ": 0,
+            "generation": 0,
+            "populationId": "p_frog_1_0_98bf30af"
+        },
+        {
+            "instanceId": "a_frog_89e7a4ca",
+            "animalId": "frog",
+            "posX": -4.720569133758545,
+            "posY": 0.7699999809265137,
+            "posZ": 8.584030151367188,
+            "state": 0,
+            "spawnedUtc": 1795114981,
+            "habitatChunkX": 0,
+            "habitatChunkZ": 1,
+            "generation": 0,
+            "populationId": "p_frog_0_1_a9e04528"
+        },
+        {
+            "instanceId": "a_frog_1cbb21ad",
+            "animalId": "frog",
+            "posX": -14.39608383178711,
+            "posY": 0.7699999809265137,
+            "posZ": -8.656813621520996,
+            "state": 0,
+            "spawnedUtc": 1795114981,
+            "habitatChunkX": -1,
+            "habitatChunkZ": -1,
+            "generation": 0,
+            "populationId": "p_frog_-1_-1_1fe09f34"
+        },
+        {
+            "instanceId": "a_frog_57566fe8",
+            "animalId": "frog",
+            "posX": 8.511591911315918,
+            "posY": 0.7699999809265137,
+            "posZ": 0.7069481015205383,
+            "state": 0,
+            "spawnedUtc": 1795114981,
+            "habitatChunkX": 1,
+            "habitatChunkZ": 0,
+            "generation": 1,
+            "populationId": "p_frog_1_0_98bf30af"
+        },
+        {
+            "instanceId": "a_bird_b8c5c95b",
+            "animalId": "bird",
+            "posX": -0.36716902256011963,
+            "posY": 1.0699999332427979,
+            "posZ": -8.482512474060059,
+            "state": 0,
+            "spawnedUtc": 1795114981,
+            "habitatChunkX": 0,
+            "habitatChunkZ": -1,
+            "generation": 0,
+            "populationId": "p_bird_0_-1_eed6e73c"
+        },
+        {
+            "instanceId": "a_frog_24953f48",
+            "animalId": "frog",
+            "posX": -1.3342562913894653,
+            "posY": 0.7699999809265137,
+            "posZ": -8.570487976074219,
+            "state": 0,
+            "spawnedUtc": 1795114981,
+            "habitatChunkX": 0,
+            "habitatChunkZ": -1,
+            "generation": 0,
+            "populationId": "p_frog_0_-1_942b1ba2"
+        },
+        {
+            "instanceId": "a_butterfly_3c9d13af",
+            "animalId": "butterfly",
+            "posX": 8.46331787109375,
+            "posY": 0.9199999570846558,
+            "posZ": 0.487415075302124,
+            "state": 0,
+            "spawnedUtc": 1795114981,
+            "habitatChunkX": 1,
+            "habitatChunkZ": 0,
+            "generation": 0,
+            "populationId": "p_butterfly_1_0_8e90f80a"
+        },
+        {
+            "instanceId": "a_frog_c55efa5e",
+            "animalId": "frog",
+            "posX": 8.288063049316406,
+            "posY": 0.7699999809265137,
+            "posZ": 0.5329709053039551,
+            "state": 0,
+            "spawnedUtc": 1795114981,
+            "habitatChunkX": 1,
+            "habitatChunkZ": 0,
+            "generation": 0,
+            "populationId": "p_frog_1_0_98bf30af"
+        },
+        {
+            "instanceId": "a_frog_b0cc034d",
+            "animalId": "frog",
+            "posX": 1.4072301387786865,
+            "posY": 1.9499999284744263,
+            "posZ": 0.7214412689208984,
+            "state": 0,
+            "spawnedUtc": 1795114981,
+            "habitatChunkX": 0,
+            "habitatChunkZ": 0,
+            "generation": 1,
+            "populationId": "p_frog_0_0_fb041095"
+        },
+        {
+            "instanceId": "a_butterfly_1ea8b2a8",
+            "animalId": "butterfly",
+            "posX": 8.495100021362305,
+            "posY": 0.9199999570846558,
+            "posZ": 0.7985623478889465,
+            "state": 0,
+            "spawnedUtc": 1795114981,
+            "habitatChunkX": 1,
+            "habitatChunkZ": 0,
+            "generation": 1,
+            "populationId": "p_butterfly_1_0_8e90f80a"
+        },
+        {
+            "instanceId": "a_frog_a6e30f8c",
+            "animalId": "frog",
+            "posX": -0.23571264743804932,
+            "posY": 0.7699999809265137,
+            "posZ": -8.57347297668457,
+            "state": 0,
+            "spawnedUtc": 1795114981,
+            "habitatChunkX": 0,
+            "habitatChunkZ": -1,
+            "generation": 0,
+            "populationId": "p_frog_0_-1_942b1ba2"
+        },
+        {
+            "instanceId": "a_bird_d3df301a",
+            "animalId": "bird",
+            "posX": -0.5010281205177307,
+            "posY": 1.0699999332427979,
+            "posZ": -8.401196479797363,
+            "state": 0,
+            "spawnedUtc": 1795114981,
+            "habitatChunkX": 0,
+            "habitatChunkZ": -1,
+            "generation": 1,
+            "populationId": "p_bird_0_-1_eed6e73c"
+        },
+        {
+            "instanceId": "a_butterfly_e7a76a1a",
+            "animalId": "butterfly",
+            "posX": -1.3308193683624268,
+            "posY": 2.0999999046325684,
+            "posZ": 1.0022566318511963,
+            "state": 0,
+            "spawnedUtc": 1795114982,
+            "habitatChunkX": 0,
+            "habitatChunkZ": 0,
+            "generation": 0,
+            "populationId": "p_butterfly_0_0_9843f1ff"
+        },
+        {
+            "instanceId": "a_frog_847e5cda",
+            "animalId": "frog",
+            "posX": -5.704212665557861,
+            "posY": 0.7699999809265137,
+            "posZ": 8.794161796569824,
+            "state": 0,
+            "spawnedUtc": 1795114982,
+            "habitatChunkX": 0,
+            "habitatChunkZ": 1,
+            "generation": 1,
+            "populationId": "p_frog_0_1_a9e04528"
+        },
+        {
+            "instanceId": "a_bird_3e849433",
+            "animalId": "bird",
+            "posX": 2.3226590156555176,
+            "posY": 1.0699999332427979,
+            "posZ": -8.45319938659668,
+            "state": 0,
+            "spawnedUtc": 1795114982,
+            "habitatChunkX": 0,
+            "habitatChunkZ": -1,
+            "generation": 0,
+            "populationId": "p_bird_0_-1_eed6e73c"
+        },
+        {
+            "instanceId": "a_butterfly_0bce30c6",
+            "animalId": "butterfly",
+            "posX": -1.7123388051986694,
+            "posY": 0.9199999570846558,
+            "posZ": -8.447628021240234,
+            "state": 0,
+            "spawnedUtc": 1795114982,
+            "habitatChunkX": 0,
+            "habitatChunkZ": -1,
+            "generation": 0,
+            "populationId": "p_butterfly_0_-1_d9e45962"
+        },
+        {
+            "instanceId": "a_frog_66477a77",
+            "animalId": "frog",
+            "posX": -4.696560382843018,
+            "posY": 0.7699999809265137,
+            "posZ": 9.444729804992676,
+            "state": 0,
+            "spawnedUtc": 1795114984,
+            "habitatChunkX": 0,
+            "habitatChunkZ": 1,
+            "generation": 1,
+            "populationId": "p_frog_0_1_a9e04528"
+        },
+        {
+            "instanceId": "a_frog_ce158d49",
+            "animalId": "frog",
+            "posX": 7.6596832275390625,
+            "posY": 0.7699999809265137,
+            "posZ": 8.73552131652832,
+            "state": 0,
+            "spawnedUtc": 1795114984,
+            "habitatChunkX": 0,
+            "habitatChunkZ": 1,
+            "generation": 1,
+            "populationId": "p_frog_0_1_a9e04528"
+        },
+        {
+            "instanceId": "a_butterfly_4d6adfbb",
+            "animalId": "butterfly",
+            "posX": -9.596846580505371,
+            "posY": 0.9199999570846558,
+            "posZ": 1.6704167127609253,
+            "state": 0,
+            "spawnedUtc": 1795114984,
+            "habitatChunkX": -1,
+            "habitatChunkZ": 0,
+            "generation": 0,
+            "populationId": "p_butterfly_-1_0_f2b304a"
+        },
+        {
+            "instanceId": "a_frog_0107a553",
+            "animalId": "frog",
+            "posX": 1.2823814153671265,
+            "posY": 0.7699999809265137,
+            "posZ": -9.523032188415527,
+            "state": 0,
+            "spawnedUtc": 1795114984,
+            "habitatChunkX": 0,
+            "habitatChunkZ": -1,
+            "generation": 0,
+            "populationId": "p_frog_0_-1_942b1ba2"
+        },
+        {
+            "instanceId": "a_bird_64c4e63c",
+            "animalId": "bird",
+            "posX": 11.366861343383789,
+            "posY": 1.0699999332427979,
+            "posZ": -14.51891040802002,
+            "state": 0,
+            "spawnedUtc": 1795115005,
+            "habitatChunkX": 1,
+            "habitatChunkZ": -1,
+            "generation": 0,
+            "populationId": "p_bird_1_-1_9958f233"
+        },
+        {
+            "instanceId": "a_frog_8cc53fd7",
+            "animalId": "frog",
+            "posX": -8.279939651489258,
+            "posY": 0.7699999809265137,
+            "posZ": -9.672969818115234,
+            "state": 0,
+            "spawnedUtc": 1795115005,
+            "habitatChunkX": -1,
+            "habitatChunkZ": -1,
+            "generation": 0,
+            "populationId": "p_frog_-1_-1_1fe09f34"
+        },
+        {
+            "instanceId": "a_butterfly_46fd793c",
+            "animalId": "butterfly",
+            "posX": -8.475568771362305,
+            "posY": 0.9199999570846558,
+            "posZ": -13.53170108795166,
+            "state": 0,
+            "spawnedUtc": 1795115007,
+            "habitatChunkX": -1,
+            "habitatChunkZ": -1,
+            "generation": 0,
+            "populationId": "p_butterfly_-1_-1_d81b348"
+        },
+        {
+            "instanceId": "a_butterfly_9586d3fa",
+            "animalId": "butterfly",
+            "posX": -11.396515846252441,
+            "posY": 0.9199999570846558,
+            "posZ": 11.225240707397461,
+            "state": 0,
+            "spawnedUtc": 1795115007,
+            "habitatChunkX": -1,
+            "habitatChunkZ": 1,
+            "generation": 0,
+            "populationId": "p_butterfly_-1_1_a11dea9d"
+        },
+        {
+            "instanceId": "a_butterfly_66457f02",
+            "animalId": "butterfly",
+            "posX": 9.558810234069824,
+            "posY": 0.9199999570846558,
+            "posZ": -8.657554626464844,
+            "state": 0,
+            "spawnedUtc": 1795115013,
+            "habitatChunkX": 1,
+            "habitatChunkZ": -1,
+            "generation": 0,
+            "populationId": "p_butterfly_1_-1_e1548f19"
+        },
+        {
+            "instanceId": "a_butterfly_fcc1f4c0",
+            "animalId": "butterfly",
+            "posX": 10.434354782104492,
+            "posY": 0.9199999570846558,
+            "posZ": -3.498769521713257,
+            "state": 0,
+            "spawnedUtc": 1795115013,
+            "habitatChunkX": 1,
+            "habitatChunkZ": 0,
+            "generation": 0,
+            "populationId": "p_butterfly_1_0_8e90f80a"
+        },
+        {
+            "instanceId": "a_butterfly_cb0f73d7",
+            "animalId": "butterfly",
+            "posX": -3.581402540206909,
+            "posY": 0.9199999570846558,
+            "posZ": -17.330554962158203,
+            "state": 0,
+            "spawnedUtc": 1795115017,
+            "habitatChunkX": 0,
+            "habitatChunkZ": -1,
+            "generation": 1,
+            "populationId": "p_butterfly_0_-1_d9e45962"
+        },
+        {
+            "instanceId": "a_bird_8f4befef",
+            "animalId": "bird",
+            "posX": 11.280200958251953,
+            "posY": 1.0699999332427979,
+            "posZ": 11.371253967285156,
+            "state": 0,
+            "spawnedUtc": 1795115017,
+            "habitatChunkX": 1,
+            "habitatChunkZ": 1,
+            "generation": 0,
+            "populationId": "p_bird_1_1_bea70148"
+        },
+        {
+            "instanceId": "a_bird_7cb6a56c",
+            "animalId": "bird",
+            "posX": -18.343360900878906,
+            "posY": 1.0699999332427979,
+            "posZ": 9.583629608154297,
+            "state": 0,
+            "spawnedUtc": 1795115019,
+            "habitatChunkX": -1,
+            "habitatChunkZ": 1,
+            "generation": 0,
+            "populationId": "p_bird_-1_1_65544eac"
+        },
+        {
+            "instanceId": "a_butterfly_b5f00d07",
+            "animalId": "butterfly",
+            "posX": -2.286332368850708,
+            "posY": 0.9199999570846558,
+            "posZ": -20.664424896240234,
+            "state": 0,
+            "spawnedUtc": 1795115019,
+            "habitatChunkX": 0,
+            "habitatChunkZ": -1,
+            "generation": 1,
+            "populationId": "p_butterfly_0_-1_d9e45962"
+        },
+        {
+            "instanceId": "a_frog_7105dc80",
+            "animalId": "frog",
+            "posX": -2.564006805419922,
+            "posY": 0.7699999809265137,
+            "posZ": -21.75139617919922,
+            "state": 0,
+            "spawnedUtc": 1795115021,
+            "habitatChunkX": 0,
+            "habitatChunkZ": -1,
+            "generation": 1,
+            "populationId": "p_frog_0_-1_942b1ba2"
+        },
+        {
+            "instanceId": "a_bird_c4cf93a9",
+            "animalId": "bird",
+            "posX": 13.615039825439453,
+            "posY": 1.0699999332427979,
+            "posZ": -15.636490821838379,
+            "state": 0,
+            "spawnedUtc": 1795115021,
+            "habitatChunkX": 1,
+            "habitatChunkZ": -1,
+            "generation": 1,
+            "populationId": "p_bird_1_-1_9958f233"
+        },
+        {
+            "instanceId": "a_butterfly_77d55612",
+            "animalId": "butterfly",
+            "posX": -13.739346504211426,
+            "posY": 0.9199999570846558,
+            "posZ": -19.2652645111084,
+            "state": 0,
+            "spawnedUtc": 1795115027,
+            "habitatChunkX": -1,
+            "habitatChunkZ": -1,
+            "generation": 0,
+            "populationId": "p_butterfly_-1_-1_d81b348"
+        },
+        {
+            "instanceId": "a_bird_50c697a0",
+            "animalId": "bird",
+            "posX": -1.3055602312088013,
+            "posY": 2.25,
+            "posZ": 1.2046608924865723,
+            "state": 0,
+            "spawnedUtc": 1795115027,
+            "habitatChunkX": 0,
+            "habitatChunkZ": 0,
+            "generation": 1,
+            "populationId": "p_bird_0_0_653c1064"
+        }
+    ],
+    "habitats": [
+        {
+            "chunkX": 0,
+            "chunkZ": 0,
+            "speciesId": "butterfly",
+            "biomeAffinity": "mossy",
+            "capacity": 4,
+            "count": 4,
+            "populationId": "p_butterfly_0_0_9843f1ff"
+        },
+        {
+            "chunkX": 0,
+            "chunkZ": 0,
+            "speciesId": "bird",
+            "biomeAffinity": "forest",
+            "capacity": 4,
+            "count": 4,
+            "populationId": "p_bird_0_0_653c1064"
+        },
+        {
+            "chunkX": 0,
+            "chunkZ": 0,
+            "speciesId": "frog",
+            "biomeAffinity": "coastal",
+            "capacity": 4,
+            "count": 4,
+            "populationId": "p_frog_0_0_fb041095"
+        },
+        {
+            "chunkX": 1,
+            "chunkZ": 0,
+            "speciesId": "butterfly",
+            "biomeAffinity": "mossy",
+            "capacity": 4,
+            "count": 4,
+            "populationId": "p_butterfly_1_0_8e90f80a"
+        },
+        {
+            "chunkX": 0,
+            "chunkZ": -1,
+            "speciesId": "bird",
+            "biomeAffinity": "forest",
+            "capacity": 4,
+            "count": 4,
+            "populationId": "p_bird_0_-1_eed6e73c"
+        },
+        {
+            "chunkX": 1,
+            "chunkZ": 0,
+            "speciesId": "frog",
+            "biomeAffinity": "coastal",
+            "capacity": 4,
+            "count": 4,
+            "populationId": "p_frog_1_0_98bf30af"
+        },
+        {
+            "chunkX": 0,
+            "chunkZ": 1,
+            "speciesId": "frog",
+            "biomeAffinity": "coastal",
+            "capacity": 4,
+            "count": 4,
+            "populationId": "p_frog_0_1_a9e04528"
+        },
+        {
+            "chunkX": 0,
+            "chunkZ": -1,
+            "speciesId": "frog",
+            "biomeAffinity": "coastal",
+            "capacity": 4,
+            "count": 4,
+            "populationId": "p_frog_0_-1_942b1ba2"
+        },
+        {
+            "chunkX": 0,
+            "chunkZ": -1,
+            "speciesId": "butterfly",
+            "biomeAffinity": "mossy",
+            "capacity": 4,
+            "count": 4,
+            "populationId": "p_butterfly_0_-1_d9e45962"
+        },
+        {
+            "chunkX": -1,
+            "chunkZ": 0,
+            "speciesId": "butterfly",
+            "biomeAffinity": "mossy",
+            "capacity": 4,
+            "count": 1,
+            "populationId": "p_butterfly_-1_0_f2b304a"
+        },
+        {
+            "chunkX": 1,
+            "chunkZ": -1,
+            "speciesId": "bird",
+            "biomeAffinity": "forest",
+            "capacity": 4,
+            "count": 3,
+            "populationId": "p_bird_1_-1_9958f233"
+        },
+        {
+            "chunkX": -1,
+            "chunkZ": -1,
+            "speciesId": "frog",
+            "biomeAffinity": "coastal",
+            "capacity": 4,
+            "count": 2,
+            "populationId": "p_frog_-1_-1_1fe09f34"
+        },
+        {
+            "chunkX": -1,
+            "chunkZ": -1,
+            "speciesId": "butterfly",
+            "biomeAffinity": "mossy",
+            "capacity": 4,
+            "count": 2,
+            "populationId": "p_butterfly_-1_-1_d81b348"
+        },
+        {
+            "chunkX": -1,
+            "chunkZ": 1,
+            "speciesId": "butterfly",
+            "biomeAffinity": "mossy",
+            "capacity": 4,
+            "count": 1,
+            "populationId": "p_butterfly_-1_1_a11dea9d"
+        },
+        {
+            "chunkX": 1,
+            "chunkZ": -1,
+            "speciesId": "butterfly",
+            "biomeAffinity": "mossy",
+            "capacity": 4,
+            "count": 1,
+            "populationId": "p_butterfly_1_-1_e1548f19"
+        },
+        {
+            "chunkX": 1,
+            "chunkZ": 1,
+            "speciesId": "bird",
+            "biomeAffinity": "forest",
+            "capacity": 4,
+            "count": 1,
+            "populationId": "p_bird_1_1_bea70148"
+        },
+        {
+            "chunkX": -1,
+            "chunkZ": 1,
+            "speciesId": "bird",
+            "biomeAffinity": "forest",
+            "capacity": 4,
+            "count": 1,
+            "populationId": "p_bird_-1_1_65544eac"
+        }
+    ],
+    "collection": {
+        "entries": []
+    },
+    "fishing": {
+        "totalCatches": 0
+    }
+}

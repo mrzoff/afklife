@@ -26,6 +26,7 @@ namespace AfkIsland.World
         private Material _sideMaterial;
         private GameObject[] _decorPrefabs;
         private string _lastSignature;
+        private string _lastPlantSignature;
         private GameSaveData _cachedData;
         private readonly Dictionary<long, byte[]> _stageSamples = new();
         private readonly Dictionary<long, byte[]> _biomeSamples = new();
@@ -56,6 +57,7 @@ namespace AfkIsland.World
             {
                 ClearAll();
                 _lastSignature = null;
+                _lastPlantSignature = null;
                 return;
             }
 
@@ -66,6 +68,9 @@ namespace AfkIsland.World
             }
 
             _lastSignature = signature;
+            var plantSignature = BuildPlantBlockerSignature(data);
+            var plantBlockersChanged = !string.Equals(plantSignature, _lastPlantSignature, StringComparison.Ordinal);
+            _lastPlantSignature = plantSignature;
             EnsureRoot();
             EnsureMaterials();
             EnsureDecorPrefabs();
@@ -118,6 +123,15 @@ namespace AfkIsland.World
                             || HasChangedNeighbor(growth.chunkX, growth.chunkZ, changed);
                 if (!dirty)
                 {
+                    // Plant blockers are global to the scatter: a saved plant can suppress a
+                    // candidate in its own chunk or in any neighbour within the tree minimum
+                    // spacing of the chunk edge. When the blocker set changes, every chunk with
+                    // a built mesh re-runs decor placement; the land mesh itself stays untouched.
+                    if (plantBlockersChanged && view.mesh != null && view.mesh.vertexCount >= 3)
+                    {
+                        RebuildDecor(view, growth, stages, size);
+                    }
+
                     view.root.SetActive(true);
                     continue;
                 }
@@ -991,46 +1005,53 @@ namespace AfkIsland.World
             parts.Sort();
 
             // Existing saved plants are hard blockers for new decorative tree trunks.
-            // Include their canonical positions so a planting/removal rebuilds scatter.
-            var plantParts = new List<string>();
-            var hasChunkPlants = false;
-            if (data.chunks != null)
+            // Use the same canonical blocker set the scatter consumes, so planting, moving or
+            // removing a plant always invalidates the cached rebuild signature.
+            return $"{ResolveWorldScatterSeed(data)}|{string.Join("|", parts)}|plants:{BuildPlantBlockerSignature(data)}";
+        }
+
+        /// <summary>
+        /// Canonical signature of the world-space plant blockers consumed by tall-tree scatter.
+        /// <see cref="CollectSavedPlantBlockers"/> reads both the root plant list and every chunk
+        /// list, so the same plant may be stored twice; positions are deduplicated here.
+        /// </summary>
+        private static string BuildPlantBlockerSignature(GameSaveData data)
+        {
+            var keys = new HashSet<string>();
+            CollectPlantBlockerKeys(data?.plants, keys);
+            if (data?.chunks != null)
             {
-                foreach (var chunk in data.chunks)
+                for (var i = 0; i < data.chunks.Count; i++)
                 {
-                    if (chunk?.plants == null)
-                    {
-                        continue;
-                    }
-
-                    for (var i = 0; i < chunk.plants.Count; i++)
-                    {
-                        var plant = chunk.plants[i];
-                        if (plant == null)
-                        {
-                            continue;
-                        }
-
-                        hasChunkPlants = true;
-                        plantParts.Add($"{plant.instanceId}:{plant.posX:R}:{plant.posZ:R}");
-                    }
+                    CollectPlantBlockerKeys(data.chunks[i]?.plants, keys);
                 }
             }
 
-            if (!hasChunkPlants && data.plants != null)
+            if (keys.Count == 0)
             {
-                for (var i = 0; i < data.plants.Count; i++)
-                {
-                    var plant = data.plants[i];
-                    if (plant != null)
-                    {
-                        plantParts.Add($"{plant.instanceId}:{plant.posX:R}:{plant.posZ:R}");
-                    }
-                }
+                return string.Empty;
             }
 
-            plantParts.Sort(StringComparer.Ordinal);
-            return $"{ResolveWorldScatterSeed(data)}|{string.Join("|", parts)}|plants:{string.Join("|", plantParts)}";
+            var parts = new List<string>(keys);
+            parts.Sort(StringComparer.Ordinal);
+            return string.Join("|", parts);
+        }
+
+        private static void CollectPlantBlockerKeys(List<PlantSaveData> plants, HashSet<string> into)
+        {
+            if (plants == null)
+            {
+                return;
+            }
+
+            for (var i = 0; i < plants.Count; i++)
+            {
+                var plant = plants[i];
+                if (plant != null)
+                {
+                    into.Add($"{plant.posX:R}:{plant.posZ:R}");
+                }
+            }
         }
 
         private static bool HasChangedNeighbor(int chunkX, int chunkZ, HashSet<long> changed)

@@ -4,7 +4,7 @@
 **Base branch:** `feature/stage-11g-b-organic-trees`  
 **Fix branch:** `fix/stage-11g-visual-overlap-and-start-area`  
 **Scope:** bird visuals, hut/tree footprint separation, organic starter island silhouette, starter planting markers  
-**Status:** IMPLEMENTED IN BRANCH — UNITY COMPILE / EDITOR SMOKE / PLAY MODE / ANDROID DEVICE PASS PENDING
+**Status:** IMPLEMENTED IN BRANCH — batchmode compile and Editor Smoke reported PASS; Play Mode / ANDROID DEVICE PASS PENDING
 
 ## 1. Bird visuals
 
@@ -73,12 +73,13 @@ Checks:
 | Check | Status |
 |---|---|
 | Source review | DONE — code changes committed to fix branch |
-| Unity C# compilation | NOT RUN |
-| Stage 11G visual fix Editor Smoke | ADDED — NOT EXECUTED |
-| Existing Stage 11G-B scatter smoke | NOT EXECUTED |
-| Existing Stage 12 settlement smoke | NOT EXECUTED |
+| Unity C# compilation | PASS — Unity 6000.6.5f1 batchmode, 0 errors; pre-existing CS0618/CS0162 warnings |
+| Stage 11G visual fix Editor Smoke | PASS — batchmode; includes plant blocker refresh regression |
+| Existing Stage 11G-B scatter smoke | PASS — batchmode; 12 points, partitioned=12, min spacing 3.50 m |
+| Existing Stage 12 settlement smoke | PASS — expected duplicate-growth rejection LogError only |
+| Stage 13 residents smoke | PASS — batchmode |
 | Play Mode visual inspection | NOT RUN |
 | Android APK / BlueStacks pass | NOT RUN |
 | Save v8 reference comparison | NOT RUN |
 
-Do not merge this branch until Unity compile, all three Editor Smoke menus, Play Mode and Android visual checks pass.
+Batchmode compile and smoke are not Play Mode acceptance. The plant-blocker regression verifies canonical signatures and scatter filtering, but does not exercise the actual `RebuildDecor` call in Play Mode (it uses `Object.Destroy`). The branch must not be merged until Play Mode, suitable Forest-fixture visuals, Android/device checks and the unresolved hut-suppression product decision are closed.

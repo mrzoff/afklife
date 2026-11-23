@@ -2,10 +2,10 @@
 
 **Версия карты:** 0.2
 **Дата аудита:** 2026-11-23
-**Ветка аудита:** `fix/stage-11g-visual-overlap-and-start-area` (56 коммитов впереди `main`, 1 позади; HEAD на момент синхронизации — `83dcfc6`)
+**Ветка аудита:** `fix/stage-11g-visual-overlap-and-start-area` (60 коммитов впереди `main`, 1 позади; docs HEAD — `268a0a1`)
 **Принятая сборка:** 0.6.56 / versionCode 86 (это состояние `main`; ветка 11G ещё не собрана и не прошла device-pass)
 **Срез проекта по Docs/SPEC-EXECUTION.md:** Unity 6 / URP, Save v8
-**Статус карты:** ревизия 0.2 синхронизирована с веткой на `83dcfc6` (2026-11-23). Кодовая карта сверена с исходниками; результаты batchmode и ограничения визуальной приёмки отражены отдельно. Упоминание класса не означает, что все его сценарии прошли визуальную или device-проверку.
+**Статус карты:** ревизия 0.2 + синхронизация приёмки. Batchmode compile/smoke по 11G-B и visual fixes — PASS; Play Mode / Forest fixture / Android / hut decision — pending. Упоминание класса не означает device-приёмку.
 
 Карта фактических компонентов из `Assets/_Project/Scripts`, сопоставленная с действующими документами. Ветка 11G **не слита в `main`** и не меняет Save v8, бюджеты симуляции и игровые механики.
 
@@ -193,18 +193,19 @@ Stage 13 закрыт на 0.6.56 / versionCode 86; Stage 12 — на 0.6.50. Н
 
 Фактическое состояние ветки `fix/stage-11g-visual-overlap-and-start-area`:
 
-- 11G-B (органические высокие деревья через `WorldScatterField`) — код и smoke написаны, приёмка не пройдена;
-- visual fixes (птицы, footprint хижин, органическая стартовая площадка, маркеры посадки, эллиптический footprint дома) — код и smoke написаны, приёмка не пройдена;
-- в отчётах `Docs/Stage-11G-B-Implementation-Report.md` и `Docs/Stage-11G-Visual-Fixes-Implementation-Report.md` статус `UNITY COMPILE / EDITOR SMOKE / DEVICE PASS PENDING`;
+- 11G-B — код + batchmode smoke PASS; визуальная приёмка не пройдена (`save056` → 0 деревьев);
+- visual fixes — код + batchmode smoke PASS; Play Mode / device-pass не пройдены;
+- hut suppression: вариант D — масштаб ~0.9 м + visual spacing 0.95 м; создание новых хижин по-прежнему 3.2 м;
+- Forest fixture: меню `AFK Island/Build Forest Fixture (11G-B)` / `Install Forest Fixture Save`;
 - `main` не изменён, merge не выполнялся, сборка 0.6.57 ещё не собрана.
 
 Оставшиеся задачи приёмки:
 
-1. Компиляция Unity 6000.6.5f1 и прогон обоих новых smoke-меню плюс регресс Stage 12/13.
-2. Проверка на эталонном сейве: 120 растений без изменений координат; нет деревьев на берегу, воде, `WaterSource` и клетках хижин; корни в пределах 2 см от рельефа; нет швов и полос плотности; раскладка стабильна после рестарта и после офлайна.
-3. Замер `RebuildDecor`/scatter на 20 чанках и мобильная производительность.
-4. Play Mode визуальный осмотр птиц, силуэта стартовой площадки и коллизии пруда.
-5. Сборка 0.6.57 / versionCode 87 и device-pass, затем merge в `main`.
+1. Play Mode на Forest fixture: плотность/швы/корни/фильтры воды и хижин; стабильность после рестарта и офлайна.
+2. На `save056`: 120 растений без сдвига координат; поселение/HUD; нет ложных деревьев.
+3. Play Mode: читаемость хижин после D, птицы, органик-старт.
+4. Замер полного `RebuildDecor` (не только `Generate`) и мобильная производительность.
+5. Сборка 0.6.57 / versionCode 87, device-pass, затем merge в `main`.
 
 ---
 

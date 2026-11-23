@@ -1,6 +1,7 @@
 #if UNITY_EDITOR
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 using AfkIsland.Animals;
 using AfkIsland.Plants;
@@ -39,13 +40,15 @@ namespace AfkIsland.EditorTools
             try
             {
                 if (!CheckHutFootprints()) return 2;
+                if (!CheckLegacyHutVisibility()) return 7;
                 if (!CheckBirdCatalog()) return 3;
                 if (!CheckPlantPlotMarkers()) return 4;
                 if (!CheckOrganicPlatformMesh()) return 5;
                 if (!CheckPlantBlockerRefresh()) return 6;
 
-                Debug.Log("[AFK Island] Stage 11G visual fixes: hut footprints, bird tuning, " +
-                          "hidden plot markers, organic platform mesh and plant blocker refresh passed.");
+                Debug.Log("[AFK Island] Stage 11G visual fixes: hut footprints, option D legacy " +
+                          "visibility, bird tuning, hidden plot markers, organic platform mesh " +
+                          "and plant blocker refresh passed.");
                 return 0;
             }
             catch (Exception ex)
@@ -87,16 +90,47 @@ namespace AfkIsland.EditorTools
                 return false;
             }
 
+            // Option D: scaled footprints fit in 1 m cells, so adjacent mask huts both draw.
             if (SettlementCellQuery.IsHutVisualSuppressed(save, 1, 0, leftCell) ||
-                !SettlementCellQuery.IsHutVisualSuppressed(save, 2, 0, rightCell))
+                SettlementCellQuery.IsHutVisualSuppressed(save, 2, 0, rightCell))
             {
-                Debug.LogError("Overlapping hut visual winner is not deterministic across chunk seams.");
+                Debug.LogError(
+                    "Option D: adjacent 1 m hut cells must both remain visible with visual spacing.");
+                return false;
+            }
+
+            var authoredHutWidth = 1.59f;
+            var scaledFootprint = SettlementCellQuery.HutVisualUniformScale * authoredHutWidth;
+            if (scaledFootprint > SettlementCellQuery.HutVisualFootprintMeters + 0.02f)
+            {
+                Debug.LogError(
+                    $"Hut visual scale {SettlementCellQuery.HutVisualUniformScale} exceeds " +
+                    $"{SettlementCellQuery.HutVisualFootprintMeters} m footprint target " +
+                    $"(scaled={scaledFootprint:0.###}).");
                 return false;
             }
 
             if (!SettlementCellQuery.IsHutFootprintBlocked(save, -1.6f, 0.9f, 2.0f))
             {
                 Debug.LogError("Authored starter hut footprint was not reserved.");
+                return false;
+            }
+
+            // Authored clearance for visuals: cell (~-1.5, 1.5) is ~0.61 m from Hut_A (-1.6, 0.9).
+            var nearAuthored = new GameSaveData
+            {
+                version = SaveMigrationService.CurrentVersion,
+                worldGrowth = SaveMigrationService.CreateDefaultWorldGrowth(now)
+            };
+            var home = SaveMigrationService.CreateGrowthRecord(0, 0, true);
+            var homeMask = new byte[ChunkMaskCodec.CellCount];
+            var nearCell = ChunkMaskCodec.CellIndex(6, 9);
+            homeMask[nearCell] = (byte)SettlementStage.Hut;
+            home.settlementMaskBase64 = ChunkMaskCodec.EncodeToBase64(homeMask);
+            nearAuthored.worldGrowth.chunks.Add(home);
+            if (!SettlementCellQuery.IsHutVisualSuppressed(nearAuthored, 0, 0, nearCell))
+            {
+                Debug.LogError("Hut visual suppression missed authored starter clearance.");
                 return false;
             }
 
@@ -113,6 +147,67 @@ namespace AfkIsland.EditorTools
                 return false;
             }
 
+            return true;
+        }
+
+        /// <summary>
+        /// Option D acceptance on the reference legacy save: almost all Hut cells must remain
+        /// visually unsuppressed (authored starter clearance may hide a few).
+        /// </summary>
+        private static bool CheckLegacyHutVisibility()
+        {
+            var path = Path.Combine(
+                Directory.GetParent(Application.dataPath)!.FullName, "Builds", "save056.json");
+            if (!File.Exists(path))
+            {
+                Debug.LogError("Reference save missing for hut visibility check: " + path);
+                return false;
+            }
+
+            var save = JsonUtility.FromJson<GameSaveData>(File.ReadAllText(path));
+            if (save?.worldGrowth?.chunks == null)
+            {
+                Debug.LogError("Reference save could not be deserialized for hut visibility.");
+                return false;
+            }
+
+            var hutCells = 0;
+            var visible = 0;
+            for (var c = 0; c < save.worldGrowth.chunks.Count; c++)
+            {
+                var growth = save.worldGrowth.chunks[c];
+                if (growth == null ||
+                    !ChunkMaskCodec.TryDecodeBase64(growth.settlementMaskBase64, out var settle, out _))
+                {
+                    continue;
+                }
+
+                for (var i = 0; i < settle.Length; i++)
+                {
+                    if (settle[i] != (byte)SettlementStage.Hut)
+                    {
+                        continue;
+                    }
+
+                    hutCells++;
+                    if (!SettlementCellQuery.IsHutVisualSuppressed(
+                            save, growth.chunkX, growth.chunkZ, i))
+                    {
+                        visible++;
+                    }
+                }
+            }
+
+            // Pre-D baseline was 7 visible of 64. Option D must restore the dense field.
+            if (hutCells < 60 || visible < hutCells - 3)
+            {
+                Debug.LogError(
+                    $"Option D legacy hut visibility failed: hutCells={hutCells}, visible={visible} " +
+                    "(expected nearly all cells visible; only authored clearance may hide a few).");
+                return false;
+            }
+
+            Debug.Log($"[AFK Island] Option D legacy huts: {visible}/{hutCells} visually unsuppressed.");
             return true;
         }
 

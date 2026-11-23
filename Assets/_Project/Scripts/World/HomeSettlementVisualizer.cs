@@ -300,6 +300,9 @@ namespace AfkIsland.World
 
         private void PlaceHut(Transform parent, Vector3 local, int cellIndex, float yaw)
         {
+            // Stage 11G option D: shrink footprint to ~0.9 m so legacy 1 m Hut cells can all draw.
+            var visualScale = Vector3.one * SettlementCellQuery.HutVisualUniformScale;
+
             if (_hutPrefabs != null && _hutPrefabs.Length > 0)
             {
                 var prefab = _hutPrefabs[cellIndex % _hutPrefabs.Length];
@@ -307,8 +310,7 @@ namespace AfkIsland.World
                 hut.name = $"Hut_{cellIndex}";
                 hut.transform.localPosition = local;
                 hut.transform.localRotation = Quaternion.Euler(0f, yaw, 0f);
-                // Larger + taller than forest mid-layer so roofs punch through trees.
-                hut.transform.localScale = Vector3.one;
+                hut.transform.localScale = visualScale;
                 return;
             }
 
@@ -316,7 +318,7 @@ namespace AfkIsland.World
             fallback.transform.SetParent(parent, false);
             fallback.transform.localPosition = local;
             fallback.transform.localRotation = Quaternion.Euler(0f, yaw, 0f);
-            fallback.transform.localScale = Vector3.one;
+            fallback.transform.localScale = visualScale;
 
             var body = GameObject.CreatePrimitive(PrimitiveType.Cube);
             body.name = "Body";

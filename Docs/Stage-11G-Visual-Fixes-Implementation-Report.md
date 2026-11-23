@@ -74,7 +74,7 @@ Checks:
 |---|---|
 | Source review | DONE — code changes committed to fix branch |
 | Unity C# compilation | PASS — Unity 6000.6.5f1 batchmode, 0 errors; pre-existing CS0618/CS0162 warnings |
-| Stage 11G visual fix Editor Smoke | PASS — batchmode; includes plant blocker refresh regression |
+| Stage 11G visual fix Editor Smoke | PASS — batchmode; plant blocker refresh + option D legacy hut visibility |
 | Existing Stage 11G-B scatter smoke | PASS — batchmode; 12 points, partitioned=12, min spacing 3.50 m |
 | Existing Stage 12 settlement smoke | PASS — expected duplicate-growth rejection LogError only |
 | Stage 13 residents smoke | PASS — batchmode |
@@ -82,4 +82,4 @@ Checks:
 | Android APK / BlueStacks pass | NOT RUN |
 | Save v8 reference comparison | NOT RUN |
 
-Batchmode compile and smoke are not Play Mode acceptance. The plant-blocker regression verifies canonical signatures and scatter filtering, but does not exercise the actual `RebuildDecor` call in Play Mode (it uses `Object.Destroy`). The branch must not be merged until Play Mode, suitable Forest-fixture visuals, Android/device checks and the unresolved hut-suppression product decision are closed.
+Batchmode compile and smoke are not Play Mode acceptance. The plant-blocker regression verifies canonical signatures and scatter filtering, but does not exercise the actual `RebuildDecor` call in Play Mode (it uses `Object.Destroy`). Hut suppression option **D** is implemented: visual scale 0.56 (~0.9 m footprint), visual center spacing 0.95 m; creation spacing stays 3.2 m; Save v8 unchanged. Batchmode hut footprint smoke updated and PASS. The branch must not be merged until Play Mode (including hut readability + Forest fixture), Android/device checks are closed.

@@ -77,12 +77,35 @@ namespace AfkIsland.World
                    IsHut(save, chunkX, chunkZ, cellIndex);
         }
 
+        /// <summary>
+        /// Minimum center spacing when creating new huts (SettlementSimulation).
+        /// Keeps future saves from growing dense Hut blocks.
+        /// </summary>
         public const float DefaultHutCenterSpacing = 3.2f;
+
+        /// <summary>
+        /// Visual-only spacing for legacy overlapping Hut cells (Stage 11G option D).
+        /// Must stay below one cell (1 m) so adjacent mask cells can all draw after the
+        /// hut mesh is scaled to <see cref="HutVisualFootprintMeters"/>. Creation spacing
+        /// stays at <see cref="DefaultHutCenterSpacing"/>.
+        /// </summary>
+        public const float DefaultHutVisualCenterSpacing = 0.95f;
+
+        /// <summary>Target max XZ footprint of a drawn hut after uniform scale (option D).</summary>
+        public const float HutVisualFootprintMeters = 0.9f;
+
+        /// <summary>
+        /// Uniform scale applied to Hut_A (authored ~1.59 m wide) so the footprint fits
+        /// <see cref="HutVisualFootprintMeters"/> and neighbouring 1 m cells do not intersect.
+        /// </summary>
+        public const float HutVisualUniformScale = 0.56f;
+
         public const float DefaultTreeHutClearance = 2.2f;
 
         /// <summary>
-        /// True when a visual or new hut footprint would overlap an existing generated hut
+        /// True when a new hut footprint would overlap an existing generated hut
         /// or either authored starter hut. This is a read-only query; it never changes the save.
+        /// Used by SettlementSimulation growth, not by legacy visual suppression.
         /// </summary>
         public static bool IsHutFootprintBlocked(
             GameSaveData save,
@@ -131,15 +154,17 @@ namespace AfkIsland.World
         }
 
         /// <summary>
-        /// Deterministically suppresses legacy overlapping hut visuals without rewriting Save v8.
-        /// For an overlap cluster, the hut with the lowest world-cell Z/X key remains visible.
+        /// Deterministically suppresses hut visuals that still collide after option-D scaling,
+        /// without rewriting Save v8. Default spacing is <see cref="DefaultHutVisualCenterSpacing"/>
+        /// so orthogonal 1 m neighbours both draw; authored starter clearance still applies.
+        /// For a true overlap cluster, the hut with the lowest world-cell Z/X key remains visible.
         /// </summary>
         public static bool IsHutVisualSuppressed(
             GameSaveData save,
             int chunkX,
             int chunkZ,
             int cellIndex,
-            float minimumCenterSpacing = DefaultHutCenterSpacing)
+            float minimumCenterSpacing = DefaultHutVisualCenterSpacing)
         {
             if (cellIndex < 0 || cellIndex >= ChunkMaskCodec.CellCount)
             {

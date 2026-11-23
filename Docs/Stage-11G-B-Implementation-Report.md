@@ -90,6 +90,6 @@ Do not mark 11G-B accepted until Play Mode and device checks are completed and t
 - stable placement after restart and after offline growth;
 - full `RebuildDecor` cost and mobile performance are acceptable.
 
-The reference `Builds/save056.json` currently produces zero scattered trees, so it cannot visually validate tree placement. A separate Forest fixture is required. Batchmode smoke results do not replace Play Mode verification of the actual `RebuildDecor` call, scene WaterSource position, prefabs, colliders or visuals.
+The reference `Builds/save056.json` currently produces zero scattered trees, so it cannot visually validate tree placement. Use `AFK Island/Build Forest Fixture (11G-B)` → `Builds/save-forest-fixture.json` (batchmode verified: ~33 estimated trees; wild plants trimmed so blockers do not blank the island; plant-coordinate regression stays on `save056`). Install via `AFK Island/Install Forest Fixture Save (Play Mode)`. Batchmode smoke results do not replace Play Mode verification of the actual `RebuildDecor` call, scene WaterSource position, prefabs, colliders or visuals.
 
 A Unity Editor/device run is required before merging this branch into `main`.

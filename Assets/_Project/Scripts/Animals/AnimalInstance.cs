@@ -21,6 +21,7 @@ namespace AfkIsland.Animals
         private bool _moving;
         private AnimalVisualMotion _visual;
         private Animator _animator;
+        private float _modelForwardYawOffset;
         private static readonly int IsMovingHash = Animator.StringToHash("IsMoving");
 
         public string InstanceId => instanceId;
@@ -39,7 +40,11 @@ namespace AfkIsland.Animals
                 wanderRadius = catalog.wanderRadius;
                 idleSecondsMin = catalog.idleSecondsMin;
                 idleSecondsMax = catalog.idleSecondsMax;
+                _modelForwardYawOffset = catalog.modelForwardYawOffset;
             }
+
+            // Keep the visual facing correct while idle as well as while moving.
+            transform.rotation = Quaternion.Euler(0f, _modelForwardYawOffset, 0f);
 
             _visual = GetComponentInChildren<AnimalVisualMotion>(true);
             _animator = GetComponentInChildren<Animator>(true);
@@ -70,7 +75,8 @@ namespace AfkIsland.Animals
                     {
                         transform.rotation = Quaternion.Slerp(
                             transform.rotation,
-                            Quaternion.LookRotation(dir.normalized, Vector3.up),
+                            Quaternion.LookRotation(dir.normalized, Vector3.up) *
+                            Quaternion.Euler(0f, _modelForwardYawOffset, 0f),
                             1f - Mathf.Exp(-10f * Time.deltaTime));
                     }
                 }

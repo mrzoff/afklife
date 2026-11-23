@@ -109,7 +109,7 @@ namespace AfkIsland.World
                 if (view.signature == chunkSig)
                 {
                     view.root.SetActive(true);
-                    CountHomeStages(growth, settle, ref homePaths, ref homeHuts);
+                    CountHomeStages(data, growth, settle, ref homePaths, ref homeHuts);
                     continue;
                 }
 
@@ -117,7 +117,7 @@ namespace AfkIsland.World
                 view.signature = chunkSig;
                 PlaceChunkProps(view.root.transform, growth, settle, size);
                 view.root.SetActive(true);
-                CountHomeStages(growth, settle, ref homePaths, ref homeHuts);
+                CountHomeStages(data, growth, settle, ref homePaths, ref homeHuts);
             }
 
             var remove = new List<long>();
@@ -212,7 +212,11 @@ namespace AfkIsland.World
                         break;
                     case SettlementStage.Hut:
                         PlacePath(parent, local, i, yaw);
-                        PlaceHut(parent, local, i, yaw);
+                        if (!SettlementCellQuery.IsHutVisualSuppressed(
+                                _cachedData, growth.chunkX, growth.chunkZ, i))
+                        {
+                            PlaceHut(parent, local, i, yaw);
+                        }
                         break;
                 }
             }
@@ -296,6 +300,9 @@ namespace AfkIsland.World
 
         private void PlaceHut(Transform parent, Vector3 local, int cellIndex, float yaw)
         {
+            // Stage 11G option D: shrink footprint to ~0.9 m so legacy 1 m Hut cells can all draw.
+            var visualScale = Vector3.one * SettlementCellQuery.HutVisualUniformScale;
+
             if (_hutPrefabs != null && _hutPrefabs.Length > 0)
             {
                 var prefab = _hutPrefabs[cellIndex % _hutPrefabs.Length];
@@ -303,8 +310,7 @@ namespace AfkIsland.World
                 hut.name = $"Hut_{cellIndex}";
                 hut.transform.localPosition = local;
                 hut.transform.localRotation = Quaternion.Euler(0f, yaw, 0f);
-                // Larger + taller than forest mid-layer so roofs punch through trees.
-                hut.transform.localScale = Vector3.one * 1.28f;
+                hut.transform.localScale = visualScale;
                 return;
             }
 
@@ -312,7 +318,7 @@ namespace AfkIsland.World
             fallback.transform.SetParent(parent, false);
             fallback.transform.localPosition = local;
             fallback.transform.localRotation = Quaternion.Euler(0f, yaw, 0f);
-            fallback.transform.localScale = Vector3.one * 1.35f;
+            fallback.transform.localScale = visualScale;
 
             var body = GameObject.CreatePrimitive(PrimitiveType.Cube);
             body.name = "Body";
@@ -486,6 +492,7 @@ namespace AfkIsland.World
         }
 
         private static void CountHomeStages(
+            GameSaveData save,
             ChunkGrowthSaveData growth,
             byte[] settle,
             ref int paths,
@@ -503,7 +510,8 @@ namespace AfkIsland.World
                     paths++;
                 }
 
-                if (settle[i] == (byte)SettlementStage.Hut)
+                if (settle[i] == (byte)SettlementStage.Hut &&
+                    !SettlementCellQuery.IsHutVisualSuppressed(save, growth.chunkX, growth.chunkZ, i))
                 {
                     huts++;
                 }

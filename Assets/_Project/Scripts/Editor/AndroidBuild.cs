@@ -61,8 +61,9 @@ namespace AfkIsland.EditorTools
             // 0.6.54: log stand point status for verification.
             // 0.6.55: stand point rings outward when all neighbours are huts.
             // 0.6.56: Stage 13 editor smoke (roster, graph, director, save contract). No runtime change.
-            PlayerSettings.bundleVersion = "0.6.56";
-            PlayerSettings.Android.bundleVersionCode = 86;
+            // 0.6.57: Stage 11G-B scatter + visual fixes + hut option D (scale 0.62). Save v8 unchanged.
+            PlayerSettings.bundleVersion = "0.6.57";
+            PlayerSettings.Android.bundleVersionCode = 87;
             PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.Android, "com.afkisland.game");
             PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel26;
             PlayerSettings.Android.targetSdkVersion = AndroidSdkVersions.AndroidApiLevel34;

@@ -16,8 +16,9 @@ MonoBehaviour:
   displayNameRu: "\u041F\u0442\u0438\u0446\u0430"
   prefab: {fileID: 5720814082307707670, guid: 9b569ff976317ce4086f02ddcebd2915, type: 3}
   fallbackColor: {r: 0.52, g: 0.46, b: 0.38, a: 1}
-  moveSpeed: 0.85
-  idleSecondsMin: 1.5
-  idleSecondsMax: 4
-  wanderRadius: 3.2
-  visualScale: {x: 1, y: 1, z: 1}
+  moveSpeed: 0.42
+  idleSecondsMin: 3
+  idleSecondsMax: 6.5
+  wanderRadius: 1.7
+  visualScale: {x: 0.25, y: 0.25, z: 0.25}
+  modelForwardYawOffset: 180

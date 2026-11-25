@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using AfkIsland.Save;
 using UnityEngine;
@@ -16,7 +17,6 @@ namespace AfkIsland.World
         [SerializeField] private float yBase = GrowthWorldPlacement.VisualYBase;
         [SerializeField] private bool parentGrownMeshUnderWorld = true;
         [SerializeField] private bool placeDecor = true;
-        [SerializeField] private int maxDecorPerChunk = 14;
         /// <summary>In-cell decor spread as a fraction of a cell. Must stay below 1.0.</summary>
         private const float DecorJitterFraction = 0.8f;
 
@@ -27,6 +27,8 @@ namespace AfkIsland.World
         private GameObject[] _decorPrefabs;
         private string _lastSignature;
         private GameSaveData _cachedData;
+        private readonly Dictionary<long, byte[]> _stageSamples = new();
+        private readonly Dictionary<long, byte[]> _biomeSamples = new();
 
         private sealed class ChunkView
         {
@@ -48,6 +50,7 @@ namespace AfkIsland.World
         {
             data ??= saveService != null ? saveService.AuthoritativeSnapshot : null;
             _cachedData = data;
+            RebuildSampleCaches(data);
             if (data?.worldGrowth?.chunks == null || chunkManager == null)
             {
                 ClearAll();
@@ -70,6 +73,7 @@ namespace AfkIsland.World
             var size = chunkManager.ChunkSizeMeters;
             var changed = new HashSet<long>();
             var pending = new List<(ChunkGrowthSaveData growth, byte[] stages, long key, string chunkSig, int seed)>();
+            var worldSeed = ResolveWorldScatterSeed(data);
 
             foreach (var growth in data.worldGrowth.chunks)
             {
@@ -94,7 +98,7 @@ namespace AfkIsland.World
                     ? growth.growthSeed
                     : growth.chunkX * 73856093 ^ growth.chunkZ * 19349663;
                 var chunkSig =
-                    $"{growth.stageMaskBase64}:{growth.settlementMaskBase64}:{seed}:{ChunkTerrainMesher.Subdiv}:r{ChunkTerrainMesher.MesherRevision}";
+                    $"{growth.stageMaskBase64}:{growth.biomeMaskBase64}:{growth.settlementMaskBase64}:{seed}:{worldSeed}:{ChunkTerrainMesher.Subdiv}:r{ChunkTerrainMesher.MesherRevision}";
                 pending.Add((growth, stages, key, chunkSig, seed));
 
                 _views.TryGetValue(key, out var existing);
@@ -181,39 +185,72 @@ namespace AfkIsland.World
             }
         }
 
-        private byte SampleWorldStage(int worldCellX, int worldCellZ)
+        private void RebuildSampleCaches(GameSaveData data)
         {
-            // Must match GrowthWorldPlacement.SampleStage — especially isLegacyBase → Moss.
-            // Otherwise SDF treats the authored home as water and tears neighbor shores.
-            return GrowthWorldPlacement.SampleStage(_cachedData, worldCellX, worldCellZ);
-        }
-
-        private BiomeType SampleWorldBiome(int worldCellX, int worldCellZ)
-        {
-            var data = _cachedData;
+            _stageSamples.Clear();
+            _biomeSamples.Clear();
             if (data?.worldGrowth?.chunks == null)
             {
-                return BiomeType.None;
+                return;
             }
 
+            foreach (var growth in data.worldGrowth.chunks)
+            {
+                if (growth == null)
+                {
+                    continue;
+                }
+
+                var key = Pack(growth.chunkX, growth.chunkZ);
+                byte[] stages;
+                if (growth.isLegacyBase)
+                {
+                    stages = new byte[ChunkMaskCodec.CellCount];
+                    for (var i = 0; i < stages.Length; i++)
+                    {
+                        stages[i] = (byte)CellStage.Moss;
+                    }
+                }
+                else if (!ChunkMaskCodec.TryDecodeBase64(growth.stageMaskBase64, out stages, out _))
+                {
+                    stages = Array.Empty<byte>();
+                }
+
+                _stageSamples[key] = stages;
+                _biomeSamples[key] = BiomeMaskCodec.DecodeOrEmpty(growth.biomeMaskBase64);
+            }
+        }
+
+        private byte SampleWorldStage(int worldCellX, int worldCellZ)
+        {
             var grid = ChunkMaskCodec.GridSize;
             var chunkX = FloorDiv(worldCellX, grid);
             var chunkZ = FloorDiv(worldCellZ, grid);
             var lx = worldCellX - chunkX * grid;
             var lz = worldCellZ - chunkZ * grid;
-
-            foreach (var growth in data.worldGrowth.chunks)
+            if (!_stageSamples.TryGetValue(Pack(chunkX, chunkZ), out var stages))
             {
-                if (growth == null || growth.chunkX != chunkX || growth.chunkZ != chunkZ)
-                {
-                    continue;
-                }
-
-                var biomes = BiomeMaskCodec.DecodeOrEmpty(growth.biomeMaskBase64);
-                return (BiomeType)biomes[ChunkMaskCodec.CellIndex(lx, lz)];
+                return (byte)CellStage.Void;
             }
 
-            return BiomeType.None;
+            var index = ChunkMaskCodec.CellIndex(lx, lz);
+            return index >= 0 && index < stages.Length ? stages[index] : (byte)CellStage.Void;
+        }
+
+        private BiomeType SampleWorldBiome(int worldCellX, int worldCellZ)
+        {
+            var grid = ChunkMaskCodec.GridSize;
+            var chunkX = FloorDiv(worldCellX, grid);
+            var chunkZ = FloorDiv(worldCellZ, grid);
+            var lx = worldCellX - chunkX * grid;
+            var lz = worldCellZ - chunkZ * grid;
+            if (!_biomeSamples.TryGetValue(Pack(chunkX, chunkZ), out var biomes))
+            {
+                return BiomeType.None;
+            }
+
+            var index = ChunkMaskCodec.CellIndex(lx, lz);
+            return index >= 0 && index < biomes.Length ? (BiomeType)biomes[index] : BiomeType.None;
         }
 
         private static int FloorDiv(int a, int b)
@@ -261,13 +298,6 @@ namespace AfkIsland.World
                 view.decorRoot = go.transform;
             }
 
-            var placed = 0;
-            var tallOnChunk = 0;
-            var tallCap = growth.chunkX == 0 && growth.chunkZ == 0 ? 4 : int.MaxValue;
-            var tallPoints = new List<Vector2>(16);
-            // Authored yard cedar. Its pivot stays outside the pond after the mesh recenter.
-            tallPoints.Add(new Vector2(-2.4f, -0.4f));
-            CollectStarterTreePoints(tallPoints);
             var seed = growth.growthSeed != 0
                 ? growth.growthSeed
                 : growth.chunkX * 73856093 ^ growth.chunkZ * 19349663;
@@ -276,7 +306,7 @@ namespace AfkIsland.World
             var biomes = BiomeMaskCodec.DecodeOrEmpty(growth.biomeMaskBase64);
             ChunkMaskCodec.TryDecodeBase64(growth.settlementMaskBase64, out var settlement, out _);
 
-            for (var i = 0; i < stages.Length && placed < maxDecorPerChunk; i++)
+            for (var i = 0; i < stages.Length; i++)
             {
                 var stage = stages[i];
                 // Roots / void: no props. Soil+: sparse rocks. Moss/Vegetation: plants.
@@ -346,14 +376,8 @@ namespace AfkIsland.World
                 }
 
                 var isRock = IsRockDecor(prefab.name);
-                // Tall canopy only inland Forest + Vegetation so roofs stay readable.
-                var isTall = IsTallDecor(prefab.name);
-                if (isTall && (biome != BiomeType.Forest || stage < (byte)CellStage.Vegetation))
-                {
-                    continue;
-                }
-
-                if (isTall && IsNearShore(worldCellX, worldCellZ, 2))
+                // Tall trees are generated by WorldScatterField in a separate world-space pass.
+                if (IsTallDecor(prefab.name))
                 {
                     continue;
                 }
@@ -361,7 +385,7 @@ namespace AfkIsland.World
                 // Hut cell keeps its roof. Only low rocks may stay; tall canopy and bushes go.
                 if (settlement != null && i < settlement.Length &&
                     settlement[i] == (byte)SettlementStage.Hut &&
-                    (isTall || IsScrubDecor(prefab.name)))
+                    IsScrubDecor(prefab.name))
                 {
                     continue;
                 }
@@ -371,10 +395,6 @@ namespace AfkIsland.World
                 if (isRock)
                 {
                     scale = 0.22f + h * 0.18f;
-                }
-                else if (isTall)
-                {
-                    scale = 0.55f + h * 0.35f;
                 }
                 else if (isScrub)
                 {
@@ -397,20 +417,6 @@ namespace AfkIsland.World
                 var propWorldX = cellWorld.x + jitterX;
                 var propWorldZ = cellWorld.z + jitterZ;
 
-                if (isTall)
-                {
-                    if (tallOnChunk >= tallCap)
-                    {
-                        continue;
-                    }
-
-                    var point = new Vector2(propWorldX, propWorldZ);
-                    if (WithinTallGap(point, tallPoints))
-                    {
-                        continue;
-                    }
-                }
-
                 if (WaterSourceLayout.BlocksTrunk(
                         propWorldX, propWorldZ, WaterSourceLayout.TrunkRadius(scale)))
                 {
@@ -427,14 +433,203 @@ namespace AfkIsland.World
                 inst.transform.localPosition = local;
                 inst.transform.localRotation = Quaternion.Euler(0f, h * 360f, 0f);
                 inst.transform.localScale = Vector3.one * scale;
-                if (isTall)
-                {
-                    tallOnChunk++;
-                    tallPoints.Add(new Vector2(propWorldX, propWorldZ));
-                }
                 VegetationWindApplicator.ApplyToInstance(inst, isRock, prefab.name);
                 inst.name = $"Decor_{growth.chunkX}_{growth.chunkZ}_{i}";
-                placed++;
+            }
+
+            RebuildTallTrees(view, growth, chunkSize, plants);
+        }
+
+        private void RebuildTallTrees(
+            ChunkView view,
+            ChunkGrowthSaveData growth,
+            float chunkSize,
+            GameObject[] treePrefabs)
+        {
+            if (treePrefabs == null || treePrefabs.Length == 0 || _cachedData?.worldGrowth == null)
+            {
+                return;
+            }
+
+            var origin = GrowthWorldPlacement.ChunkOriginXZ(growth.chunkX, growth.chunkZ, chunkSize);
+            var bounds = new Rect(origin.x, origin.y, chunkSize, chunkSize);
+            var worldSeed = ResolveWorldScatterSeed(_cachedData);
+            if (worldSeed == 0)
+            {
+                worldSeed = unchecked((int)0x11B0A11);
+            }
+
+            var blockers = new List<Vector2>(32)
+            {
+                new Vector2(-2.4f, -0.4f) // authored yard cedar
+            };
+            CollectSavedPlantBlockers(blockers);
+
+            float DensityAt(Vector2 point)
+            {
+                if (!TryGetWorldCell(point.x, point.y, out _, out _, out var stage, out var biome))
+                {
+                    return 0f;
+                }
+
+                if (stage < (byte)CellStage.Vegetation || biome != BiomeType.Forest)
+                {
+                    return 0f;
+                }
+
+                var broad = WorldScatterField.SampleValueNoise(point.x, point.y, 18f, worldSeed, 113u);
+                var detail = WorldScatterField.SampleValueNoise(point.x, point.y, 7f, worldSeed, 127u);
+                return 0.28f * Mathf.Lerp(0.72f, 1.18f, broad) * Mathf.Lerp(0.82f, 1.12f, detail);
+            }
+
+            bool IsValid(Vector2 point)
+            {
+                if (!TryGetWorldCell(point.x, point.y, out var worldCellX, out var worldCellZ,
+                        out var stage, out var biome))
+                {
+                    return false;
+                }
+
+                if (stage < (byte)CellStage.Vegetation || biome != BiomeType.Forest)
+                {
+                    return false;
+                }
+
+                if (IsNearShore(worldCellX, worldCellZ, 2))
+                {
+                    return false;
+                }
+
+                if (SettlementCellQuery.IsHutAtWorldXZ(_cachedData, point.x, point.y))
+                {
+                    return false;
+                }
+
+                if (WaterSourceLayout.BlocksTrunk(point.x, point.y,
+                        WaterSourceLayout.TrunkRadius(0.9f)))
+                {
+                    return false;
+                }
+
+                return true;
+            }
+
+            var points = new List<WorldScatterField.ScatterPoint>(16);
+            WorldScatterField.Generate(
+                bounds,
+                worldSeed,
+                WorldScatterField.DefaultTreeMinimumSpacing,
+                WorldScatterField.DefaultCandidateSpacing,
+                DensityAt,
+                IsValid,
+                blockers,
+                points);
+
+            for (var i = 0; i < points.Count; i++)
+            {
+                var point = points[i];
+                var pick = (int)(WorldScatterField.Hash(worldSeed, point.GridX, point.GridZ, 191u) % (uint)treePrefabs.Length);
+                var prefab = treePrefabs[pick];
+                if (prefab == null)
+                {
+                    continue;
+                }
+
+                var scaleRoll = WorldScatterField.Hash01(worldSeed, point.GridX, point.GridZ, 197u);
+                var scale = 0.58f + scaleRoll * 0.30f;
+                var inst = Instantiate(prefab, view.decorRoot);
+                var worldY = ChunkTerrainMesher.SampleVisualHeight(
+                    point.Position.x,
+                    point.Position.y,
+                    SampleWorldStage,
+                    SampleWorldBiome,
+                    chunkSize);
+                inst.transform.localPosition = new Vector3(
+                    point.Position.x - origin.x,
+                    worldY - yBase,
+                    point.Position.y - origin.y);
+                inst.transform.localRotation = Quaternion.Euler(
+                    0f,
+                    WorldScatterField.Hash01(worldSeed, point.GridX, point.GridZ, 211u) * 360f,
+                    0f);
+                inst.transform.localScale = Vector3.one * scale;
+                VegetationWindApplicator.ApplyToInstance(inst, false, prefab.name);
+                inst.name = $"Tree_{point.GridX}_{point.GridZ}";
+            }
+        }
+
+        private bool TryGetWorldCell(
+            float worldX,
+            float worldZ,
+            out int worldCellX,
+            out int worldCellZ,
+            out byte stage,
+            out BiomeType biome)
+        {
+            var cellSize = GrowthWorldPlacement.CellSizeMeters;
+            var half = GrowthWorldPlacement.ChunkSizeMeters * 0.5f;
+            worldCellX = Mathf.FloorToInt((worldX + half) / cellSize);
+            worldCellZ = Mathf.FloorToInt((worldZ + half) / cellSize);
+            stage = SampleWorldStage(worldCellX, worldCellZ);
+            biome = SampleWorldBiome(worldCellX, worldCellZ);
+            return stage != (byte)CellStage.Void;
+        }
+
+        private static int ResolveWorldScatterSeed(GameSaveData data)
+        {
+            // WorldGrowthSaveData.growthSeed advances during simulation. It must not drive
+            // persistent visual placement or trees would jump after every offline session.
+            if (data?.chunks != null)
+            {
+                for (var i = 0; i < data.chunks.Count; i++)
+                {
+                    var chunk = data.chunks[i];
+                    if (chunk != null && chunk.chunkX == IslandChunk.HomeChunkX &&
+                        chunk.chunkZ == IslandChunk.HomeChunkZ && chunk.randomSeed != 0)
+                    {
+                        return chunk.randomSeed;
+                    }
+                }
+            }
+
+            // Legacy saves can have a zero home randomSeed. A fixed fallback keeps their
+            // world-space scatter stable without adding fields or migrating Save v8.
+            return unchecked((int)0x11B0A11);
+        }
+
+        private void CollectSavedPlantBlockers(List<Vector2> into)
+        {
+            if (_cachedData == null)
+            {
+                return;
+            }
+
+            AddPlantBlockers(_cachedData.plants, into);
+            if (_cachedData.chunks == null)
+            {
+                return;
+            }
+
+            for (var i = 0; i < _cachedData.chunks.Count; i++)
+            {
+                AddPlantBlockers(_cachedData.chunks[i]?.plants, into);
+            }
+        }
+
+        private static void AddPlantBlockers(List<PlantSaveData> plants, List<Vector2> into)
+        {
+            if (plants == null)
+            {
+                return;
+            }
+
+            for (var i = 0; i < plants.Count; i++)
+            {
+                var plant = plants[i];
+                if (plant != null)
+                {
+                    into.Add(new Vector2(plant.posX, plant.posZ));
+                }
             }
         }
 
@@ -468,59 +663,6 @@ namespace AfkIsland.World
             rocks = rockList.ToArray();
             plants = plantList.ToArray();
             scrub = scrubList.ToArray();
-        }
-
-        private void CollectStarterTreePoints(List<Vector2> into)
-        {
-            if (_cachedData == null)
-            {
-                return;
-            }
-
-            AddStarterPoints(_cachedData.plants, into);
-            if (_cachedData.chunks == null)
-            {
-                return;
-            }
-
-            for (var i = 0; i < _cachedData.chunks.Count; i++)
-            {
-                AddStarterPoints(_cachedData.chunks[i]?.plants, into);
-            }
-        }
-
-        private static void AddStarterPoints(List<PlantSaveData> plants, List<Vector2> into)
-        {
-            if (plants == null)
-            {
-                return;
-            }
-
-            for (var i = 0; i < plants.Count; i++)
-            {
-                var plant = plants[i];
-                if (plant == null || plant.plantId != PlantColonizationSimulation.DefaultPlantId)
-                {
-                    continue;
-                }
-
-                into.Add(new Vector2(plant.posX, plant.posZ));
-            }
-        }
-
-        private static bool WithinTallGap(Vector2 point, List<Vector2> others)
-        {
-            const float minSq = 3.5f * 3.5f;
-            for (var i = 0; i < others.Count; i++)
-            {
-                var d = others[i] - point;
-                if (d.sqrMagnitude < minSq)
-                {
-                    return true;
-                }
-            }
-
-            return false;
         }
 
         private static bool IsRockDecor(string name) =>
@@ -808,11 +950,52 @@ namespace AfkIsland.World
                     continue;
                 }
 
-                parts.Add($"{growth.chunkX}:{growth.chunkZ}:{growth.stageMaskBase64}:{growth.settlementMaskBase64}");
+                parts.Add($"{growth.chunkX}:{growth.chunkZ}:{growth.stageMaskBase64}:{growth.biomeMaskBase64}:{growth.settlementMaskBase64}:{growth.growthSeed}");
             }
 
             parts.Sort();
-            return string.Join("|", parts);
+
+            // Existing saved plants are hard blockers for new decorative tree trunks.
+            // Include their canonical positions so a planting/removal rebuilds scatter.
+            var plantParts = new List<string>();
+            var hasChunkPlants = false;
+            if (data.chunks != null)
+            {
+                foreach (var chunk in data.chunks)
+                {
+                    if (chunk?.plants == null)
+                    {
+                        continue;
+                    }
+
+                    for (var i = 0; i < chunk.plants.Count; i++)
+                    {
+                        var plant = chunk.plants[i];
+                        if (plant == null)
+                        {
+                            continue;
+                        }
+
+                        hasChunkPlants = true;
+                        plantParts.Add($"{plant.instanceId}:{plant.posX:R}:{plant.posZ:R}");
+                    }
+                }
+            }
+
+            if (!hasChunkPlants && data.plants != null)
+            {
+                for (var i = 0; i < data.plants.Count; i++)
+                {
+                    var plant = data.plants[i];
+                    if (plant != null)
+                    {
+                        plantParts.Add($"{plant.instanceId}:{plant.posX:R}:{plant.posZ:R}");
+                    }
+                }
+            }
+
+            plantParts.Sort(StringComparer.Ordinal);
+            return $"{ResolveWorldScatterSeed(data)}|{string.Join("|", parts)}|plants:{string.Join("|", plantParts)}";
         }
 
         private static bool HasChangedNeighbor(int chunkX, int chunkZ, HashSet<long> changed)

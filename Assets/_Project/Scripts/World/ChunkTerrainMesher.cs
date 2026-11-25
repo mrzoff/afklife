@@ -453,6 +453,36 @@ namespace AfkIsland.World
             }
         }
 
+        /// <summary>
+        /// Samples the exact visual height field used by Build at a world-space XZ point.
+        /// Returned Y is in world coordinates (including GrowthWorldPlacement.VisualYBase).
+        /// </summary>
+        public static float SampleVisualHeight(
+            float worldX,
+            float worldZ,
+            Func<int, int, byte> sampleWorldStage,
+            Func<int, int, BiomeType> sampleWorldBiome = null,
+            float chunkSize = IslandChunk.DefaultSizeMeters)
+        {
+            if (sampleWorldStage == null || chunkSize <= 0f)
+            {
+                return GrowthWorldPlacement.VisualYBase;
+            }
+
+            SampleSdfField(
+                worldX,
+                worldZ,
+                chunkSize / ChunkMaskCodec.GridSize,
+                -chunkSize * 0.5f,
+                sampleWorldStage,
+                sampleWorldBiome ?? ((_, _) => BiomeType.None),
+                out _,
+                out var height,
+                out _,
+                out _);
+            return GrowthWorldPlacement.VisualYBase + height;
+        }
+
         private static void SampleSdfField(
             float wx,
             float wz,

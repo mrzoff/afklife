@@ -16,6 +16,14 @@ namespace AfkIsland.World
         [SerializeField] private ChunkManager chunkManager;
         [SerializeField] private float yBase = GrowthWorldPlacement.VisualYBase;
         [SerializeField] private bool softDimAuthored = true;
+        [Header("Stage C-3E — opt-in continuous path network")]
+        [SerializeField] private bool useContinuousPathNetworkRenderer = false;
+        [SerializeField] private SettlementPathMeshBuilder.MeshBuildConfig continuousPathMeshConfig =
+            new SettlementPathMeshBuilder.MeshBuildConfig();
+
+        private readonly WorldTerrainSampleCache _terrainSamples = new WorldTerrainSampleCache();
+        private SettlementPathNetworkRenderer _continuousPathRenderer;
+        private Transform _continuousPathRoot;
 
         private Transform _root;
         private readonly Dictionary<long, ChunkView> _views = new();
@@ -76,6 +84,7 @@ namespace AfkIsland.World
 
             _lastSignature = signature;
             EnsureRoot();
+            _terrainSamples.Rebuild(data);
             EnsureMaterials();
             EnsureRockPrefabs();
             EnsureSettlementPrefabs();
@@ -132,6 +141,15 @@ namespace AfkIsland.World
             for (var i = 0; i < remove.Count; i++)
             {
                 DestroyView(remove[i]);
+            }
+
+            if (useContinuousPathNetworkRenderer)
+            {
+                RebuildContinuousPathNetwork(data);
+            }
+            else
+            {
+                ClearContinuousPathNetwork();
             }
 
             SoftDimAuthored(homePaths, homeHuts);
@@ -204,7 +222,7 @@ namespace AfkIsland.World
                         PlaceClearing(parent, local, i, seed);
                         break;
                     case SettlementStage.Path:
-                        PlacePath(parent, local, i, yaw);
+                        if (!useContinuousPathNetworkRenderer) PlacePath(parent, local, i, yaw);
                         break;
                     case SettlementStage.Stone:
                         PlacePath(parent, local, i, yaw);
@@ -730,11 +748,133 @@ namespace AfkIsland.World
                     continue;
                 }
 
-                parts.Add($"{growth.chunkX}:{growth.chunkZ}:{growth.settlementMaskBase64}");
+                parts.Add(useContinuousPathNetworkRenderer
+                    ? growth.chunkX + ":" + growth.chunkZ + ":" + growth.settlementMaskBase64 + ":" + growth.stageMaskBase64 + ":" + growth.biomeMaskBase64
+                    : growth.chunkX + ":" + growth.chunkZ + ":" + growth.settlementMaskBase64);
             }
 
             parts.Sort();
             return string.Join("|", parts);
+        }
+
+        private void RebuildContinuousPathNetwork(GameSaveData data)
+        {
+            if (data?.worldGrowth?.chunks == null || chunkManager == null)
+            {
+                ClearContinuousPathNetwork();
+                return;
+            }
+
+            EnsureMaterials();
+            EnsureContinuousPathRenderer();
+
+            var config = new SettlementPathTopology.TopologyConfig
+            {
+                ChunkSizeMeters = chunkManager.ChunkSizeMeters,
+                GridSize = ChunkMaskCodec.GridSize
+            };
+            var input = new SettlementPathTopology.TopologyInput
+            {
+                Config = config,
+                StarterPaths = SettlementPathTopology.CreateProductionStarterPaths(config),
+                Huts = SettlementPathTopology.CreateProductionStarterHuts(),
+                IsInsideLand = _terrainSamples.IsInsideLand,
+                IsBlockedByWater = IsBlockedByWaterForPath
+            };
+
+            foreach (var growth in data.worldGrowth.chunks)
+            {
+                if (growth == null ||
+                    !ChunkMaskCodec.TryDecodeBase64(growth.settlementMaskBase64, out var settle, out _))
+                    continue;
+
+                var seed = growth.growthSeed != 0
+                    ? growth.growthSeed
+                    : growth.chunkX * 73856093 ^ growth.chunkZ * 19349663;
+
+                for (var i = 0; i < settle.Length; i++)
+                {
+                    var stage = (SettlementStage)settle[i];
+                    if (stage == SettlementStage.Path || stage == SettlementStage.Stone)
+                    {
+                        ChunkMaskCodec.IndexToLocal(i, out var lx, out var lz);
+                        input.RoadCells.Add(new SettlementPathTopology.MaskCellInput
+                        {
+                            WorldCellX = growth.chunkX * ChunkMaskCodec.GridSize + lx,
+                            WorldCellZ = growth.chunkZ * ChunkMaskCodec.GridSize + lz,
+                            Stage = settle[i]
+                        });
+                    }
+                    else if (stage == SettlementStage.Hut &&
+                             !SettlementCellQuery.IsHutVisualSuppressed(data, growth.chunkX, growth.chunkZ, i))
+                    {
+                        var center = GrowthWorldPlacement.CellCenterWorld(growth.chunkX, growth.chunkZ, i);
+                        var yaw = Hash01(seed, i, 7) * 360f;
+                        input.Huts.Add(new SettlementPathTopology.HutInput
+                        {
+                            Id = "MaskHut_" + growth.chunkX + "_" + growth.chunkZ + "_" + i.ToString("D3"),
+                            Center = new Vector2(center.x, center.z),
+                            YawDegrees = yaw,
+                            Scale = SettlementCellQuery.HutVisualUniformScale,
+                            FootprintHalfExtents = new Vector2(0.47f, 0.44f),
+                            DoorLocalZ = 0.598f,
+                            AllowVisualDoorCorrection = true
+                        });
+                    }
+                }
+            }
+
+            var plan = SettlementPathTopology.Build(input);
+            continuousPathMeshConfig.ChunkSizeMeters = chunkManager.ChunkSizeMeters;
+            continuousPathMeshConfig.LocalChunkYBase = yBase;
+            _continuousPathRenderer.ApplyPlan(
+                plan,
+                _terrainSamples.SampleHeight,
+                continuousPathMeshConfig,
+                forceFullRebuild: false,
+                terrainVersion: _terrainSamples.Revision);
+        }
+
+        private static bool IsBlockedByWaterForPath(float worldX, float worldZ)
+        {
+            var center = WaterSourceLayout.GetWorldCenter();
+            const float clearance = 0.31f;
+            var rx = WaterSourceLayout.WaterHalfExtentX + clearance;
+            var rz = WaterSourceLayout.WaterHalfExtentZ + clearance;
+            var dx = (worldX - center.x) / rx;
+            var dz = (worldZ - center.z) / rz;
+            return dx * dx + dz * dz <= 1f;
+        }
+
+        private void EnsureContinuousPathRenderer()
+        {
+            if (_continuousPathRenderer != null)
+                return;
+
+            var world = GameObject.Find("World");
+            var parent = world != null ? world.transform : transform;
+            var root = new GameObject("SettlementPathNetwork");
+            root.transform.SetParent(parent, false);
+            root.transform.localPosition = Vector3.zero;
+            root.transform.localRotation = Quaternion.identity;
+            root.transform.localScale = Vector3.one;
+            _continuousPathRoot = root.transform;
+            _continuousPathRenderer = root.AddComponent<SettlementPathNetworkRenderer>();
+            _continuousPathRenderer.ConfigureMaterials(_pathMat, _pathMat);
+        }
+
+        private void ClearContinuousPathNetwork()
+        {
+            if (_continuousPathRenderer != null)
+                _continuousPathRenderer.Clear();
+
+            if (_continuousPathRoot != null)
+            {
+                Destroy(_continuousPathRoot.gameObject);
+                _continuousPathRoot = null;
+            }
+
+            _continuousPathRenderer = null;
         }
 
         private static long Pack(int x, int z) => ((long)x << 32) ^ (uint)z;
@@ -753,6 +893,7 @@ namespace AfkIsland.World
         private void OnDestroy()
         {
             ClearAll();
+            ClearContinuousPathNetwork();
             DestroyMat(ref _pathMat);
             DestroyMat(ref _clearingMat);
             DestroyMat(ref _hutBodyMat);

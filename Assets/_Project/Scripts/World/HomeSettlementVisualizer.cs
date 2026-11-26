@@ -844,11 +844,16 @@ namespace AfkIsland.World
                 ChunkSizeMeters = chunkSize,
                 GridSize = ChunkMaskCodec.GridSize
             };
+            var hasAuthoredSettlement = HasAuthoredStarterSettlement();
             var input = new SettlementPathTopology.TopologyInput
             {
                 Config = config,
-                StarterPaths = SettlementPathTopology.CreatePondSafeProductionStarterPaths(config),
-                Huts = SettlementPathTopology.CreateProductionStarterHuts(),
+                StarterPaths = hasAuthoredSettlement
+                    ? SettlementPathTopology.CreatePondSafeProductionStarterPaths(config)
+                    : new List<SettlementPathTopology.StarterPolylineInput>(),
+                Huts = hasAuthoredSettlement
+                    ? SettlementPathTopology.CreateProductionStarterHuts()
+                    : new List<SettlementPathTopology.HutInput>(),
                 IsInsideLand = (wx, wz) => _terrainSamples.IsInsideLand(wx, wz, chunkSize),
                 IsBlockedByWater = IsBlockedByWaterForPath
             };
@@ -901,7 +906,7 @@ namespace AfkIsland.World
                              !SettlementCellQuery.IsHutVisualSuppressed(data, growth.chunkX, growth.chunkZ, i))
                     {
                         var center = GrowthWorldPlacement.CellCenterWorld(growth.chunkX, growth.chunkZ, i);
-                        if (IsAuthoredStarterHutPosition(center))
+                        if (hasAuthoredSettlement && IsAuthoredStarterHutPosition(center))
                             continue;
 
                         var yaw = Hash01(seed, i, 7) * 360f;
@@ -958,6 +963,26 @@ namespace AfkIsland.World
                 continuousPathMeshConfig,
                 forceFullRebuild: false,
                 terrainVersion: _terrainSamples.Revision);
+        }
+
+        private static bool HasAuthoredStarterSettlement()
+        {
+            var island = GameObject.Find("World/Island") ?? GameObject.Find("Island");
+            if (island == null)
+            {
+                return false;
+            }
+
+            var settlement = island.transform.Find("Settlement");
+            if (settlement == null)
+            {
+                return false;
+            }
+
+            return settlement.Find("Hut_A") != null ||
+                   settlement.Find("Hut_B") != null ||
+                   settlement.Find("Path_Main") != null ||
+                   settlement.Find("Path_Cross") != null;
         }
 
         private static bool IsAuthoredStarterHutPosition(Vector3 center)

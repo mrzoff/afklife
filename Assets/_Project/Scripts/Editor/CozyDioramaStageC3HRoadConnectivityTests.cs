@@ -44,6 +44,7 @@ namespace AfkIsland.EditorTools
             RunApplyCase("cardinal Path neighbour permits growth, single component", Seed.CardinalPath, ref passed, ref failed);
             RunApplyCase("cardinal Stone neighbour permits growth, single component", Seed.CardinalStone, ref passed, ref failed);
             RunSeamCase("Apply grows Path across the chunk seam from a Stone seed", ref passed, ref failed);
+            RunStoneBridgeCase("Stone bridge between two Path cells is never turned into a Hut", ref passed, ref failed);
 
             var summary = $"[C-3H] Road connectivity tests: passed={passed}, failed={failed}";
             if (failed == 0) Debug.Log(summary);
@@ -105,12 +106,11 @@ namespace AfkIsland.EditorTools
             }
             else
             {
-                var seedKey = Key(chunkX * Grid + seedX, chunkZ * Grid + seedZ);
-                var seedStillRoad = roads.Set.Contains(seedKey);
-                ok &= seedStillRoad;
+                var seedAttached = SeedStillPartOfNetwork(save, roads, chunkX * Grid + seedX, chunkZ * Grid + seedZ);
+                ok &= seedAttached;
                 // Every new Path/Stone cell must be attached to the original network: exactly one component.
                 ok &= roads.Components == 1;
-                detail += $", seedStillRoad={seedStillRoad}";
+                detail += $", seedStage={(SettlementStage)SettlementSimulation.SampleSettlementStage(save, chunkX * Grid + seedX, chunkZ * Grid + seedZ)}, seedAttached={seedAttached}";
 
                 if (seed == Seed.CardinalPath)
                 {
@@ -211,18 +211,78 @@ namespace AfkIsland.EditorTools
             var result = SettlementSimulation.Apply(save, 7 * 86400L, new DeterministicRng(2468u));
             var roads = AnalyzeRoads(save);
             var seamStage = SettlementSimulation.SampleSettlementStage(save, rightChunkX * Grid + 0, chunkZ * Grid + 7);
-            var seedKey = Key(leftChunkX * Grid + 15, chunkZ * Grid + 7);
+            var seedAttached = SeedStillPartOfNetwork(save, roads, leftChunkX * Grid + 15, chunkZ * Grid + 7);
 
             var ok = neighborBefore &&
                      seamStage == (byte)SettlementStage.Path &&
-                     roads.Set.Contains(seedKey) &&
+                     seedAttached &&
                      roads.Components == 1;
             Log(name, ok,
                 $"neighborBefore={neighborBefore}, seamCellStage={(SettlementStage)seamStage}, pathsAdded={result.pathsAdded}, roadCells={roads.Cells}, components={roads.Components}",
                 ref passed, ref failed);
         }
 
+        /// <summary>
+        /// A Stone between two Path cells is a cut vertex of the road graph. Turning it into a Hut would
+        /// split the network, so Apply must keep it a road for every RNG seed.
+        /// </summary>
+        private static void RunStoneBridgeCase(string name, ref int passed, ref int failed)
+        {
+            const int chunkX = 20;
+            const int chunkZ = 20;
+            var ok = true;
+            var details = string.Empty;
+
+            for (var s = 1u; s <= 8u; s++)
+            {
+                var save = CreateFixture(chunkX, chunkZ, out var growth, out var land, out var settle);
+                PaintMossPatch(land, 2, 13, 2, 13);
+                settle[ChunkMaskCodec.CellIndex(5, 7)] = (byte)SettlementStage.Path;
+                settle[ChunkMaskCodec.CellIndex(6, 7)] = (byte)SettlementStage.Stone;
+                settle[ChunkMaskCodec.CellIndex(7, 7)] = (byte)SettlementStage.Path;
+                growth.stageMaskBase64 = ChunkMaskCodec.EncodeToBase64(land);
+                growth.settlementMaskBase64 = ChunkMaskCodec.EncodeToBase64(settle);
+
+                SettlementSimulation.Apply(save, 7 * 86400L, new DeterministicRng(1000u + s));
+                var roads = AnalyzeRoads(save);
+                var bridge = SettlementSimulation.SampleSettlementStage(save, chunkX * Grid + 6, chunkZ * Grid + 7);
+                var bridgeIsRoad = bridge == (byte)SettlementStage.Stone || bridge == (byte)SettlementStage.Path;
+                var seedOk = bridgeIsRoad && roads.Components == 1;
+                ok &= seedOk;
+                details += $"[rng{s}: bridge={(SettlementStage)bridge}, components={roads.Components}] ";
+            }
+
+            Log(name, ok, details.TrimEnd(), ref passed, ref failed);
+        }
+
+        /// <summary>The seed is still a road, or became a Hut that a road cardinally touches (a leaf hut is legal).</summary>
+        private static bool SeedStillPartOfNetwork(GameSaveData save, RoadAnalysis roads, int seedWx, int seedWz)
+        {
+            if (roads.Set.Contains(Key(seedWx, seedWz)))
+            {
+                return true;
+            }
+
+            var stage = SettlementSimulation.SampleSettlementStage(save, seedWx, seedWz);
+            return stage == (byte)SettlementStage.Hut &&
+                   (roads.Set.Contains(Key(seedWx + 1, seedWz)) ||
+                    roads.Set.Contains(Key(seedWx - 1, seedWz)) ||
+                    roads.Set.Contains(Key(seedWx, seedWz + 1)) ||
+                    roads.Set.Contains(Key(seedWx, seedWz - 1)));
+        }
+
         // ---------- fixtures ----------
+
+        private static void PaintMossPatch(byte[] land, int x0, int x1, int z0, int z1)
+        {
+            for (var z = z0; z <= z1; z++)
+            {
+                for (var x = x0; x <= x1; x++)
+                {
+                    land[ChunkMaskCodec.CellIndex(x, z)] = (byte)CellStage.Moss;
+                }
+            }
+        }
 
         private static void PaintClearingPatch(byte[] land, byte[] settle, int x0, int x1, int z0, int z1)
         {

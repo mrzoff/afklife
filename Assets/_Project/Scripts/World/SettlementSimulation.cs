@@ -614,6 +614,21 @@ namespace AfkIsland.World
                          (HasNeighborAtLeast(save, growth.chunkX, growth.chunkZ, i, SettlementStage.Path) ||
                           HasNeighborAtLeast(save, growth.chunkX, growth.chunkZ, i, SettlementStage.Hut)))
                 {
+                    // Keep Stone junctions and bridges as roads, same rule as for Path cells.
+                    ChunkMaskCodec.IndexToLocal(i, out var stoneLx, out var stoneLz);
+                    var stoneWorldKey = PackWorldCell(
+                        growth.chunkX * ChunkMaskCodec.GridSize + stoneLx,
+                        growth.chunkZ * ChunkMaskCodec.GridSize + stoneLz);
+                    var isProtectedStone =
+                        IsRoadJunctionCell(save, growth.chunkX, growth.chunkZ, i) ||
+                        (articulationPoints != null
+                            ? articulationPoints.Contains(stoneWorldKey)
+                            : WouldDisconnectRoadNetwork(save, growth.chunkX, growth.chunkZ, i));
+                    if (isProtectedStone)
+                    {
+                        continue;
+                    }
+
                     next = (byte)SettlementStage.Hut;
                 }
                 else
@@ -745,7 +760,8 @@ namespace AfkIsland.World
                 // Revalidate at apply time because earlier upgrades in this simulation pass
                 // may have changed neighbouring road cells or opened a road loop after
                 // candidates were collected.
-                if (cur == (byte)SettlementStage.Path &&
+                // Stone is a road cell too: a Stone junction or bridge must not become a Hut either.
+                if ((cur == (byte)SettlementStage.Path || cur == (byte)SettlementStage.Stone) &&
                     IsProtectedRoadCell(save, c.chunkX, c.chunkZ, c.cellIndex))
                 {
                     return false;

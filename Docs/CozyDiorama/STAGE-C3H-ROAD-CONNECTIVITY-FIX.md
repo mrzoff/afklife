@@ -17,25 +17,33 @@ The 84-day stress run showed that the existing Path/Stone network remained intac
 
 The rule is deliberately incremental: a new road can extend one cell at a time, but each new cell must attach to the already-connected network. It does not alter growth budgets, Save v8, the renderer, ResidentPathGraph, or the renderer feature flag.
 
-## Regression tests added
+## Stone → Hut protection (found by the corrected tests)
+
+The corrected tests assert the final topology after `Apply`. They exposed a gap in the C-3G protection: a `Stone` cell with a `Path`/`Hut` neighbour could become a `Hut` without the junction/articulation check that already guarded `Path` cells. A `Stone` bridge between two `Path` cells was turned into a `Hut` for all 8 RNG seeds and split the road into two components.
+
+Fix: the junction/cut-vertex protection now applies to `Stone` as well as `Path`, both in candidate collection and in the revalidation inside `TryApplyUpgrade`. A leaf `Stone` (not a junction, not a cut vertex) may still become a `Hut`, as a leaf `Path` can.
+
+## Regression tests
 
 Unity menu:
 
 `AFK Island → Cozy Diorama → Stage C-3H → Run Road Connectivity Tests`
 
-The in-memory Save v8 fixtures cover:
+All assertions are made on the final topology after `SettlementSimulation.Apply` (the four-neighbour road graph across chunks), not on the pre-`Apply` neighbourhood. In-memory Save v8 fixtures:
 
-1. An isolated Clearing cannot become Path.
-2. Diagonal-only adjacency does not permit Path.
-3. Cardinal Path adjacency permits Path.
-4. Cardinal Stone adjacency permits Path.
-5. A road neighbour across a chunk seam is detected.
+1. An isolated Clearing with no roads creates no road.
+2. An empty settlement creates no Path/Stone/Hut over several sessions.
+3. A diagonal-only seed: the final network is one connected component, and the target Path is cardinally attached.
+4. A cardinal Path seed permits growth into a single component.
+5. A real cardinal `Stone` seed permits growth into a single component.
+6. `Apply` grows a Path across a chunk seam from a `Stone` seed; the final network is one component.
+7. A `Stone` bridge between two `Path` cells is never turned into a `Hut` (8 RNG seeds).
 
 The tests use synthetic in-memory data and do not read or write the user's real save.
 
 ## Validation status
 
-The source changes and regression fixtures are committed on the isolated branch. Unity compilation, the new menu tests, the 12 × 7-day stress run, and MainIsland Play Mode verification still need to be run in Unity 6000.6.5f1. Do not enable the continuous renderer globally or proceed to Android until those checks pass.
+Unity 6000.6.5f1 batch run: compiles, 7 / 7 road connectivity tests pass, 15 / 15 C-3G junction and bridge tests pass. Test 7 failed before the `Stone → Hut` protection fix (components = 2 in all 8 seeds) and passes after it.
 
 ## Protected scope
 

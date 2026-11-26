@@ -1,5 +1,6 @@
 #if UNITY_EDITOR
 using System.Collections.Generic;
+using System.IO;
 using AfkIsland.World;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -62,6 +63,91 @@ namespace AfkIsland.EditorTools
             {
                 Debug.LogError("[AFK Island] Stage B-2 build failed: " + ex);
                 throw;
+            }
+        }
+
+        private const string ReviewOutDir = "Builds/cozy-diorama/stage-b2-shots";
+        private const string ReviewDocsDir = "Docs/CozyDiorama/StageB2-Shots";
+
+        /// <summary>
+        /// Renders StageB2_Camera at the three review ortho sizes (close 7.5, medium 12.8, overview 17)
+        /// into Builds/cozy-diorama/stage-b2-shots and copies the PNGs into Docs/CozyDiorama/StageB2-Shots.
+        /// Opens the saved scene read-only: the scene is never saved and the camera size is restored.
+        /// </summary>
+        [MenuItem("AFK Island/Cozy Diorama/Stage B-2/Render Review Shots")]
+        public static void RenderReviewShotsMenu()
+        {
+            if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
+                return;
+            if (!File.Exists(ScenePath))
+            {
+                Debug.LogError("[AFK Island] Stage B-2 scene not found, run Build Composition Review Scene first: " + ScenePath);
+                return;
+            }
+
+            EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
+            var camGo = GameObject.Find("StageB2_Camera");
+            if (camGo == null)
+            {
+                Debug.LogError("[AFK Island] StageB2_Camera not found in " + ScenePath);
+                return;
+            }
+
+            var cam = camGo.GetComponent<Camera>();
+            var originalSize = cam.orthographicSize;
+            var originalTarget = cam.targetTexture;
+            var dir = Path.Combine(Application.dataPath, "..", ReviewOutDir);
+            Directory.CreateDirectory(dir);
+
+            try
+            {
+                // Warm-up: first batchmode/editor frames can render with unfinished shader variants.
+                var warmup = Path.Combine(dir, "_warmup.png");
+                for (var w = 0; w < 3; w++)
+                    ReviewShot(cam, warmup, 12.8f);
+                File.Delete(warmup);
+
+                ReviewShot(cam, Path.Combine(dir, "close_7_5.png"), 7.5f);
+                ReviewShot(cam, Path.Combine(dir, "medium_12_8.png"), 12.8f);
+                ReviewShot(cam, Path.Combine(dir, "overview_17.png"), 17f);
+            }
+            finally
+            {
+                cam.orthographicSize = originalSize;
+                cam.targetTexture = originalTarget;
+            }
+
+            var docs = Path.Combine(Application.dataPath, "..", ReviewDocsDir);
+            Directory.CreateDirectory(docs);
+            foreach (var name in new[] { "close_7_5.png", "medium_12_8.png", "overview_17.png" })
+                File.Copy(Path.Combine(dir, name), Path.Combine(docs, name), true);
+
+            Debug.Log("[AFK Island] Stage B-2 review shots written to " + dir + " and " + docs);
+        }
+
+        private static void ReviewShot(Camera cam, string file, float orthoSize)
+        {
+            const int w = 1920;
+            const int h = 1080;
+            cam.orthographicSize = orthoSize;
+            var rt = new RenderTexture(w, h, 24, RenderTextureFormat.ARGB32) { antiAliasing = 4 };
+            var tex = new Texture2D(w, h, TextureFormat.RGB24, false);
+            var previous = RenderTexture.active;
+            try
+            {
+                cam.targetTexture = rt;
+                cam.Render();
+                RenderTexture.active = rt;
+                tex.ReadPixels(new Rect(0, 0, w, h), 0, 0);
+                tex.Apply();
+                File.WriteAllBytes(file, tex.EncodeToPNG());
+            }
+            finally
+            {
+                cam.targetTexture = null;
+                RenderTexture.active = previous;
+                Object.DestroyImmediate(rt);
+                Object.DestroyImmediate(tex);
             }
         }
 

@@ -1,0 +1,24 @@
+﻿Stage C-3C — Terrain-Aware Two-Chunk Path Network Report
+Scene: Assets/_Project/Scenes/Prototypes/CozyDioramaStageC3C.unity
+B-2 scene hash before=7410EE060BA4E329 after=7410EE060BA4E329 unchanged=True
+C-2 scene hash before=061A92B92AF2F217 after=061A92B92AF2F217 unchanged=True
+Deterministic rebuild: plan hash 183F3BD2973ED15F identical=True; mesh hash A1DF2D67EB6BABED identical=True
+
+Topology: nodes=24, edges=23, junctions=7, components=1, starterIssues=0
+Chunks generated: 2 (Total Core: 989 verts / 884 tris; Fringe: 992 verts / 887 tris; JunctionPatches: 7)
+  Chunk (0,0): core=567v/504t fringe=570v/507t junctionPatches=3
+  Chunk (1,0): core=422v/380t fringe=422v/380t junctionPatches=4
+
+Terrain & Geometry Verification:
+  Core ground clearance (vertexY - SampleVisualHeight): min=0.0360 m, max=0.0431 m
+  Max path terrain slope: 11.90 deg (violations > 28 deg: 0)
+  Upward winding check: minUpwardNormalDot=0.9616, downwardTriangles=0
+  Chunk-border continuity: sharedPairs=2, maxPosDelta=0.00000 m, maxHeightDelta=0.00000 m
+
+Hut Branches:
+  Hut_Grown_BorderN: status=Connected origYaw=150.0 effYaw=150.0 len=2.73m dot=1.00 clear=0.20m join=MaskRoad_8_8_to_18_8 (bezier-tight) violations=[]
+  Hut_Grown_East_Reversed: status=ConnectedWithVisualDoorCorrection origYaw=90.0 effYaw=-90.0 len=0.54m dot=1.00 clear=0.38m join=MaskRoad_19_6_to_21_8 (bezier-soft) violations=[]
+  Hut_Grown_North: status=Connected origYaw=180.0 effYaw=180.0 len=0.57m dot=1.00 clear=0.37m join=MaskRoad_18_8_to_18_11 (bezier-soft) violations=[]
+  Hut_Grown_PondSW: status=Connected origYaw=0.0 effYaw=0.0 len=0.57m dot=1.00 clear=0.37m join=MaskRoad_8_4_to_6_7 (bezier-soft) violations=[]
+  Starter_Hut_A: status=Connected origYaw=12.0 effYaw=12.0 len=1.87m dot=0.99 clear=0.28m join=Starter_Main_b_b (bezier-tight) violations=[]
+  Starter_Hut_B: status=Connected origYaw=-25.0 effYaw=-25.0 len=0.32m dot=1.00 clear=0.15m join=MaskRoad_8_8_to_18_8_a (bezier-tight) violations=[]

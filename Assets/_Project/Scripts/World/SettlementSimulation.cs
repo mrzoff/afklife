@@ -578,8 +578,13 @@ namespace AfkIsland.World
                                       i < land.Length &&
                                       land[i] >= (byte)CellStage.Vegetation;
 
-                    // Keep most Path cells as roads; huts only at network nodes / grown inland.
-                    if (alongRoad && (grownInland ||
+                    // Preserve cardinal road junctions: the visual road planner connects
+                    // Path/Stone cells with four cardinal edges, not diagonal neighbours.
+                    // Ordinary straight/bend cells remain eligible under the existing rules.
+                    var isRoadJunction = IsRoadJunctionCell(save, growth.chunkX, growth.chunkZ, i);
+
+                    // Keep most Path cells as roads; huts only at non-junction grown road cells.
+                    if (!isRoadJunction && alongRoad && (grownInland ||
                                       HasNeighborAtLeast(save, growth.chunkX, growth.chunkZ, i,
                                           SettlementStage.Hut)))
                     {
@@ -709,6 +714,14 @@ namespace AfkIsland.World
 
             if (c.toStage == (byte)SettlementStage.Hut)
             {
+                // Revalidate at apply time because earlier upgrades in this simulation pass
+                // may have changed neighbouring road cells after candidates were collected.
+                if (cur == (byte)SettlementStage.Path &&
+                    IsRoadJunctionCell(save, c.chunkX, c.chunkZ, c.cellIndex))
+                {
+                    return false;
+                }
+
                 var hutCenter = GrowthWorldPlacement.CellCenterWorld(c.chunkX, c.chunkZ, c.cellIndex);
                 if (SettlementCellQuery.IsHutFootprintBlocked(
                         save, hutCenter.x, hutCenter.z, SettlementCellQuery.DefaultHutCenterSpacing))
@@ -847,6 +860,47 @@ namespace AfkIsland.World
 
             return false;
         }
+
+        /// <summary>
+        /// Counts cardinal neighbours that participate in the continuous road graph.
+        /// Matches SettlementPathTopology.BuildMaskRoadGraph: Path and Stone cells are
+        /// road cells; Hut cells connect by a separate door branch and are not mask edges.
+        /// World-coordinate sampling keeps the result identical across chunk boundaries.
+        /// </summary>
+        public static int CountCardinalRoadNeighbors(
+            GameSaveData save,
+            int chunkX,
+            int chunkZ,
+            int cellIndex)
+        {
+            if (cellIndex < 0 || cellIndex >= ChunkMaskCodec.CellCount)
+            {
+                return 0;
+            }
+
+            ChunkMaskCodec.IndexToLocal(cellIndex, out var localX, out var localZ);
+            var worldX = chunkX * ChunkMaskCodec.GridSize + localX;
+            var worldZ = chunkZ * ChunkMaskCodec.GridSize + localZ;
+            var count = 0;
+
+            if (IsRoadStage(SampleSettlementStage(save, worldX - 1, worldZ))) count++;
+            if (IsRoadStage(SampleSettlementStage(save, worldX + 1, worldZ))) count++;
+            if (IsRoadStage(SampleSettlementStage(save, worldX, worldZ - 1))) count++;
+            if (IsRoadStage(SampleSettlementStage(save, worldX, worldZ + 1))) count++;
+            return count;
+        }
+
+        /// <summary>True for a branch or crossing cell in the cardinal road graph.</summary>
+        public static bool IsRoadJunctionCell(
+            GameSaveData save,
+            int chunkX,
+            int chunkZ,
+            int cellIndex) =>
+            CountCardinalRoadNeighbors(save, chunkX, chunkZ, cellIndex) >= 3;
+
+        private static bool IsRoadStage(byte stage) =>
+            stage == (byte)SettlementStage.Path ||
+            stage == (byte)SettlementStage.Stone;
 
         private static int CenterBias(int cellIndex)
         {

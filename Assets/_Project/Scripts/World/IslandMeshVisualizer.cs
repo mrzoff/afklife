@@ -28,8 +28,7 @@ namespace AfkIsland.World
         private string _lastSignature;
         private string _lastPlantSignature;
         private GameSaveData _cachedData;
-        private readonly Dictionary<long, byte[]> _stageSamples = new();
-        private readonly Dictionary<long, byte[]> _biomeSamples = new();
+        private readonly WorldTerrainSampleCache _terrainSamples = new WorldTerrainSampleCache();
         private readonly List<Vector2> _hutCenters = new();
 
         private sealed class ChunkView
@@ -202,8 +201,7 @@ namespace AfkIsland.World
 
         private void RebuildSampleCaches(GameSaveData data)
         {
-            _stageSamples.Clear();
-            _biomeSamples.Clear();
+            _terrainSamples.Rebuild(data);
             _hutCenters.Clear();
             if (data?.worldGrowth?.chunks == null)
             {
@@ -232,8 +230,7 @@ namespace AfkIsland.World
                     stages = Array.Empty<byte>();
                 }
 
-                _stageSamples[key] = stages;
-                _biomeSamples[key] = BiomeMaskCodec.DecodeOrEmpty(growth.biomeMaskBase64);
+                // Stage and biome samples are owned by the shared WorldTerrainSampleCache.
 
                 if (ChunkMaskCodec.TryDecodeBase64(growth.settlementMaskBase64, out var settlement, out _))
                 {
@@ -251,34 +248,12 @@ namespace AfkIsland.World
 
         private byte SampleWorldStage(int worldCellX, int worldCellZ)
         {
-            var grid = ChunkMaskCodec.GridSize;
-            var chunkX = FloorDiv(worldCellX, grid);
-            var chunkZ = FloorDiv(worldCellZ, grid);
-            var lx = worldCellX - chunkX * grid;
-            var lz = worldCellZ - chunkZ * grid;
-            if (!_stageSamples.TryGetValue(Pack(chunkX, chunkZ), out var stages))
-            {
-                return (byte)CellStage.Void;
-            }
-
-            var index = ChunkMaskCodec.CellIndex(lx, lz);
-            return index >= 0 && index < stages.Length ? stages[index] : (byte)CellStage.Void;
+            return _terrainSamples.SampleStage(worldCellX, worldCellZ);
         }
 
         private BiomeType SampleWorldBiome(int worldCellX, int worldCellZ)
         {
-            var grid = ChunkMaskCodec.GridSize;
-            var chunkX = FloorDiv(worldCellX, grid);
-            var chunkZ = FloorDiv(worldCellZ, grid);
-            var lx = worldCellX - chunkX * grid;
-            var lz = worldCellZ - chunkZ * grid;
-            if (!_biomeSamples.TryGetValue(Pack(chunkX, chunkZ), out var biomes))
-            {
-                return BiomeType.None;
-            }
-
-            var index = ChunkMaskCodec.CellIndex(lx, lz);
-            return index >= 0 && index < biomes.Length ? (BiomeType)biomes[index] : BiomeType.None;
+            return _terrainSamples.SampleBiome(worldCellX, worldCellZ);
         }
 
         private static int FloorDiv(int a, int b)

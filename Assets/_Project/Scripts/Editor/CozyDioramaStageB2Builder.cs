@@ -180,10 +180,13 @@ namespace AfkIsland.EditorTools
             settlement.transform.SetParent(root.transform, false);
             PlaceHut(settlement.transform, "Hut_A", new Vector3(-1.65f, 0f, -0.15f), -145f);
             PlaceHut(settlement.transform, "Hut_B", new Vector3(1.35f, 0f, 0.65f), -115f);
-            PlacePath(settlement.transform, new Vector3(-0.7f, 0f, -1.0f), -35f);
-            PlacePath(settlement.transform, new Vector3(0.15f, 0f, -1.55f), -20f);
-            PlacePath(settlement.transform, new Vector3(1.0f, 0f, -1.85f), 5f);
-            PlacePath(settlement.transform, new Vector3(1.8f, 0f, -1.55f), 35f);
+            BuildPathRibbon(settlement.transform, new[]
+            {
+                new Vector3(-0.7f, 0.025f, -1.0f),
+                new Vector3(0.15f, 0.025f, -1.55f),
+                new Vector3(1.0f, 0.025f, -1.85f),
+                new Vector3(1.8f, 0.025f, -1.55f)
+            });
             PlaceDecor(settlement.transform, Decor + "Rock_A.prefab", new Vector3(-2.8f, 0f, -1.0f), 0.32f, 25f);
             PlaceDecor(settlement.transform, Decor + "Rock_B.prefab", new Vector3(2.7f, 0f, -0.9f), 0.30f, 70f);
 
@@ -298,15 +301,72 @@ namespace AfkIsland.EditorTools
             instance.transform.position = position - Vector3.up * bounds.min.y;
         }
 
-        private static void PlacePath(Transform parent, Vector3 position, float yaw)
+        // Stage C visual refinement: one continuous earthen ribbon replaces four raised square pads.
+        // This is prototype-only; production settlement masks and Path_Tile prefab remain untouched.
+        private static void BuildPathRibbon(Transform parent, Vector3[] points)
         {
-            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(Settlement + "Path_Tile.prefab");
-            if (prefab == null) return;
-            var instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
-            instance.name = "Path_Tile";
-            instance.transform.SetParent(parent, true);
-            instance.transform.position = position;
-            instance.transform.rotation = Quaternion.Euler(0f, yaw, 0f);
+            if (points == null || points.Length < 2) return;
+
+            const float halfWidth = 0.34f;
+            const float y = 0.025f;
+            const int subdivisionsPerSegment = 5;
+            var samples = new List<Vector3>();
+            for (var i = 0; i < points.Length - 1; i++)
+            {
+                var a = points[i];
+                var b = points[i + 1];
+                for (var step = 0; step < subdivisionsPerSegment; step++)
+                    samples.Add(Vector3.Lerp(a, b, step / (float)subdivisionsPerSegment));
+            }
+            samples.Add(points[points.Length - 1]);
+
+            var vertices = new Vector3[samples.Count * 2];
+            var uvs = new Vector2[vertices.Length];
+            var triangles = new int[(samples.Count - 1) * 6];
+            for (var i = 0; i < samples.Count; i++)
+            {
+                var previous = samples[Mathf.Max(0, i - 1)];
+                var next = samples[Mathf.Min(samples.Count - 1, i + 1)];
+                var tangent = (next - previous).normalized;
+                var side = Vector3.Cross(Vector3.up, tangent).normalized;
+                if (side.sqrMagnitude < 0.001f) side = Vector3.right;
+                var center = new Vector3(samples[i].x, y, samples[i].z);
+                vertices[i * 2] = center - side * halfWidth;
+                vertices[i * 2 + 1] = center + side * halfWidth;
+                uvs[i * 2] = new Vector2(0f, i / (float)(samples.Count - 1));
+                uvs[i * 2 + 1] = new Vector2(1f, i / (float)(samples.Count - 1));
+                if (i == samples.Count - 1) continue;
+                var t = i * 6;
+                var a = i * 2;
+                var b = a + 2;
+                triangles[t] = a;
+                triangles[t + 1] = a + 1;
+                triangles[t + 2] = b;
+                triangles[t + 3] = b;
+                triangles[t + 4] = a + 1;
+                triangles[t + 5] = b + 1;
+            }
+
+            var mesh = new Mesh { name = "CozyDiorama_PathRibbon_Mesh" };
+            mesh.vertices = vertices;
+            mesh.uv = uvs;
+            mesh.triangles = triangles;
+            mesh.RecalculateNormals();
+            mesh.RecalculateBounds();
+
+            var go = new GameObject("Path_Ribbon");
+            go.transform.SetParent(parent, false);
+            go.AddComponent<MeshFilter>().sharedMesh = mesh;
+            var renderer = go.AddComponent<MeshRenderer>();
+            var pathPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(Settlement + "Path_Tile.prefab");
+            var sourceRenderer = pathPrefab != null ? pathPrefab.GetComponentInChildren<MeshRenderer>() : null;
+            if (sourceRenderer != null)
+                renderer.sharedMaterial = sourceRenderer.sharedMaterial;
+            else
+                renderer.sharedMaterial = CozyDioramaPrototypeSceneBuilder.TempMaterial(
+                    "Cozy_PathEarth", CozyDioramaPrototypeSceneBuilder.Hex("#806B4C"));
+            renderer.shadowCastingMode = ShadowCastingMode.Off;
+            renderer.receiveShadows = true;
         }
 
         private static void PlaceDecor(Transform parent, string path, Vector3 position, float scale, float yaw)

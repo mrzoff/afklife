@@ -1,4 +1,4 @@
-#if UNITY_EDITOR
+﻿#if UNITY_EDITOR
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -171,7 +171,7 @@ namespace AfkIsland.EditorTools
             return missing == 0;
         }
 
-        private static void ConfigureEnvironment()
+        internal static void ConfigureEnvironment()
         {
             // Soft tri-light ambient, no fog, no skybox. Matches the production daytime intent
             // (sun 45/-35, warm white) but with a gentler ambient so shadows stay readable, not black.
@@ -184,7 +184,7 @@ namespace AfkIsland.EditorTools
             RenderSettings.fog = false;
         }
 
-        private static void CreateSun()
+        internal static void CreateSun()
         {
             var sunGo = new GameObject("Sun");
             var sun = sunGo.AddComponent<Light>();
@@ -215,7 +215,7 @@ namespace AfkIsland.EditorTools
             ctrl.ResetToIslandCenter();
         }
 
-        private static void CreateWaterPlaceholder(Transform parent)
+        internal static void CreateWaterPlaceholder(Transform parent)
         {
             var plane = GameObject.CreatePrimitive(PrimitiveType.Plane);
             plane.name = "Water_Placeholder";
@@ -435,7 +435,7 @@ namespace AfkIsland.EditorTools
         /// Prototype materials are real assets under Art/CozyDiorama/Materials, so the scene
         /// keeps its references after reload. Existing assets are updated, not duplicated.
         /// </summary>
-        private static Material TempMaterial(string name, Color color)
+        internal static Material TempMaterial(string name, Color color)
         {
             var path = MaterialsFolder + "/" + name + ".mat";
             var mat = AssetDatabase.LoadAssetAtPath<Material>(path);
@@ -464,12 +464,12 @@ namespace AfkIsland.EditorTools
             return mat;
         }
 
-        private static Color Hex(string html)
+        internal static Color Hex(string html)
         {
             return ColorUtility.TryParseHtmlString(html, out var c) ? c : Color.magenta;
         }
 
-        private static void EnsureFolder(string parent, string child)
+        internal static void EnsureFolder(string parent, string child)
         {
             var path = parent + "/" + child;
             if (!AssetDatabase.IsValidFolder(path))

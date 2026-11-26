@@ -227,7 +227,7 @@ namespace AfkIsland.World
             return false;
         }
 
-        private static bool IsNearAuthoredStarterHut(float worldX, float worldZ, float clearance)
+        public static bool IsNearAuthoredStarterHut(float worldX, float worldZ, float clearance)
         {
             var clearanceSq = clearance * clearance;
             var dxA = worldX + 1.6f;

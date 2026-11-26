@@ -578,13 +578,14 @@ namespace AfkIsland.World
                                       i < land.Length &&
                                       land[i] >= (byte)CellStage.Vegetation;
 
-                    // Preserve cardinal road junctions: the visual road planner connects
-                    // Path/Stone cells with four cardinal edges, not diagonal neighbours.
-                    // Ordinary straight/bend cells remain eligible under the existing rules.
-                    var isRoadJunction = IsRoadJunctionCell(save, growth.chunkX, growth.chunkZ, i);
+                    // Preserve cardinal road junctions and bridge/articulation cells:
+                    // the visual road planner connects Path/Stone cells with four cardinal
+                    // edges, not diagonal neighbours. Removing a junction (degree >= 3)
+                    // or cut-vertex splits the road network into disconnected components.
+                    var isProtectedRoad = IsProtectedRoadCell(save, growth.chunkX, growth.chunkZ, i);
 
-                    // Keep most Path cells as roads; huts only at non-junction grown road cells.
-                    if (!isRoadJunction && alongRoad && (grownInland ||
+                    // Keep junctions and bridges as roads; huts only at non-critical grown road cells.
+                    if (!isProtectedRoad && alongRoad && (grownInland ||
                                       HasNeighborAtLeast(save, growth.chunkX, growth.chunkZ, i,
                                           SettlementStage.Hut)))
                     {
@@ -715,9 +716,10 @@ namespace AfkIsland.World
             if (c.toStage == (byte)SettlementStage.Hut)
             {
                 // Revalidate at apply time because earlier upgrades in this simulation pass
-                // may have changed neighbouring road cells after candidates were collected.
+                // may have changed neighbouring road cells or opened a road loop after
+                // candidates were collected.
                 if (cur == (byte)SettlementStage.Path &&
-                    IsRoadJunctionCell(save, c.chunkX, c.chunkZ, c.cellIndex))
+                    IsProtectedRoadCell(save, c.chunkX, c.chunkZ, c.cellIndex))
                 {
                     return false;
                 }
@@ -897,6 +899,161 @@ namespace AfkIsland.World
             int chunkZ,
             int cellIndex) =>
             CountCardinalRoadNeighbors(save, chunkX, chunkZ, cellIndex) >= 3;
+
+        /// <summary>
+        /// True when removing this cell from the cardinal road graph (Path/Stone cells across
+        /// all chunks) leaves at least two of its cardinal road neighbours unreachable from
+        /// each other (i.e. the cell is an articulation vertex / bridge).
+        /// Isolated cells and dead-end spurs (degree &lt;= 1) never disconnect the graph.
+        /// </summary>
+        public static bool WouldDisconnectRoadNetwork(
+            GameSaveData save,
+            int chunkX,
+            int chunkZ,
+            int cellIndex)
+        {
+            if (save?.worldGrowth?.chunks == null ||
+                cellIndex < 0 ||
+                cellIndex >= ChunkMaskCodec.CellCount)
+            {
+                return false;
+            }
+
+            // Fast O(1) short-circuit: dead-end (deg 1) or isolated (deg 0) cannot split a component.
+            if (CountCardinalRoadNeighbors(save, chunkX, chunkZ, cellIndex) < 2)
+            {
+                return false;
+            }
+
+            ChunkMaskCodec.IndexToLocal(cellIndex, out var localX, out var localZ);
+            var targetX = chunkX * ChunkMaskCodec.GridSize + localX;
+            var targetZ = chunkZ * ChunkMaskCodec.GridSize + localZ;
+            var targetKey = PackWorldCell(targetX, targetZ);
+
+            var roadCells = new HashSet<long>();
+            var grid = ChunkMaskCodec.GridSize;
+            foreach (var growth in save.worldGrowth.chunks)
+            {
+                if (growth == null ||
+                    !ChunkMaskCodec.TryDecodeBase64(growth.settlementMaskBase64, out var settle, out _))
+                {
+                    continue;
+                }
+
+                byte[] land = null;
+                if (!growth.isLegacyBase && !string.IsNullOrEmpty(growth.stageMaskBase64))
+                {
+                    ChunkMaskCodec.TryDecodeBase64(growth.stageMaskBase64, out land, out _);
+                }
+
+                var baseX = growth.chunkX * grid;
+                var baseZ = growth.chunkZ * grid;
+                for (var i = 0; i < settle.Length; i++)
+                {
+                    if (!IsRoadStage(settle[i]))
+                    {
+                        continue;
+                    }
+
+                    if (land != null && i < land.Length && land[i] < (byte)CellStage.Moss)
+                    {
+                        continue;
+                    }
+
+                    if (growth.isLegacyBase)
+                    {
+                        if (WaterSourceLayout.BlocksSettlementCell(growth.chunkX, growth.chunkZ, i))
+                        {
+                            continue;
+                        }
+
+                        var center = GrowthWorldPlacement.CellCenterWorld(growth.chunkX, growth.chunkZ, i);
+                        if (SettlementCellQuery.IsNearAuthoredStarterHut(center.x, center.z, 0.85f))
+                        {
+                            continue;
+                        }
+                    }
+
+                    ChunkMaskCodec.IndexToLocal(i, out var lx, out var lz);
+                    var key = PackWorldCell(baseX + lx, baseZ + lz);
+                    if (key != targetKey)
+                    {
+                        roadCells.Add(key);
+                    }
+                }
+            }
+
+            var neighbors = new List<Vector2Int>(4);
+            var cand0 = new Vector2Int(targetX - 1, targetZ);
+            var cand1 = new Vector2Int(targetX + 1, targetZ);
+            var cand2 = new Vector2Int(targetX, targetZ - 1);
+            var cand3 = new Vector2Int(targetX, targetZ + 1);
+            if (roadCells.Contains(PackWorldCell(cand0.x, cand0.y))) neighbors.Add(cand0);
+            if (roadCells.Contains(PackWorldCell(cand1.x, cand1.y))) neighbors.Add(cand1);
+            if (roadCells.Contains(PackWorldCell(cand2.x, cand2.y))) neighbors.Add(cand2);
+            if (roadCells.Contains(PackWorldCell(cand3.x, cand3.y))) neighbors.Add(cand3);
+
+            if (neighbors.Count < 2)
+            {
+                return false;
+            }
+
+            var requiredTargets = new HashSet<long>();
+            for (var i = 1; i < neighbors.Count; i++)
+            {
+                requiredTargets.Add(PackWorldCell(neighbors[i].x, neighbors[i].y));
+            }
+
+            var visited = new HashSet<long>();
+            var queue = new Queue<Vector2Int>();
+            var start = neighbors[0];
+            visited.Add(PackWorldCell(start.x, start.y));
+            queue.Enqueue(start);
+
+            while (queue.Count > 0 && requiredTargets.Count > 0)
+            {
+                var cur = queue.Dequeue();
+                TryEnqueueRoadNeighbor(cur.x - 1, cur.y, roadCells, visited, requiredTargets, queue);
+                TryEnqueueRoadNeighbor(cur.x + 1, cur.y, roadCells, visited, requiredTargets, queue);
+                TryEnqueueRoadNeighbor(cur.x, cur.y - 1, roadCells, visited, requiredTargets, queue);
+                TryEnqueueRoadNeighbor(cur.x, cur.y + 1, roadCells, visited, requiredTargets, queue);
+            }
+
+            return requiredTargets.Count > 0;
+        }
+
+        /// <summary>
+        /// True when a Path cell must remain road and cannot be promoted to Hut:
+        /// either it is a junction (degree >= 3) or removing it would split the road network.
+        /// </summary>
+        public static bool IsProtectedRoadCell(
+            GameSaveData save,
+            int chunkX,
+            int chunkZ,
+            int cellIndex) =>
+            IsRoadJunctionCell(save, chunkX, chunkZ, cellIndex) ||
+            WouldDisconnectRoadNetwork(save, chunkX, chunkZ, cellIndex);
+
+        private static void TryEnqueueRoadNeighbor(
+            int wx,
+            int wz,
+            HashSet<long> roadCells,
+            HashSet<long> visited,
+            HashSet<long> requiredTargets,
+            Queue<Vector2Int> queue)
+        {
+            var key = PackWorldCell(wx, wz);
+            if (!roadCells.Contains(key) || !visited.Add(key))
+            {
+                return;
+            }
+
+            requiredTargets.Remove(key);
+            queue.Enqueue(new Vector2Int(wx, wz));
+        }
+
+        private static long PackWorldCell(int worldX, int worldZ) =>
+            ((long)worldX << 32) ^ (uint)worldZ;
 
         private static bool IsRoadStage(byte stage) =>
             stage == (byte)SettlementStage.Path ||

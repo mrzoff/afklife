@@ -1,7 +1,7 @@
 # Stage C-3G — Settlement junction preservation audit
 
 **Base:** `948cd4448c8cae105599178514ff739b41a8b796` (C-3F Unity 6 verification)
-**Status:** source audit and proposed acceptance contract only. No simulation, save schema, growth pacing, or production visual code changed.
+**Status:** source audit completed; implementation is now in `SettlementSimulation.cs` with a separate Editor regression suite. See `STAGE-C3G-JUNCTION-PRESERVATION-IMPLEMENTATION.md`. Unity runtime verification remains pending.
 **Branch:** `audit/cozy-diorama-stage-c3g-junction-growth`
 
 ## 1. Observed behavior
@@ -22,7 +22,7 @@ The `grownInland` condition does not distinguish an ordinary road segment from a
 
 The same candidate rule is evaluated using an 8-neighbourhood in `HasNeighborAtLeast`, whereas the continuous path planner reasons about its own explicit topology. This difference needs to be handled deliberately rather than assuming every adjacent mask cell is a graph edge.
 
-## 3. Proposed C-3G policy (not implemented)
+## 3. Implemented C-3G policy
 
 Preserve road connectivity when upgrading a Path cell to a Hut:
 

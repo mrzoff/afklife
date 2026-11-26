@@ -81,12 +81,12 @@ namespace AfkIsland.Editor
             report.AppendLine("Execution mode: Isolated empty editor scene + in-memory SaveClone copies (zero disk save writes)");
 
             // =========================================================================
-            // CHECK 1: All 8 C-3G mask-level junction preservation unit tests
+            // CHECK 1: All 15 C-3G junction + bridge/cut-vertex + end-to-end Apply tests
             // =========================================================================
             var unitOk = CozyDioramaStageC3GJunctionTests.RunAll(out var unitPassed, out var unitFailed);
-            var check1Ok = unitOk && unitPassed == 8 && unitFailed == 0;
+            var check1Ok = unitOk && unitPassed == 15 && unitFailed == 0;
             report.AppendLine();
-            report.AppendLine($"Check 1 — C-3G 8 Regression Unit Tests: ok={check1Ok} (passed={unitPassed}, failed={unitFailed})");
+            report.AppendLine($"Check 1 — C-3G 15 Junction, Bridge & End-to-End Regression Tests: ok={check1Ok} (passed={unitPassed}, failed={unitFailed})");
 
             // =========================================================================
             // CHECK 2: Deterministic +48h offline growth on TWO identical Save v8 copies
@@ -310,6 +310,10 @@ namespace AfkIsland.Editor
             report.AppendLine();
             report.AppendLine($"Check 4b — Post-Growth Single-Component Path Network Connectivity: ok={singleComponentOk}");
             report.AppendLine($"  connectedComponents: before48h={preConnectedComponents} -> after48h={plan?.ConnectedComponents} (expected 1)");
+            if (plan != null && !singleComponentOk)
+            {
+                AppendComponentDiagnostics(report, plan);
+            }
 
             // =========================================================================
             // CHECK 5: Protected scenes unchanged
@@ -739,6 +743,49 @@ namespace AfkIsland.Editor
                 RenderTexture.active = prevActive;
                 rt.Release();
                 UnityEngine.Object.DestroyImmediate(rt);
+            }
+        }
+
+        private static void AppendComponentDiagnostics(StringBuilder report, SettlementPathTopology.TopologyPlan plan)
+        {
+            var adj = new Dictionary<string, List<string>>(StringComparer.Ordinal);
+            var byId = new Dictionary<string, SettlementPathTopology.PathNode>(StringComparer.Ordinal);
+            for (var i = 0; i < plan.Nodes.Count; i++)
+            {
+                var n = plan.Nodes[i];
+                byId[n.Id] = n;
+                adj[n.Id] = new List<string>();
+            }
+            for (var i = 0; i < plan.Edges.Count; i++)
+            {
+                var e = plan.Edges[i];
+                if (adj.ContainsKey(e.FromNodeId) && adj.ContainsKey(e.ToNodeId))
+                {
+                    adj[e.FromNodeId].Add(e.ToNodeId);
+                    adj[e.ToNodeId].Add(e.FromNodeId);
+                }
+            }
+            var visited = new HashSet<string>(StringComparer.Ordinal);
+            var compIdx = 0;
+            for (var i = 0; i < plan.Nodes.Count; i++)
+            {
+                var start = plan.Nodes[i];
+                if (start.Degree == 0 || !visited.Add(start.Id)) continue;
+                compIdx++;
+                var comp = new List<string>();
+                var q = new Queue<string>();
+                q.Enqueue(start.Id);
+                while (q.Count > 0)
+                {
+                    var cur = q.Dequeue();
+                    var p = byId[cur].Position;
+                    comp.Add($"{cur}({p.x:0.0},{p.y:0.0})");
+                    foreach (var next in adj[cur])
+                    {
+                        if (visited.Add(next)) q.Enqueue(next);
+                    }
+                }
+                report.AppendLine($"    component[{compIdx}] ({comp.Count} nodes): " + string.Join(", ", comp));
             }
         }
 

@@ -92,12 +92,11 @@ namespace AfkIsland.EditorTools
         private static void AssertDegree(string name, GameSaveData save, int worldX, int worldZ,
             int expected, ref int passed, ref int failed)
         {
-            if (!SettlementCellQuery.TryWorldToCell(worldX, worldZ, out var chunkX, out var chunkZ, out var cell))
-            {
-                Debug.LogError($"[C-3G] FAIL {name}: world-to-cell failed");
-                failed++;
-                return;
-            }
+            var chunkX = FloorDiv(worldX, ChunkMaskCodec.GridSize);
+            var chunkZ = FloorDiv(worldZ, ChunkMaskCodec.GridSize);
+            var localX = worldX - chunkX * ChunkMaskCodec.GridSize;
+            var localZ = worldZ - chunkZ * ChunkMaskCodec.GridSize;
+            var cell = ChunkMaskCodec.CellIndex(localX, localZ);
 
             var actual = SettlementSimulation.CountCardinalRoadNeighbors(save, chunkX, chunkZ, cell);
             var expectedJunction = expected >= 3;

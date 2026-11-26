@@ -838,9 +838,8 @@ namespace AfkIsland.World
         private static bool IsBlockedByWaterForPath(float worldX, float worldZ)
         {
             var center = WaterSourceLayout.GetWorldCenter();
-            const float clearance = 0.35f;
-            var rx = WaterSourceLayout.WaterHalfExtentX + clearance;
-            var rz = WaterSourceLayout.WaterHalfExtentZ + clearance;
+            var rx = WaterSourceLayout.WaterHalfExtentX;
+            var rz = WaterSourceLayout.WaterHalfExtentZ;
             var dx = (worldX - center.x) / rx;
             var dz = (worldZ - center.z) / rz;
             return dx * dx + dz * dz <= 1f;

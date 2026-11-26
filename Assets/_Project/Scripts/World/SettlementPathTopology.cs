@@ -320,6 +320,45 @@ namespace AfkIsland.World
         }
 
         /// <summary>
+        /// Pond- and hearth-safe production starter paths for continuous ribbon rendering (Stage C-3E).
+        /// Keeps Starter_Main clear of Hearth (0.15, -1.50) and Starter_Cross clear of WaterSource
+        /// (1.80, -1.40, rx=1.10, rz=0.80) and Starter_Hut_B (1.80, -0.20).
+        /// </summary>
+        public static List<StarterPolylineInput> CreatePondSafeProductionStarterPaths(TopologyConfig cfg = null)
+        {
+            cfg ??= new TopologyConfig();
+            return new List<StarterPolylineInput>
+            {
+                new StarterPolylineInput
+                {
+                    Id = "Starter_Main",
+                    HalfWidth = cfg.StarterMainHalfWidth,
+                    SmoothCatmullRom = true,
+                    ControlPoints = new List<Vector2>
+                    {
+                        new Vector2(0.05f, -0.95f),
+                        new Vector2(0.00f, -0.50f),
+                        new Vector2(0.00f, 0.20f),
+                        new Vector2(0.00f, 1.30f),
+                        new Vector2(0.00f, 2.30f)
+                    }
+                },
+                new StarterPolylineInput
+                {
+                    Id = "Starter_Cross",
+                    HalfWidth = cfg.StarterCrossHalfWidth,
+                    SmoothCatmullRom = true,
+                    ControlPoints = new List<Vector2>
+                    {
+                        new Vector2(-0.30f, -0.55f),
+                        new Vector2(0.45f, -0.40f),
+                        new Vector2(1.05f, -0.28f)
+                    }
+                }
+            };
+        }
+
+        /// <summary>
         /// Production starter huts from IslandPrototypeBuilder.CreateStarterSettlement (scale 1.0).
         /// </summary>
         public static List<HutInput> CreateProductionStarterHuts()

@@ -23,7 +23,22 @@ namespace AfkIsland.World
 
         private readonly WorldTerrainSampleCache _terrainSamples = new WorldTerrainSampleCache();
         private SettlementPathNetworkRenderer _continuousPathRenderer;
+        private SettlementPathNetworkRenderer.RendererStats _lastClearedRendererStats;
+        private SettlementPathTopology.TopologyPlan _lastContinuousPathPlan;
         private Transform _continuousPathRoot;
+        private Transform _cachedWaterSource;
+        private readonly List<(GameObject go, bool originalActive)> _authoredPathObjects = new();
+
+        public bool UseContinuousPathNetworkRenderer
+        {
+            get => useContinuousPathNetworkRenderer;
+            set => useContinuousPathNetworkRenderer = value;
+        }
+
+        public SettlementPathNetworkRenderer ContinuousPathRenderer => _continuousPathRenderer;
+        public SettlementPathNetworkRenderer.RendererStats LastClearedRendererStats => _lastClearedRendererStats;
+        public SettlementPathTopology.TopologyPlan LastContinuousPathPlan => _lastContinuousPathPlan;
+        public Transform GrownSettlementRoot => _root;
 
         private Transform _root;
         private readonly Dictionary<long, ChunkView> _views = new();
@@ -78,15 +93,19 @@ namespace AfkIsland.World
 
             // CIF-A5: visualizer reads only — stone rebalance lives in WorldGrowthService commit path.
             var signature = BuildSignature(data);
-            if (signature == _lastSignature && _views.Count > 0)
+            if (signature == _lastSignature &&
+                (_views.Count > 0 || (useContinuousPathNetworkRenderer && _continuousPathRenderer != null)))
             {
                 return;
             }
 
             _lastSignature = signature;
             EnsureRoot();
-            if (useContinuousPathNetworkRenderer) WaterSourceLayout.ClearCenterCache();
-            _terrainSamples.Rebuild(data);
+            if (useContinuousPathNetworkRenderer)
+            {
+                WaterSourceLayout.ClearCenterCache();
+                _terrainSamples.Rebuild(data);
+            }
             EnsureMaterials();
             EnsureRockPrefabs();
             EnsureSettlementPrefabs();
@@ -115,7 +134,7 @@ namespace AfkIsland.World
 
                 var key = Pack(growth.chunkX, growth.chunkZ);
                 keep.Add(key);
-                var chunkSig = $"{growth.settlementMaskBase64}:{growth.stageMaskBase64}:{growth.isLegacyBase}";
+                var chunkSig = $"{growth.settlementMaskBase64}:{growth.stageMaskBase64}:{growth.isLegacyBase}:{(useContinuousPathNetworkRenderer ? 1 : 0)}";
                 var view = EnsureView(key, growth.chunkX, growth.chunkZ);
                 if (view.signature == chunkSig)
                 {
@@ -147,11 +166,13 @@ namespace AfkIsland.World
 
             if (useContinuousPathNetworkRenderer)
             {
+                SetAuthoredPathsSuppressed(true);
                 RebuildContinuousPathNetwork(data);
             }
             else
             {
                 ClearContinuousPathNetwork();
+                SetAuthoredPathsSuppressed(false);
             }
 
             SoftDimAuthored(homePaths, homeHuts);
@@ -397,6 +418,7 @@ namespace AfkIsland.World
 
             _authoredPathFades.Clear();
             _authoredHutFades.Clear();
+            _authoredPathObjects.Clear();
             _authoredSettlement = null;
 
             var island = GameObject.Find("World/Island") ?? GameObject.Find("Island");
@@ -418,7 +440,12 @@ namespace AfkIsland.World
             {
                 var child = settlement.GetChild(i);
                 var name = child.name;
-                if (name.StartsWith("Path_") || name.StartsWith("Hearth") || name.StartsWith("Stone_"))
+                if (name.StartsWith("Path_"))
+                {
+                    _authoredPathObjects.Add((child.gameObject, child.gameObject.activeSelf));
+                    CollectFades(child, _authoredPathFades);
+                }
+                else if (name.StartsWith("Hearth") || name.StartsWith("Stone_"))
                 {
                     CollectFades(child, _authoredPathFades);
                 }
@@ -429,6 +456,25 @@ namespace AfkIsland.World
             }
 
             _authoredCacheReady = true;
+        }
+
+        private void SetAuthoredPathsSuppressed(bool suppressed)
+        {
+            EnsureAuthoredCache();
+            for (var i = 0; i < _authoredPathObjects.Count; i++)
+            {
+                var entry = _authoredPathObjects[i];
+                if (entry.go == null)
+                {
+                    continue;
+                }
+
+                var desired = suppressed ? false : entry.originalActive;
+                if (entry.go.activeSelf != desired)
+                {
+                    entry.go.SetActive(desired);
+                }
+            }
         }
 
         private static void CollectFades(Transform root, List<AuthoredFade> list)
@@ -568,7 +614,7 @@ namespace AfkIsland.World
 
             if (view.root != null)
             {
-                Destroy(view.root);
+                SafeDestroy(view.root);
             }
 
             _views.Remove(key);
@@ -695,7 +741,7 @@ namespace AfkIsland.World
             var col = go.GetComponent<Collider>();
             if (col != null)
             {
-                Destroy(col);
+                SafeDestroy(col);
             }
         }
 
@@ -703,7 +749,7 @@ namespace AfkIsland.World
         {
             for (var i = t.childCount - 1; i >= 0; i--)
             {
-                Destroy(t.GetChild(i).gameObject);
+                SafeDestroy(t.GetChild(i).gameObject);
             }
         }
 
@@ -717,7 +763,7 @@ namespace AfkIsland.World
 
             if (_root != null)
             {
-                Destroy(_root.gameObject);
+                SafeDestroy(_root.gameObject);
                 _root = null;
             }
         }
@@ -739,10 +785,13 @@ namespace AfkIsland.World
         {
             if (data?.worldGrowth?.chunks == null)
             {
-                return "empty";
+                return useContinuousPathNetworkRenderer ? "empty:C3E" : "empty:Legacy";
             }
 
-            var parts = new List<string>(data.worldGrowth.chunks.Count);
+            var parts = new List<string>(data.worldGrowth.chunks.Count + 2)
+            {
+                useContinuousPathNetworkRenderer ? "Mode:C3E" : "Mode:Legacy"
+            };
             foreach (var growth in data.worldGrowth.chunks)
             {
                 if (growth == null)
@@ -751,18 +800,26 @@ namespace AfkIsland.World
                 }
 
                 parts.Add(useContinuousPathNetworkRenderer
-                    ? growth.chunkX + ":" + growth.chunkZ + ":" + growth.settlementMaskBase64 + ":" + growth.stageMaskBase64 + ":" + growth.biomeMaskBase64
+                    ? growth.chunkX + ":" + growth.chunkZ + ":" + growth.settlementMaskBase64 + ":" + growth.stageMaskBase64 + ":" + growth.biomeMaskBase64 + ":" + (growth.isLegacyBase ? 1 : 0)
                     : growth.chunkX + ":" + growth.chunkZ + ":" + growth.settlementMaskBase64);
             }
 
             if (useContinuousPathNetworkRenderer)
             {
-                var water = GameObject.Find("WaterSource");
-                if (water != null)
+                if (_cachedWaterSource == null)
                 {
-                    parts.Add("Water:" + water.transform.position.ToString("F3") + ":" +
-                              water.transform.eulerAngles.ToString("F2") + ":" +
-                              water.transform.lossyScale.ToString("F3"));
+                    var waterGo = GameObject.Find("WaterSource");
+                    if (waterGo != null)
+                    {
+                        _cachedWaterSource = waterGo.transform;
+                    }
+                }
+
+                if (_cachedWaterSource != null)
+                {
+                    parts.Add("Water:" + _cachedWaterSource.position.ToString("F3") + ":" +
+                              _cachedWaterSource.eulerAngles.ToString("F2") + ":" +
+                              _cachedWaterSource.lossyScale.ToString("F3"));
                 }
             }
 
@@ -781,19 +838,22 @@ namespace AfkIsland.World
             EnsureMaterials();
             EnsureContinuousPathRenderer();
 
+            var chunkSize = chunkManager.ChunkSizeMeters;
             var config = new SettlementPathTopology.TopologyConfig
             {
-                ChunkSizeMeters = chunkManager.ChunkSizeMeters,
+                ChunkSizeMeters = chunkSize,
                 GridSize = ChunkMaskCodec.GridSize
             };
             var input = new SettlementPathTopology.TopologyInput
             {
                 Config = config,
-                StarterPaths = SettlementPathTopology.CreateProductionStarterPaths(config),
+                StarterPaths = SettlementPathTopology.CreatePondSafeProductionStarterPaths(config),
                 Huts = SettlementPathTopology.CreateProductionStarterHuts(),
-                IsInsideLand = _terrainSamples.IsInsideLand,
+                IsInsideLand = (wx, wz) => _terrainSamples.IsInsideLand(wx, wz, chunkSize),
                 IsBlockedByWater = IsBlockedByWaterForPath
             };
+
+            var maskHutCoords = new Dictionary<string, (long chunkKey, int cellIndex)>();
 
             foreach (var growth in data.worldGrowth.chunks)
             {
@@ -801,13 +861,32 @@ namespace AfkIsland.World
                     !ChunkMaskCodec.TryDecodeBase64(growth.settlementMaskBase64, out var settle, out _))
                     continue;
 
+                byte[] land = null;
+                if (!growth.isLegacyBase)
+                {
+                    ChunkMaskCodec.TryDecodeBase64(growth.stageMaskBase64, out land, out _);
+                }
+
                 var seed = growth.growthSeed != 0
                     ? growth.growthSeed
                     : growth.chunkX * 73856093 ^ growth.chunkZ * 19349663;
+                var chunkKey = Pack(growth.chunkX, growth.chunkZ);
 
                 for (var i = 0; i < settle.Length; i++)
                 {
                     var stage = (SettlementStage)settle[i];
+                    if (stage == SettlementStage.None || stage == SettlementStage.Clearing)
+                        continue;
+
+                    if (WaterSourceLayout.BlocksSettlementCell(growth.chunkX, growth.chunkZ, i))
+                        continue;
+
+                    var landStage = growth.isLegacyBase
+                        ? (byte)CellStage.Moss
+                        : (land != null && i < land.Length ? land[i] : (byte)CellStage.Void);
+                    if (!growth.isLegacyBase && landStage < (byte)CellStage.Moss)
+                        continue;
+
                     if (stage == SettlementStage.Path || stage == SettlementStage.Stone)
                     {
                         ChunkMaskCodec.IndexToLocal(i, out var lx, out var lz);
@@ -826,9 +905,11 @@ namespace AfkIsland.World
                             continue;
 
                         var yaw = Hash01(seed, i, 7) * 360f;
+                        var hutId = "MaskHut_" + growth.chunkX + "_" + growth.chunkZ + "_" + i.ToString("D3");
+                        maskHutCoords[hutId] = (chunkKey, i);
                         input.Huts.Add(new SettlementPathTopology.HutInput
                         {
-                            Id = "MaskHut_" + growth.chunkX + "_" + growth.chunkZ + "_" + i.ToString("D3"),
+                            Id = hutId,
                             Center = new Vector2(center.x, center.z),
                             YawDegrees = yaw,
                             Scale = SettlementCellQuery.HutVisualUniformScale,
@@ -843,11 +924,37 @@ namespace AfkIsland.World
             }
 
             var plan = SettlementPathTopology.Build(input);
-            continuousPathMeshConfig.ChunkSizeMeters = chunkManager.ChunkSizeMeters;
+            _lastContinuousPathPlan = plan;
+
+            // Visual-only door yaw adjustment for grown huts that needed visual door correction.
+            // Never modifies GameSaveData or simulation state.
+            if (plan?.HutReports != null)
+            {
+                for (var r = 0; r < plan.HutReports.Count; r++)
+                {
+                    var report = plan.HutReports[r];
+                    if (report.Status != SettlementPathTopology.HutConnectionStatus.ConnectedWithVisualDoorCorrection)
+                        continue;
+
+                    if (!maskHutCoords.TryGetValue(report.HutId, out var info))
+                        continue;
+
+                    if (_views.TryGetValue(info.chunkKey, out var view) && view?.root != null)
+                    {
+                        var hutTransform = view.root.transform.Find($"Hut_{info.cellIndex}");
+                        if (hutTransform != null)
+                        {
+                            hutTransform.localRotation = Quaternion.Euler(0f, report.EffectiveYawDegrees, 0f);
+                        }
+                    }
+                }
+            }
+
+            continuousPathMeshConfig.ChunkSizeMeters = chunkSize;
             continuousPathMeshConfig.LocalChunkYBase = yBase;
             _continuousPathRenderer.ApplyPlan(
                 plan,
-                _terrainSamples.SampleHeight,
+                (wx, wz) => _terrainSamples.SampleHeight(wx, wz, chunkSize),
                 continuousPathMeshConfig,
                 forceFullRebuild: false,
                 terrainVersion: _terrainSamples.Revision);
@@ -893,15 +1000,19 @@ namespace AfkIsland.World
         private void ClearContinuousPathNetwork()
         {
             if (_continuousPathRenderer != null)
+            {
                 _continuousPathRenderer.Clear();
+                _lastClearedRendererStats = _continuousPathRenderer.GetStats();
+            }
 
             if (_continuousPathRoot != null)
             {
-                Destroy(_continuousPathRoot.gameObject);
+                SafeDestroy(_continuousPathRoot.gameObject);
                 _continuousPathRoot = null;
             }
 
             _continuousPathRenderer = null;
+            _lastContinuousPathPlan = null;
         }
 
         private static long Pack(int x, int z) => ((long)x << 32) ^ (uint)z;
@@ -921,6 +1032,7 @@ namespace AfkIsland.World
         {
             ClearAll();
             ClearContinuousPathNetwork();
+            SetAuthoredPathsSuppressed(false);
             DestroyMat(ref _pathMat);
             DestroyMat(ref _clearingMat);
             DestroyMat(ref _hutBodyMat);
@@ -933,8 +1045,25 @@ namespace AfkIsland.World
         {
             if (mat != null)
             {
-                Destroy(mat);
+                SafeDestroy(mat);
                 mat = null;
+            }
+        }
+
+        private static void SafeDestroy(Object obj)
+        {
+            if (obj == null)
+            {
+                return;
+            }
+
+            if (Application.isPlaying)
+            {
+                Destroy(obj);
+            }
+            else
+            {
+                DestroyImmediate(obj);
             }
         }
     }

@@ -26,6 +26,7 @@ namespace AfkIsland.EditorTools
         private const string DecorResources = "Assets/_Project/Resources/AfkIsland/Decor";
         private const string SettlementResources = "Assets/_Project/Resources/AfkIsland/Settlement";
         private const string AnimalPrefabs = "Assets/_Project/Art/Animals/Prefabs";
+        private const string MaterialsFolder = "Assets/_Project/Art/CozyDiorama/Materials";
         private static readonly string AuditPath =
             Path.Combine("Builds", "cozy-diorama", "stage-a-prefab-audit.txt");
 
@@ -103,6 +104,28 @@ namespace AfkIsland.EditorTools
         [MenuItem("AFK Island/Cozy Diorama/Audit Reference Prefabs (Stage A)")]
         public static void AuditMenu()
         {
+            WriteAudit();
+        }
+
+        /// <summary>Batchmode: -executeMethod ...CozyDioramaPrototypeSceneBuilder.BuildBatch. No dialogs.</summary>
+        public static void BuildBatch()
+        {
+            try
+            {
+                var ok = BuildInternal();
+                WriteAudit();
+                Debug.Log("[AFK Island] Cozy Diorama stage A batch done. missingPrefabs=" + (ok ? 0 : 1));
+                EditorApplication.Exit(ok ? 0 : 3);
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogError("[AFK Island] Cozy Diorama stage A batch failed: " + ex);
+                EditorApplication.Exit(1);
+            }
+        }
+
+        private static void WriteAudit()
+        {
             var report = BuildAuditReport();
             var dir = Path.GetDirectoryName(AuditPath);
             if (!string.IsNullOrEmpty(dir))
@@ -118,6 +141,9 @@ namespace AfkIsland.EditorTools
         {
             EnsureFolder("Assets/_Project", "Scenes");
             EnsureFolder(ScenesFolder, "Prototypes");
+            EnsureFolder("Assets/_Project", "Art");
+            EnsureFolder("Assets/_Project/Art", "CozyDiorama");
+            EnsureFolder("Assets/_Project/Art/CozyDiorama", "Materials");
 
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
 
@@ -405,11 +431,21 @@ namespace AfkIsland.EditorTools
             return sb.ToString();
         }
 
+        /// <summary>
+        /// Prototype materials are real assets under Art/CozyDiorama/Materials, so the scene
+        /// keeps its references after reload. Existing assets are updated, not duplicated.
+        /// </summary>
         private static Material TempMaterial(string name, Color color)
         {
-            // Saved with the scene would need an asset; stage A keeps these as in-scene materials.
-            var shader = Shader.Find("Universal Render Pipeline/Lit") ?? Shader.Find("Standard");
-            var mat = new Material(shader) { name = name };
+            var path = MaterialsFolder + "/" + name + ".mat";
+            var mat = AssetDatabase.LoadAssetAtPath<Material>(path);
+            if (mat == null)
+            {
+                var shader = Shader.Find("Universal Render Pipeline/Lit") ?? Shader.Find("Standard");
+                mat = new Material(shader) { name = name };
+                AssetDatabase.CreateAsset(mat, path);
+            }
+
             if (mat.HasProperty("_BaseColor"))
             {
                 mat.SetColor("_BaseColor", color);
@@ -424,6 +460,7 @@ namespace AfkIsland.EditorTools
                 mat.SetFloat("_Smoothness", 0.1f);
             }
 
+            EditorUtility.SetDirty(mat);
             return mat;
         }
 

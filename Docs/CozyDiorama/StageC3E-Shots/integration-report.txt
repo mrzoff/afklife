@@ -1,0 +1,45 @@
+﻿Stage C-3E — Production Integration Verification Report (Isolated Test Scene)
+Scene: Assets/_Project/Scenes/Prototypes/CozyDioramaStageC3E.unity
+Default flag check (useContinuousPathNetworkRenderer == false): ok=True
+
+Pass 1 — Flag OFF (Legacy Mode): ok=True
+  legacyPathTiles=84, clearings=2, stones=3, grownHuts=4
+  authoredStarterPathsActive=2/2, continuousRendererPresent=False
+
+Pass 2 — Toggle OFF -> ON (Continuous Mode): ok=True
+  legacyPathTiles=0 (expected 0), authoredStarterPathsActive=0/2 (expected 0), authoredHutsAndHearthActive=3/3
+  preserved props: clearings=2, stones=3, grownHuts=4
+  starterHuts: Hut_A=True, Hut_B=True, duplicateNearStarterSkipped=True, totalHutsConnected=True (6 huts)
+  topology: nodes=26, edges=25, tJunctions=5, fourWayJunctions=3, starterIssues=0, planHash=B28E313BEDFAA612
+  pondCheck: waterViolations=0, coreVertsInsidePond=0
+  mesh: chunks=4, core=2646v/3231t, fringe=2598v/3183t, meshHash=C2D71FFC9EC92498
+  geometry: clearance=[0.0320,0.0320]m, downwardTris=0, foldbacks=0 (prevented=13)
+  continuity: junctionPairs=81 maxDelta=0.00000m; borderPairs=4 maxPosDelta=0.00000m maxHeightDelta=0.00000m
+  rendererStats: activeMeshes=8, liveOwned=8, created=8, destroyed=0, sharedMaterialsOnly=True
+  Hut Branch Details:
+    MaskHut_0_1_149: status=Connected origYaw=61.2 effYaw=61.2 len=2.74m dot=0.97 violations=[]
+    MaskHut_1_0_070: status=Connected origYaw=155.6 effYaw=155.6 len=1.70m dot=0.99 violations=[]
+    MaskHut_1_0_091: status=Connected origYaw=29.9 effYaw=29.9 len=2.75m dot=0.97 violations=[]
+    MaskHut_1_1_120: status=Connected origYaw=152.0 effYaw=152.0 len=1.72m dot=1.00 violations=[]
+    Starter_Hut_A: status=Connected origYaw=12.0 effYaw=12.0 len=1.74m dot=0.99 violations=[]
+    Starter_Hut_B: status=Connected origYaw=-25.0 effYaw=-25.0 len=1.14m dot=0.95 violations=[]
+
+Pass 3 — Idempotent No-Op Rebuild: ok=True (applyCalls=1 == 1)
+
+Pass 4 — WaterSource Transform Invalidation: ok=True (applyCalls=2, movedPondIntrusions=0)
+
+Pass 5 — Toggle ON -> OFF (Rollback & Zero Mesh Leaks): ok=True
+  rootDestroyed=True, zeroLeaks=True (created=16, destroyed=16, liveOwned=0)
+  legacyPathTilesRestored=84/84, authoredStarterPathsRestored=2/2
+
+Pass 6 — Toggle OFF -> ON Again (Deterministic Re-enable): ok=True
+  planHashMatch=True, meshHashMatch=True, legacyPathTiles=0, liveOwnedMeshes=8
+
+Protected Scenes Unchanged Check:
+  Assets/_Project/Scenes/MainIsland.unity: before=5F00F6BFDFBB7ADE after=5F00F6BFDFBB7ADE unchanged=True
+  Assets/_Project/Scenes/Prototypes/CozyDioramaStageB2.unity: before=4C6B9304E1BCDA9C after=4C6B9304E1BCDA9C unchanged=True
+  Assets/_Project/Scenes/Prototypes/CozyDioramaStageC2.unity: before=00780E3BD19BC9CF after=00780E3BD19BC9CF unchanged=True
+  Assets/_Project/Scenes/Prototypes/CozyDioramaStageC3C.unity: before=ED292B269EBB7AE6 after=ED292B269EBB7AE6 unchanged=True
+  Assets/_Project/Scenes/Prototypes/CozyDioramaStageC3D.unity: before=F67070735D396F60 after=F67070735D396F60 unchanged=True
+
+OVERALL STAGE C-3E VERIFICATION: PASS

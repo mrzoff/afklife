@@ -222,7 +222,7 @@ namespace AfkIsland.World
                         PlaceClearing(parent, local, i, seed);
                         break;
                     case SettlementStage.Path:
-                        if (!useContinuousPathNetworkRenderer) if (!useContinuousPathNetworkRenderer) PlacePath(parent, local, i, yaw);
+                        if (!useContinuousPathNetworkRenderer) PlacePath(parent, local, i, yaw);
                         break;
                     case SettlementStage.Stone:
                         if (!useContinuousPathNetworkRenderer) PlacePath(parent, local, i, yaw);

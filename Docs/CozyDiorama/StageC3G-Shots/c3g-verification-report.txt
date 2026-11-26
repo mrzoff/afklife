@@ -1,0 +1,34 @@
+﻿Stage C-3G — Junction Preservation, Offline Determinism & Post-Growth Connectivity Report
+Execution mode: Isolated empty editor scene + in-memory SaveClone copies (zero disk save writes)
+
+Check 1 — C-3G 8 Regression Unit Tests: ok=True (passed=8, failed=0)
+
+Check 2 — Deterministic Offline Growth (+48h on 2 Identical Copies): ok=True
+  appliedSecondsA=172800, appliedSecondsB=172800
+  shaCopyA=3C9C81B9CD65306C, shaCopyB=3C9C81B9CD65306C, identical=True
+
+Check 3 — Pre-Existing Path Junctions Protected & Hut Growth Delta: ok=True
+  preJunctionsTotal=4, preservedAsRoad=4, promotedToHut=0
+  keyJunctionsAfter48h: chunk(1,0)@(5,8)=Path, chunk(1,0)@(9,8)=Path, chunk(0,1)@(8,5)=Path, chunk(1,1)@(5,5)=Path
+  maskHuts: before=5 -> after=7 (newMaskHuts=2, newHutsOnPreJunction=0)
+    newHut: chunk(1,0) local(4,8) preStage=Path preCardinalDeg=2 wasJunction=False
+    newHut: chunk(0,1) local(10,5) preStage=Path preCardinalDeg=2 wasJunction=False
+
+Check 4a — Post-Growth Visual, Geometry, Immutability & Hut Health: ok=True
+  defaultFlagFalse=True, saveImmutabilityAfterVisual=True
+  huts: before=6 -> after=8, connectedHuts=8/8
+  topology: nodes=32, edges=29, tJunctions=7, fourWayJunctions=2, starterIssues=0
+  geometry: chunks=4, legacyPaths=0, pondIntrusions=0, downwardTris=0, foldbacks=0, maxBorderPos=0.00000m, maxBorderHeight=0.00000m, sharedMaterialsOnly=True, rollbackZeroLeaks=True
+
+Check 4b — Post-Growth Single-Component Path Network Connectivity: ok=False
+  connectedComponents: before48h=1 -> after48h=3 (expected 1)
+
+Check 5 — Protected Scenes Unchanged:
+  Assets/_Project/Scenes/MainIsland.unity: before=5F00F6BFDFBB7ADE after=5F00F6BFDFBB7ADE unchanged=True
+  Assets/_Project/Scenes/Prototypes/CozyDioramaStageB2.unity: before=4C6B9304E1BCDA9C after=4C6B9304E1BCDA9C unchanged=True
+  Assets/_Project/Scenes/Prototypes/CozyDioramaStageC2.unity: before=00780E3BD19BC9CF after=00780E3BD19BC9CF unchanged=True
+  Assets/_Project/Scenes/Prototypes/CozyDioramaStageC3C.unity: before=ED292B269EBB7AE6 after=ED292B269EBB7AE6 unchanged=True
+  Assets/_Project/Scenes/Prototypes/CozyDioramaStageC3D.unity: before=F67070735D396F60 after=F67070735D396F60 unchanged=True
+  Assets/_Project/Scenes/Prototypes/CozyDioramaStageC3E.unity: before=CDEFDC3DEF02B135 after=CDEFDC3DEF02B135 unchanged=True
+
+OVERALL STAGE C-3G VERIFICATION: FAIL

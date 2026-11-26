@@ -134,7 +134,7 @@ namespace AfkIsland.World
 
                 var key = Pack(growth.chunkX, growth.chunkZ);
                 keep.Add(key);
-                var chunkSig = $"{growth.settlementMaskBase64}:{growth.stageMaskBase64}:{growth.isLegacyBase}:{(useContinuousPathNetworkRenderer ? 1 : 0)}";
+                var chunkSig = $"{growth.settlementMaskBase64}:{growth.stageMaskBase64}:{growth.isLegacyBase}:{(useContinuousPathNetworkRenderer ? 1 : 0)}:{(useContinuousPathNetworkRenderer ? growth.growthSeed : 0)}";
                 var view = EnsureView(key, growth.chunkX, growth.chunkZ);
                 if (view.signature == chunkSig)
                 {
@@ -800,7 +800,7 @@ namespace AfkIsland.World
                 }
 
                 parts.Add(useContinuousPathNetworkRenderer
-                    ? growth.chunkX + ":" + growth.chunkZ + ":" + growth.settlementMaskBase64 + ":" + growth.stageMaskBase64 + ":" + growth.biomeMaskBase64 + ":" + (growth.isLegacyBase ? 1 : 0)
+                    ? growth.chunkX + ":" + growth.chunkZ + ":" + growth.settlementMaskBase64 + ":" + growth.stageMaskBase64 + ":" + growth.biomeMaskBase64 + ":" + (growth.isLegacyBase ? 1 : 0) + ":" + growth.growthSeed
                     : growth.chunkX + ":" + growth.chunkZ + ":" + growth.settlementMaskBase64);
             }
 

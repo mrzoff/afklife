@@ -810,6 +810,9 @@ namespace AfkIsland.World
                              !SettlementCellQuery.IsHutVisualSuppressed(data, growth.chunkX, growth.chunkZ, i))
                     {
                         var center = GrowthWorldPlacement.CellCenterWorld(growth.chunkX, growth.chunkZ, i);
+                        if (IsAuthoredStarterHutPosition(center))
+                            continue;
+
                         var yaw = Hash01(seed, i, 7) * 360f;
                         input.Huts.Add(new SettlementPathTopology.HutInput
                         {
@@ -834,6 +837,16 @@ namespace AfkIsland.World
                 continuousPathMeshConfig,
                 forceFullRebuild: false,
                 terrainVersion: _terrainSamples.Revision);
+        }
+
+        private static bool IsAuthoredStarterHutPosition(Vector3 center)
+        {
+            const float dedupeRadius = 0.75f;
+            var a = new Vector2(-1.60f, 0.90f);
+            var b = new Vector2(1.80f, -0.20f);
+            var p = new Vector2(center.x, center.z);
+            return Vector2.Distance(p, a) <= dedupeRadius ||
+                   Vector2.Distance(p, b) <= dedupeRadius;
         }
 
         private static bool IsBlockedByWaterForPath(float worldX, float worldZ)

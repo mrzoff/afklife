@@ -33,7 +33,7 @@ Preserve road connectivity when upgrading a Path cell to a Hut:
 - Keep hut spacing, per-session caps, random seed use, water/shore checks, and all growth timing unchanged.
 - Do not alter `ResidentPathGraph`; it remains the resident navigation graph, separate from visual road topology.
 
-Before implementing, validate whether junction degree should be measured with 4-cardinal neighbours or 8-neighbours. A diagonal adjacency must not accidentally classify a gentle bend as a junction, and chunk-boundary adjacency must behave identically to same-chunk adjacency.
+**Topology-model finding:** `SettlementPathTopology.Build` creates mask-road edges only to `(x±1,z)` and `(x,z±1)` cardinal neighbours. Its adjacency degree is therefore cardinal, not 8-neighbour. The simulation's `HasNeighborAtLeast` currently uses an 8-neighbourhood, so the proposed junction-protection degree must use the planner's **4-cardinal model**, while retaining world-coordinate sampling across chunk boundaries. Diagonal adjacency alone must not classify a gentle bend as a junction.
 
 ## 4. Required regression fixtures
 
@@ -73,4 +73,4 @@ Before implementing, validate whether junction degree should be measured with 4-
 
 - Source inspection: completed against C-3F `SettlementSimulation.cs`, `SettlementCellQuery.cs`, and the C-3F verification report.
 - Unity compile / Play Mode: not run (no production code changed).
-- Proposed degree rule: requires confirmation against the path planner's cardinal/diagonal edge model before implementation.
+- Topology edge model: source-inspected; mask-road graph uses 4-cardinal edges. The simulation's 8-neighbour candidate test is broader and must not be reused for junction degree.

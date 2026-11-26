@@ -631,6 +631,17 @@ namespace AfkIsland.World
                     }
                 }
 
+                // A Path cell is part of the continuous road graph, not a decorative
+                // isolated mark. Only promote a Clearing when it touches an existing
+                // cardinal Path/Stone neighbour (including across chunk boundaries).
+                // Revalidated again in TryApplyUpgrade because earlier upgrades can change
+                // the topology after this candidate list was collected.
+                if (next == (byte)SettlementStage.Path &&
+                    !HasCardinalRoadNeighbor(save, growth.chunkX, growth.chunkZ, i))
+                {
+                    continue;
+                }
+
                 var score = NeighborSettlementScore(save, growth.chunkX, growth.chunkZ, i);
 
                 if (next == (byte)SettlementStage.Clearing)
@@ -719,6 +730,12 @@ namespace AfkIsland.World
                 (cur == (byte)SettlementStage.Stone && c.toStage == (byte)SettlementStage.Hut);
 
             if (!allowed)
+            {
+                return false;
+            }
+
+            if (c.toStage == (byte)SettlementStage.Path &&
+                !HasCardinalRoadNeighbor(save, c.chunkX, c.chunkZ, c.cellIndex))
             {
                 return false;
             }
@@ -901,6 +918,18 @@ namespace AfkIsland.World
             if (IsRoadStage(SampleSettlementStage(save, worldX, worldZ + 1))) count++;
             return count;
         }
+
+        /// <summary>
+        /// True when a prospective Path cell touches the existing road graph by one of its
+        /// four cardinal sides. Hut cells are deliberately excluded: they are door destinations,
+        /// not edges in the Path/Stone mask graph.
+        /// </summary>
+        public static bool HasCardinalRoadNeighbor(
+            GameSaveData save,
+            int chunkX,
+            int chunkZ,
+            int cellIndex) =>
+            CountCardinalRoadNeighbors(save, chunkX, chunkZ, cellIndex) > 0;
 
         /// <summary>True for a branch or crossing cell in the cardinal road graph.</summary>
         public static bool IsRoadJunctionCell(

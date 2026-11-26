@@ -222,14 +222,14 @@ namespace AfkIsland.World
                         PlaceClearing(parent, local, i, seed);
                         break;
                     case SettlementStage.Path:
-                        if (!useContinuousPathNetworkRenderer) PlacePath(parent, local, i, yaw);
+                        if (!useContinuousPathNetworkRenderer) if (!useContinuousPathNetworkRenderer) PlacePath(parent, local, i, yaw);
                         break;
                     case SettlementStage.Stone:
-                        PlacePath(parent, local, i, yaw);
+                        if (!useContinuousPathNetworkRenderer) PlacePath(parent, local, i, yaw);
                         PlaceStone(parent, local, i, seed, yaw);
                         break;
                     case SettlementStage.Hut:
-                        PlacePath(parent, local, i, yaw);
+                        if (!useContinuousPathNetworkRenderer) PlacePath(parent, local, i, yaw);
                         if (!SettlementCellQuery.IsHutVisualSuppressed(
                                 _cachedData, growth.chunkX, growth.chunkZ, i))
                         {
@@ -733,7 +733,7 @@ namespace AfkIsland.World
             return false;
         }
 
-        private static string BuildSignature(GameSaveData data)
+        private string BuildSignature(GameSaveData data)
         {
             if (data?.worldGrowth?.chunks == null)
             {
@@ -838,7 +838,7 @@ namespace AfkIsland.World
         private static bool IsBlockedByWaterForPath(float worldX, float worldZ)
         {
             var center = WaterSourceLayout.GetWorldCenter();
-            const float clearance = 0.31f;
+            const float clearance = 0.35f;
             var rx = WaterSourceLayout.WaterHalfExtentX + clearance;
             var rz = WaterSourceLayout.WaterHalfExtentZ + clearance;
             var dx = (worldX - center.x) / rx;

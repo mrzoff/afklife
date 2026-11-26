@@ -340,19 +340,29 @@ namespace AfkIsland.EditorTools
                 var a = i * 2;
                 var b = a + 2;
                 triangles[t] = a;
-                triangles[t + 1] = a + 1;
-                triangles[t + 2] = b;
+                triangles[t + 1] = b;
+                triangles[t + 2] = a + 1;
                 triangles[t + 3] = b;
-                triangles[t + 4] = a + 1;
-                triangles[t + 5] = b + 1;
+                triangles[t + 4] = b + 1;
+                triangles[t + 5] = a + 1;
             }
 
-            var mesh = new Mesh { name = "CozyDiorama_PathRibbon_Mesh" };
+            const string meshPath = "Assets/_Project/Art/CozyDiorama/CozyDioramaStageC_PathRibbon.asset";
+            CozyDioramaPrototypeSceneBuilder.EnsureFolder("Assets/_Project", "Art");
+            CozyDioramaPrototypeSceneBuilder.EnsureFolder("Assets/_Project/Art", "CozyDiorama");
+            var mesh = AssetDatabase.LoadAssetAtPath<Mesh>(meshPath);
+            if (mesh == null)
+            {
+                mesh = new Mesh { name = "CozyDioramaStageC_PathRibbon" };
+                AssetDatabase.CreateAsset(mesh, meshPath);
+            }
+            mesh.Clear();
             mesh.vertices = vertices;
             mesh.uv = uvs;
             mesh.triangles = triangles;
             mesh.RecalculateNormals();
             mesh.RecalculateBounds();
+            EditorUtility.SetDirty(mesh);
 
             var go = new GameObject("Path_Ribbon");
             go.transform.SetParent(parent, false);

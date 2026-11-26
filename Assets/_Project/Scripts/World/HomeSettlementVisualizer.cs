@@ -832,8 +832,10 @@ namespace AfkIsland.World
                             Center = new Vector2(center.x, center.z),
                             YawDegrees = yaw,
                             Scale = SettlementCellQuery.HutVisualUniformScale,
-                            FootprintHalfExtents = new Vector2(0.47f, 0.44f),
-                            DoorLocalZ = 0.598f,
+                            FootprintHalfExtents = (i % 2 == 0)
+                                ? new Vector2(0.675f, 0.575f)
+                                : new Vector2(0.775f, 0.625f),
+                            DoorLocalZ = (i % 2 == 0) ? 0.598f : 0.65f,
                             AllowVisualDoorCorrection = true
                         });
                     }

@@ -1,0 +1,40 @@
+﻿Stage C-3F — Save v8 Immutability, Seed-Only Invalidation & Offline Growth Verification Report
+Execution mode: Isolated empty editor scene + in-memory SaveClone copies (zero disk save writes)
+Test 1 — Diagnostic Compile & Edit-Mode Guard: ok=True
+Test 2 — Default Feature Flag (false): ok=True
+
+Test 3 — Save v8 Byte-for-Byte Immutability: ok=True
+  version=8, lastSimUtc=1760000000, settleWatermarkUtc=1760000000
+  shaInitial=BABD519D13AE4041
+  shaAfterTerrain=BABD519D13AE4041 match=True
+  shaAfterLegacy=BABD519D13AE4041 match=True
+  shaAfterContinuous=BABD519D13AE4041 match=True
+  shaAfterTogglesAndWater=BABD519D13AE4041 match=True
+
+Test 4 — Seed-Only Invalidation (commit 0336dd4): ok=True
+  chunk(1,0) seed: 2002 -> 9912345 -> 2002; applyCalls: 3 -> 4
+  Hut_70 yaw: 155.6 -> 183.3 -> 155.6; Hut_91 yaw: 29.9 -> 270.0 -> 29.9
+  planHash: before=733FA5224964D4F3 after=06E8BEC881E42377 restored=733FA5224964D4F3 (roundTrip=True)
+  meshHash: before=8B8D530A2E3A0BC9 after=3A4975F88C9726DF restored=8B8D530A2E3A0BC9 (roundTrip=True)
+  chunk(1,0) hash changed=True; untouched chunk(0,1) hash preserved=True
+  saveImmutabilityAfterSeedVisualRebuild=True, legacyPathTiles=0, foldbacks=0, downwardTris=0
+
+Test 5 — Isolated Offline Growth (+48h) + Visual Rebuild: ok=True
+  simSuccess=True (err=:), appliedSeconds=172800, lastSimUtc: 1760000000 -> 1760172800, settleWatermarkUtc=1760172800
+  saveImmutabilityAfterVisualRebuild=True (sha=C293B4FA6731A3C5)
+  chunks=4, nodes=36, edges=28, huts=9, legacyPaths=0, pondIntrusions=0, foldbacks=0, downwardTris=0, maxBorderPos=0.00000m, liveOwnedMeshes=8
+
+Test 6 — Chunk Add / Remove / Reload & OFF Rollback Zero Leaks: ok=True
+  chunks: base=4 -> added=5 (slot20=True, maxBorderPos=0.00000m) -> removed=4 (slot20=False, root20=False)
+  reloadDeterministicHashMatch=True
+  rollbackOff: rootGone=True, zeroLeaks=True (created=84, destroyed=84, liveOwned=0), authoredRestored=True, legacyTilesRestored=88/88
+
+Test 7 — Protected Scenes Unchanged Check:
+  Assets/_Project/Scenes/MainIsland.unity: before=5F00F6BFDFBB7ADE after=5F00F6BFDFBB7ADE unchanged=True
+  Assets/_Project/Scenes/Prototypes/CozyDioramaStageB2.unity: before=4C6B9304E1BCDA9C after=4C6B9304E1BCDA9C unchanged=True
+  Assets/_Project/Scenes/Prototypes/CozyDioramaStageC2.unity: before=00780E3BD19BC9CF after=00780E3BD19BC9CF unchanged=True
+  Assets/_Project/Scenes/Prototypes/CozyDioramaStageC3C.unity: before=ED292B269EBB7AE6 after=ED292B269EBB7AE6 unchanged=True
+  Assets/_Project/Scenes/Prototypes/CozyDioramaStageC3D.unity: before=F67070735D396F60 after=F67070735D396F60 unchanged=True
+  Assets/_Project/Scenes/Prototypes/CozyDioramaStageC3E.unity: before=CDEFDC3DEF02B135 after=CDEFDC3DEF02B135 unchanged=True
+
+OVERALL STAGE C-3F AUTOMATED VERIFICATION: PASS

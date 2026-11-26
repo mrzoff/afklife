@@ -258,20 +258,42 @@ namespace AfkIsland.EditorTools
                 triangles.Add(topA); triangles.Add(lowA); triangles.Add(topB);
                 triangles.Add(topB); triangles.Add(lowA); triangles.Add(lowB);
             }
-            var mesh = new Mesh { name = "CozyDioramaStageB2_IslandMesh" };
+            // Reverse winding so the top surface normals face upward and the island wall faces outward.
+            for (var i = 0; i < triangles.Count; i += 9)
+            {
+                var a = triangles[i + 1];
+                triangles[i + 1] = triangles[i + 2];
+                triangles[i + 2] = a;
+                var b = triangles[i + 3];
+                triangles[i + 3] = triangles[i + 5];
+                triangles[i + 5] = b;
+                var c = triangles[i + 6];
+                triangles[i + 6] = triangles[i + 8];
+                triangles[i + 8] = c;
+            }
+
+            const string meshPath = "Assets/_Project/Art/CozyDiorama/CozyDioramaStageB2_IslandMesh.asset";
+            CozyDioramaPrototypeSceneBuilder.EnsureFolder("Assets/_Project", "Art");
+            CozyDioramaPrototypeSceneBuilder.EnsureFolder("Assets/_Project/Art", "CozyDiorama");
+            var mesh = AssetDatabase.LoadAssetAtPath<Mesh>(meshPath);
+            if (mesh == null)
+            {
+                mesh = new Mesh { name = "CozyDioramaStageB2_IslandMesh" };
+                AssetDatabase.CreateAsset(mesh, meshPath);
+            }
+            mesh.Clear();
             mesh.vertices = vertices;
             mesh.triangles = triangles.ToArray();
             mesh.RecalculateNormals();
             mesh.RecalculateBounds();
+            EditorUtility.SetDirty(mesh);
+
             var go = new GameObject("Island_Ground");
             go.transform.SetParent(parent, false);
             go.AddComponent<MeshFilter>().sharedMesh = mesh;
             go.AddComponent<MeshRenderer>().sharedMaterial =
                 CozyDioramaPrototypeSceneBuilder.TempMaterial("Cozy_ReviewSlab",
                     CozyDioramaPrototypeSceneBuilder.Hex("#78945B"));
-            var shore = new GameObject("Shore_Rim");
-            shore.transform.SetParent(parent, false);
-            // The exposed side wall is part of the same island mesh; this child marks the shore layer for hierarchy inspection.
         }
 
         private static void CreateCamera(Transform parent)

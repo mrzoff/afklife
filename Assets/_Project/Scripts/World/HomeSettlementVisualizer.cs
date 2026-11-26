@@ -70,6 +70,7 @@ namespace AfkIsland.World
             if (data?.worldGrowth?.chunks == null || chunkManager == null)
             {
                 ClearAll();
+                ClearContinuousPathNetwork();
                 _lastSignature = null;
                 SoftDimAuthored(0, 0);
                 return;

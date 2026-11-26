@@ -85,6 +85,7 @@ namespace AfkIsland.World
 
             _lastSignature = signature;
             EnsureRoot();
+            if (useContinuousPathNetworkRenderer) WaterSourceLayout.ClearCenterCache();
             _terrainSamples.Rebuild(data);
             EnsureMaterials();
             EnsureRockPrefabs();
@@ -752,6 +753,17 @@ namespace AfkIsland.World
                 parts.Add(useContinuousPathNetworkRenderer
                     ? growth.chunkX + ":" + growth.chunkZ + ":" + growth.settlementMaskBase64 + ":" + growth.stageMaskBase64 + ":" + growth.biomeMaskBase64
                     : growth.chunkX + ":" + growth.chunkZ + ":" + growth.settlementMaskBase64);
+            }
+
+            if (useContinuousPathNetworkRenderer)
+            {
+                var water = GameObject.Find("WaterSource");
+                if (water != null)
+                {
+                    parts.Add("Water:" + water.transform.position.ToString("F3") + ":" +
+                              water.transform.eulerAngles.ToString("F2") + ":" +
+                              water.transform.lossyScale.ToString("F3"));
+                }
             }
 
             parts.Sort();

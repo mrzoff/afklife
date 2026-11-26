@@ -13,8 +13,13 @@ namespace AfkIsland.EditorTools
         [MenuItem("AFK Island/Cozy Diorama/Stage C-3G/Run Junction Preservation Tests")]
         public static void Run()
         {
-            var passed = 0;
-            var failed = 0;
+            RunAll(out _, out _);
+        }
+
+        public static bool RunAll(out int passed, out int failed)
+        {
+            passed = 0;
+            failed = 0;
 
             RunCase("straight", 2, 7, 7, new[]
             {
@@ -58,6 +63,7 @@ namespace AfkIsland.EditorTools
             var summary = $"[C-3G] Junction tests: passed={passed}, failed={failed}";
             if (failed == 0) Debug.Log(summary);
             else Debug.LogError(summary);
+            return failed == 0;
         }
 
         private static void RunCase(string name, int expectedDegree, int centerX, int centerZ,
@@ -157,13 +163,13 @@ namespace AfkIsland.EditorTools
 
                 return null;
             }
+        }
 
-            private static int FloorDiv(int value, int divisor)
-            {
-                var q = value / divisor;
-                var r = value % divisor;
-                return r != 0 && value < 0 ? q - 1 : q;
-            }
+        private static int FloorDiv(int value, int divisor)
+        {
+            var q = value / divisor;
+            var r = value % divisor;
+            return r != 0 && value < 0 ? q - 1 : q;
         }
     }
 }

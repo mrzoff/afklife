@@ -164,6 +164,7 @@ namespace AfkIsland.World
             for (var pass = 0; pass < MaxInnerPasses && advances < maxAdvances; pass++)
             {
                 var candidates = new List<UpgradeCandidate>(128);
+                var articulationPoints = FindRoadArticulationPoints(save);
                 foreach (var growth in save.worldGrowth.chunks)
                 {
                     if (growth == null)
@@ -178,7 +179,7 @@ namespace AfkIsland.World
                     }
 
                     CollectCandidates(
-                        save, growth, land, settle, candidates, stoneCount, stoneCap);
+                        save, growth, land, settle, candidates, stoneCount, stoneCap, articulationPoints);
                 }
 
                 if (candidates.Count == 0)
@@ -537,7 +538,8 @@ namespace AfkIsland.World
             byte[] settle,
             List<UpgradeCandidate> list,
             int stoneCount,
-            int stoneCap)
+            int stoneCap,
+            HashSet<long> articulationPoints)
         {
             for (var i = 0; i < settle.Length; i++)
             {
@@ -582,7 +584,15 @@ namespace AfkIsland.World
                     // the visual road planner connects Path/Stone cells with four cardinal
                     // edges, not diagonal neighbours. Removing a junction (degree >= 3)
                     // or cut-vertex splits the road network into disconnected components.
-                    var isProtectedRoad = IsProtectedRoadCell(save, growth.chunkX, growth.chunkZ, i);
+                    ChunkMaskCodec.IndexToLocal(i, out var pathLx, out var pathLz);
+                    var pathWorldKey = PackWorldCell(
+                        growth.chunkX * ChunkMaskCodec.GridSize + pathLx,
+                        growth.chunkZ * ChunkMaskCodec.GridSize + pathLz);
+                    var isProtectedRoad =
+                        IsRoadJunctionCell(save, growth.chunkX, growth.chunkZ, i) ||
+                        (articulationPoints != null
+                            ? articulationPoints.Contains(pathWorldKey)
+                            : WouldDisconnectRoadNetwork(save, growth.chunkX, growth.chunkZ, i));
 
                     // Keep junctions and bridges as roads; huts only at non-critical grown road cells.
                     if (!isProtectedRoad && alongRoad && (grownInland ||
@@ -901,36 +911,125 @@ namespace AfkIsland.World
             CountCardinalRoadNeighbors(save, chunkX, chunkZ, cellIndex) >= 3;
 
         /// <summary>
-        /// True when removing this cell from the cardinal road graph (Path/Stone cells across
-        /// all chunks) leaves at least two of its cardinal road neighbours unreachable from
-        /// each other (i.e. the cell is an articulation vertex / bridge).
-        /// Isolated cells and dead-end spurs (degree &lt;= 1) never disconnect the graph.
+        /// Computes all articulation points (cut-vertices) of the navigable cardinal road graph
+        /// in a single O(V + E) iterative Tarjan DFS pass. Keys are PackWorldCell(worldX, worldZ).
+        /// Mathematically equivalent to calling WouldDisconnectRoadNetwork on every road cell,
+        /// avoiding O(N * chunks) repeated Base64 mask decoding during CollectCandidates.
         /// </summary>
-        public static bool WouldDisconnectRoadNetwork(
-            GameSaveData save,
-            int chunkX,
-            int chunkZ,
-            int cellIndex)
+        public static HashSet<long> FindRoadArticulationPoints(GameSaveData save)
         {
-            if (save?.worldGrowth?.chunks == null ||
-                cellIndex < 0 ||
-                cellIndex >= ChunkMaskCodec.CellCount)
+            var articulationPoints = new HashSet<long>();
+            var roadCells = BuildNavigableRoadCells(save, excludeKey: long.MinValue, out var cellCoords);
+            if (roadCells.Count < 3)
             {
-                return false;
+                return articulationPoints;
             }
 
-            // Fast O(1) short-circuit: dead-end (deg 1) or isolated (deg 0) cannot split a component.
-            if (CountCardinalRoadNeighbors(save, chunkX, chunkZ, cellIndex) < 2)
+            var disc = new Dictionary<long, int>(roadCells.Count);
+            var low = new Dictionary<long, int>(roadCells.Count);
+            var parent = new Dictionary<long, long>(roadCells.Count);
+            var rootChildCount = new Dictionary<long, int>();
+            var stack = new Stack<TarjanFrame>(Mathf.Min(roadCells.Count, 256));
+            var timer = 0;
+
+            for (var r = 0; r < cellCoords.Count; r++)
             {
-                return false;
+                var rootCoord = cellCoords[r];
+                var rootKey = PackWorldCell(rootCoord.x, rootCoord.y);
+                if (disc.ContainsKey(rootKey))
+                {
+                    continue;
+                }
+
+                timer++;
+                disc[rootKey] = timer;
+                low[rootKey] = timer;
+                rootChildCount[rootKey] = 0;
+                stack.Push(new TarjanFrame { key = rootKey, wx = rootCoord.x, wz = rootCoord.y, dir = 0 });
+
+                while (stack.Count > 0)
+                {
+                    var frame = stack.Pop();
+                    var u = frame.key;
+                    var pushedChild = false;
+
+                    while (frame.dir < 4)
+                    {
+                        var dir = frame.dir++;
+                        var nwx = frame.wx + (dir == 0 ? -1 : dir == 1 ? 1 : 0);
+                        var nwz = frame.wz + (dir == 2 ? -1 : dir == 3 ? 1 : 0);
+                        var v = PackWorldCell(nwx, nwz);
+                        if (!roadCells.Contains(v))
+                        {
+                            continue;
+                        }
+
+                        if (!disc.TryGetValue(v, out var discV))
+                        {
+                            parent[v] = u;
+                            if (!parent.ContainsKey(u))
+                            {
+                                rootChildCount[u] = rootChildCount[u] + 1;
+                            }
+
+                            timer++;
+                            disc[v] = timer;
+                            low[v] = timer;
+                            stack.Push(frame);
+                            stack.Push(new TarjanFrame { key = v, wx = nwx, wz = nwz, dir = 0 });
+                            pushedChild = true;
+                            break;
+                        }
+
+                        if (!parent.TryGetValue(u, out var parentU) || v != parentU)
+                        {
+                            if (discV < low[u])
+                            {
+                                low[u] = discV;
+                            }
+                        }
+                    }
+
+                    if (pushedChild)
+                    {
+                        continue;
+                    }
+
+                    // Finished vertex u: propagate low[u] to parent[u] or check root child count.
+                    if (parent.TryGetValue(u, out var p))
+                    {
+                        if (low[u] < low[p])
+                        {
+                            low[p] = low[u];
+                        }
+
+                        if (parent.ContainsKey(p) && low[u] >= disc[p])
+                        {
+                            articulationPoints.Add(p);
+                        }
+                    }
+                    else if (rootChildCount[u] >= 2)
+                    {
+                        articulationPoints.Add(u);
+                    }
+                }
             }
 
-            ChunkMaskCodec.IndexToLocal(cellIndex, out var localX, out var localZ);
-            var targetX = chunkX * ChunkMaskCodec.GridSize + localX;
-            var targetZ = chunkZ * ChunkMaskCodec.GridSize + localZ;
-            var targetKey = PackWorldCell(targetX, targetZ);
+            return articulationPoints;
+        }
 
+        private static HashSet<long> BuildNavigableRoadCells(
+            GameSaveData save,
+            long excludeKey,
+            out List<Vector2Int> coords)
+        {
             var roadCells = new HashSet<long>();
+            coords = new List<Vector2Int>(64);
+            if (save?.worldGrowth?.chunks == null)
+            {
+                return roadCells;
+            }
+
             var grid = ChunkMaskCodec.GridSize;
             foreach (var growth in save.worldGrowth.chunks)
             {
@@ -975,13 +1074,58 @@ namespace AfkIsland.World
                     }
 
                     ChunkMaskCodec.IndexToLocal(i, out var lx, out var lz);
-                    var key = PackWorldCell(baseX + lx, baseZ + lz);
-                    if (key != targetKey)
+                    var wx = baseX + lx;
+                    var wz = baseZ + lz;
+                    var key = PackWorldCell(wx, wz);
+                    if (key != excludeKey && roadCells.Add(key))
                     {
-                        roadCells.Add(key);
+                        coords.Add(new Vector2Int(wx, wz));
                     }
                 }
             }
+
+            return roadCells;
+        }
+
+        private struct TarjanFrame
+        {
+            public long key;
+            public int wx;
+            public int wz;
+            public int dir;
+        }
+
+        /// <summary>
+        /// True when removing this cell from the cardinal road graph (Path/Stone cells across
+        /// all chunks) leaves at least two of its cardinal road neighbours unreachable from
+        /// each other (i.e. the cell is an articulation vertex / bridge).
+        /// Isolated cells and dead-end spurs (degree &lt;= 1) never disconnect the graph.
+        /// </summary>
+        public static bool WouldDisconnectRoadNetwork(
+            GameSaveData save,
+            int chunkX,
+            int chunkZ,
+            int cellIndex)
+        {
+            if (save?.worldGrowth?.chunks == null ||
+                cellIndex < 0 ||
+                cellIndex >= ChunkMaskCodec.CellCount)
+            {
+                return false;
+            }
+
+            // Fast O(1) short-circuit: dead-end (deg 1) or isolated (deg 0) cannot split a component.
+            if (CountCardinalRoadNeighbors(save, chunkX, chunkZ, cellIndex) < 2)
+            {
+                return false;
+            }
+
+            ChunkMaskCodec.IndexToLocal(cellIndex, out var localX, out var localZ);
+            var targetX = chunkX * ChunkMaskCodec.GridSize + localX;
+            var targetZ = chunkZ * ChunkMaskCodec.GridSize + localZ;
+            var targetKey = PackWorldCell(targetX, targetZ);
+
+            var roadCells = BuildNavigableRoadCells(save, excludeKey: targetKey, out _);
 
             var neighbors = new List<Vector2Int>(4);
             var cand0 = new Vector2Int(targetX - 1, targetZ);

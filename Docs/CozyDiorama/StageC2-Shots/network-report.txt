@@ -1,0 +1,36 @@
+Stage C-2B settlement path network - network report
+Scene: Assets/_Project/Scenes/Prototypes/CozyDioramaStageC2.unity
+B-2 source scene hash before=7410EE060BA4E329 after=7410EE060BA4E329 unchanged=True
+Deterministic rebuild: plan hash 31B7DFFB00530056 identical=True; mesh hash EC21663F331512D7 identical=True
+Polylines: 6 (starter 2, branches 4)
+
+Hut Hut_A: pos=(-1,650, -0,003, -0,150) yaw=215,0 scale=0,620
+  door(world)=(-1,863, 0,257, -0,454) forward=(-0,574, 0,000, -0,819) footprint(m) x[-0,47,0,47] z[-0,44,0,44]
+  anchor=(-1,897, 0,000, -0,503) (door + 0.06 m along forward) first-segment/forward dot=0,98
+  joins Starter_Main at (0,000, 0,000, 0,337) candidateRank=2 variant=wrap-right length=3,66 m
+  min clearance to any hut footprint along route=0,36 m
+  violations: none
+Hut Hut_B: pos=(1,350, -0,003, 0,650) yaw=245,0 scale=0,620
+  door(world)=(0,985, 0,257, 0,480) forward=(-0,906, 0,000, -0,423) footprint(m) x[-0,55,0,55] z[-0,47,0,47]
+  anchor=(0,930, 0,000, 0,454) (door + 0.06 m along forward) first-segment/forward dot=0,88
+  joins Starter_Main at (0,000, 0,000, 0,937) candidateRank=0 variant=bezier-soft length=1,20 m
+  min clearance to any hut footprint along route=0,32 m
+  violations: none
+Hut Hut_Test_03: pos=(-0,900, -0,003, -3,200) yaw=10,0 scale=0,620
+  door(world)=(-0,836, 0,257, -2,835) forward=(0,174, 0,000, 0,985) footprint(m) x[-0,47,0,47] z[-0,44,0,44]
+  anchor=(-0,825, 0,000, -2,776) (door + 0.06 m along forward) first-segment/forward dot=1,00
+  joins Branch_Hut_A at (-1,310, 0,000, -1,126) candidateRank=0 variant=bezier-soft length=1,83 m
+  min clearance to any hut footprint along route=0,33 m
+  violations: none
+Hut Hut_Test_04: pos=(2,300, -0,003, -2,500) yaw=10,0 scale=0,620
+  door(world)=(2,370, 0,257, -2,103) forward=(0,174, 0,000, 0,985) footprint(m) x[-0,55,0,55] z[-0,47,0,47]
+  anchor=(2,380, 0,000, -2,044) (door + 0.06 m along forward) first-segment/forward dot=0,98
+  joins Starter_Cross at (1,800, 0,000, -0,600) candidateRank=0 variant=bezier-soft length=1,68 m
+  min clearance to any hut footprint along route=0,48 m
+  violations: none
+
+Junction coverage (branch end vs trunk half-width):
+  Hut_A: end is 0,080 m from trunk centreline (trunk half-width >= 0,25 m) -> overlap=True
+  Hut_B: end is 0,080 m from trunk centreline (trunk half-width >= 0,25 m) -> overlap=True
+  Hut_Test_03: end is 0,080 m from trunk centreline (trunk half-width >= 0,25 m) -> overlap=True
+  Hut_Test_04: end is 0,080 m from trunk centreline (trunk half-width >= 0,25 m) -> overlap=True

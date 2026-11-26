@@ -1,0 +1,77 @@
+﻿Stage C-3B — Offline Topology Tests, 11G Comparison, Water Audit, Chunk-Border Repro & Benchmark
+Branch target: feature/cozy-diorama-stage-c2-settlement-path-network
+Scope: offline Unity Editor harness only (no production code edited, no Play Mode, no Android build).
+
+=== STEP 1 & 2: SHARED TWO-CHUNK MASK COMPARISON (11G PlacePathRibbon vs Pure Topology) ===
+Shared fixture: 2 chunks (0,0) + (1,0), 28 road cells (Path/Stone), 6 huts (2 production starter + 4 grown).
+11G PlacePathRibbon (pure rule mirror):
+  Discrete arm instances: 44
+  4-way intersection (18,8) arms drawn: 0  <-- FINDING: throughX && throughZ drops ALL 4 arms (hole in intersection!)
+  3-way T-junction (18,7) arms drawn: 2  <-- FINDING: side road arm (east to 19,7) omitted unless neighbor is a Hut!
+  Max orthogonal corner arm gap: 0.000 m
+  Chunk-border (15,8)<->(16,8) opposing arms on clean rebuild: 2/2
+  Door routing: none (arms stop at cell border / circular hut yard, ignores Door child)
+  Starter path integration: none (separate authored cubes, dimmed via SoftDimAuthored)
+
+Pure Topology Planner (SettlementPathTopology):
+  Nodes: 22, Continuous Edges: 20, Explicit Junctions (deg>=3): 6
+  Connected components: 2 (isolated cell (22,12) has no edges)
+  Edges spanning chunk border (TouchedChunks >= 2): 2
+  Huts: 5 connected as-is, 1 connected via visual-only door correction, 0 blocked
+  Topology hash: 26410A15578634C8
+    Hut Hut_Grown_BorderN: status=Connected origYaw=150.0 effYaw=150.0 len=2.73m dot=1.00 clear=0.20m join=MaskRoad_10_8_to_18_8 (bezier-tight) violations=[]
+    Hut Hut_Grown_East_Reversed: status=ConnectedWithVisualDoorCorrection origYaw=90.0 effYaw=-90.0 len=0.54m dot=1.00 clear=0.38m join=MaskRoad_19_6_to_21_8 (bezier-soft) violations=[]
+    Hut Hut_Grown_North: status=Connected origYaw=180.0 effYaw=180.0 len=0.57m dot=1.00 clear=0.37m join=MaskRoad_18_8_to_18_11 (bezier-soft) violations=[]
+    Hut Hut_Grown_PondSW: status=Connected origYaw=0.0 effYaw=0.0 len=0.54m dot=0.98 clear=0.36m join=MaskRoad_8_4_to_7_5 (bezier-tight) violations=[]
+    Hut Starter_Hut_A: status=Connected origYaw=12.0 effYaw=12.0 len=1.79m dot=0.99 clear=0.27m join=Starter_Main_b (bezier-tight) violations=[]
+    Hut Starter_Hut_B: status=Connected origYaw=-25.0 effYaw=-25.0 len=1.30m dot=0.98 clear=0.07m join=MaskRoad_10_8_to_18_8_a (bezier-tight) violations=[]
+
+=== STEP 3: WATER SOURCE LAYOUT AUDIT ===
+WaterSourceLayout pond center=(1.80, -1.40) raw water ellipse rx=1.10 rz=0.80; BlocksSettlement reserve rx=1.80 rz=1.50.
+  Authored Starter_Main: touches raw water+halfWidth=False (first 0.00,0.00); inside BlocksSettlement=True (first 0.15,-1.50)
+  Authored Starter_Cross: touches raw water+halfWidth=True (first 0.96,-0.60); inside BlocksSettlement=True (first 0.30,-0.60)
+  Authored Hearth (0.15,-1.50): insideRawWater=False, insideBlocksSettlement=True
+  Authored Starter_Hut_A (-1.60,0.90): insideRawWater=False, insideBlocksSettlement=False
+  Authored Starter_Hut_B (1.80,-0.20): insideRawWater=False, insideBlocksSettlement=True
+  11G arms entering raw pond ellipse: 0
+  Topology generated edges (MaskRoad/HutBranch) entering raw pond ellipse: 0
+  Topology starter audit issues flagged: 1 (starter edges in raw water center: 0)
+    StarterIssue: Starter_Cross -> starter_touches_water_constraint at (1.02, -0.60)
+
+=== STEP 4: TWO-CHUNK BORDER STALENESS REPRODUCTION (11G chunkSig BUG) ===
+  T0 home chunkSig == T1 home chunkSig: True (chunk (0,0) skipped by 11G cache)
+  T1 stale 11G border arms: home(15,8)->east=0, east(16,8)->west=1 (ASYMMETRIC GAP; fresh rebuild would have 1)
+  BUG CONFIRMED: True
+  Pure topology at T1: edges=1, touchedChunks=2, continuousAcrossBorder=True
+  GetAffectedChunksForCellChange(16,8) includes both (0,0) and (1,0): True
+
+=== STEP 5: PERFORMANCE BENCHMARK (SIGNATURES, CELL LOOKUP, TOPOLOGY) ===
+1) BuildSignature (HomeSettlementVisualizer.LateUpdate per-frame cost):
+   4 chunks (2x2):   12.0 us/call |  0.72 ms/sec @60fps | ~4202 B/call (sink=ok)
+   9 chunks (3x3):   19.0 us/call |  1.14 ms/sec @60fps | ~12427 B/call (sink=ok)
+  25 chunks (5x5):   84.9 us/call |  5.09 ms/sec @60fps | ~6217 B/call (sink=ok)
+  49 chunks (7x7):  176.2 us/call | 10.57 ms/sec @60fps | ~11001 B/call (sink=ok)
+
+2) SampleSettlementStage (production linear scan + Base64 decode per lookup) vs Pre-Decoded Cache:
+   Simulating 1 full chunk rebuild: 256 cells x 6 neighbor lookups = 1536 lookups.
+   4 chunks: prod= 3.410 ms | cached= 1.504 ms | speedup=  2.3x | parity=True
+   9 chunks: prod= 3.551 ms | cached= 0.081 ms | speedup= 43.7x | parity=True
+  25 chunks: prod= 4.199 ms | cached= 0.129 ms | speedup= 32.7x | parity=True
+  49 chunks: prod= 4.136 ms | cached= 0.190 ms | speedup= 21.8x | parity=True
+
+3) SettlementPathTopology.Build timing:
+  Shared 2-chunk fixture (26 road cells, 6 huts): 32.93 ms/build
+  Worst-case 25-chunk fixture (600 road cells, 16 huts -> 117 nodes, 112 edges, 41 junctions): 83.31 ms/build
+
+=== STEP 6: PURE TOPOLOGY PLANNER OFFLINE UNIT TESTS ===
+  [PASS] T1_StarterOnly_ProductionPoses: components=1 junctions=2 HutA=Connected(visCorr=False,dot=0.99) HutB=Connected(visCorr=False,dot=0.99)
+  [PASS] T2_FourHutFixture_C2BLayout: connected=4/4 components=1 junctions=2 hash=B1553219A5851E77
+  [PASS] T3_BranchToBranchJoin: Hut_02 joined=Branch_Hut_01 junctions=2
+  [PASS] T4_MultipleSimultaneousHuts_OrderIndependent: huts=6 hashA=246C184ABB91D83A hashB=246C184ABB91D83A components=1
+  [PASS] T5_ReversedDoor_HardRejectAndVisualCorrection: noFix=UnconnectedBlocked([hut_footprint_intersection,max_length_exceeded,out_of_land]), withVisualFix=ConnectedWithVisualDoorCorrection(origYaw=90->effYaw=270.0,len=1.97m)
+  [PASS] T6_BlockedJoin_WaterBarrierNeverCrossed: status=UnconnectedBlocked edges=1 violations=[max_length_exceeded,water_crossing]
+  [PASS] T7_DuplicateInput_Deduplicated: dupHuts=1 dupCells=1 hashMatch=True
+  [PASS] T8_DeterministicRebuild_PermutationInvariant: hash1=26410A15578634C8 hash2=26410A15578634C8
+  [PASS] T9_TwoChunkBorderRepro_AndInvalidation: bugReproducedAndFixed=True interiorAffected=1 cornerAffected=4
+  [PASS] T10_NoGeneratedEdgeCrossesWater: generatedWaterSampleHits=0
+Summary: 10/10 tests passed.

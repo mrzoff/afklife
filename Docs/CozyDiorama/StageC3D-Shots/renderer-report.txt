@@ -1,0 +1,39 @@
+﻿Stage C-3D — Standalone Path Network Renderer Verification Report
+Scene: Assets/_Project/Scenes/Prototypes/CozyDioramaStageC3D.unity
+B-2 scene hash before=7410EE060BA4E329 after=7410EE060BA4E329 unchanged=True
+C-2 scene hash before=061A92B92AF2F217 after=061A92B92AF2F217 unchanged=True
+C-3C scene hash before=A076681D7C0FC9CB after=A076681D7C0FC9CB unchanged=True
+Deterministic rebuild: planHash=3A2B5767CD1AD376 identical=True; meshHash=3629F2799DD7AEFB
+
+Standalone Renderer Lifecycle & Leak Checks:
+  Pass1 Full Build (4 chunks): ok=True (rebuilt=4)
+  Pass2 Idempotent No-Op: ok=True (reused=4)
+  Pass3 Incremental Single-Chunk (1,1) Update: ok=True (rebuilt=1, reused=3)
+  Pass4 Force Full == Incremental Hash: ok=True (inc=7F7341FCA2AE44BE, full=7F7341FCA2AE44BE)
+  Pass5 Clear() Zero Mesh Leaks: ok=True
+  Final State: activeMeshes=8, liveOwnedMeshes=8, totalCreated=26, totalDestroyed=18, sharedMaterialsOnly=True
+
+Topology: nodes=30, edges=30, junctions=10, components=1, starterIssues=0
+Chunks generated: 4 (Total Core: 2325 verts / 2743 tris; Fringe: 2297 verts / 2715 tris; JunctionPatches: 10)
+  Chunk (0,0): core=912v/1055t fringe=912v/1055t junctionPatches=4 hash=55599C38EADA8B64
+  Chunk (1,0): core=641v/762t fringe=621v/742t junctionPatches=4 hash=5460B31D52C7E676
+  Chunk (0,1): core=346v/423t fringe=346v/423t junctionPatches=1 hash=4A87B05B9BCB1397
+  Chunk (1,1): core=426v/503t fringe=418v/495t junctionPatches=1 hash=7DF38682399F527F
+
+Terrain & Geometry Verification:
+  Core ground clearance (vertexY - SampleVisualHeight): min=0.0360 m, max=0.0360 m
+  Core ribbon width control: min=0.4177 m, max=0.6191 m
+  Max path terrain slope: 13.07 deg (violations > 28 deg: 0)
+  Upward winding check: minUpwardNormalDot=0.2663, downwardTriangles=0
+  Foldback protection: remainingFoldbacks=0, foldbacksPrevented=12
+  Junction-to-ribbon exact attachment: verifiedPairs=93, maxDelta=0.00000 m
+  Chunk-border continuity (X & Z): sharedPairs=4, maxPosDelta=0.00000 m, maxHeightDelta=0.00000 m
+
+Hut Branches:
+  Hut_BorderX_N: status=Connected origYaw=150.0 effYaw=150.0 len=2.73m dot=1.00 clear=0.20m join=MaskRoad_8_8_to_18_8 (bezier-tight) violations=[]
+  Hut_East_Reversed: status=ConnectedWithVisualDoorCorrection origYaw=90.0 effYaw=-90.0 len=0.54m dot=1.00 clear=0.38m join=MaskRoad_19_6_to_21_8 (bezier-soft) violations=[]
+  Hut_HillNW: status=Connected origYaw=145.0 effYaw=145.0 len=0.83m dot=1.00 clear=0.27m join=Hillside_YFork_NW (bezier-tight) violations=[]
+  Hut_Incremental_NE: status=Connected origYaw=-90.0 effYaw=-90.0 len=0.54m dot=1.00 clear=0.38m join=MaskRoad_18_16_to_21_19 (bezier-soft) violations=[]
+  Hut_PondSW: status=Connected origYaw=0.0 effYaw=0.0 len=0.57m dot=1.00 clear=0.37m join=MaskRoad_8_4_to_6_7 (bezier-soft) violations=[]
+  Starter_Hut_A: status=Connected origYaw=12.0 effYaw=12.0 len=1.87m dot=0.99 clear=0.28m join=Starter_Main_b_b (bezier-tight) violations=[]
+  Starter_Hut_B: status=Connected origYaw=-25.0 effYaw=-25.0 len=0.32m dot=1.00 clear=0.15m join=MaskRoad_8_8_to_18_8_a (bezier-tight) violations=[]

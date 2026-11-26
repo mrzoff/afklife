@@ -215,21 +215,6 @@ namespace AfkIsland.World
                     continue;
                 }
 
-                var key = Pack(growth.chunkX, growth.chunkZ);
-                byte[] stages;
-                if (growth.isLegacyBase)
-                {
-                    stages = new byte[ChunkMaskCodec.CellCount];
-                    for (var i = 0; i < stages.Length; i++)
-                    {
-                        stages[i] = (byte)CellStage.Moss;
-                    }
-                }
-                else if (!ChunkMaskCodec.TryDecodeBase64(growth.stageMaskBase64, out stages, out _))
-                {
-                    stages = Array.Empty<byte>();
-                }
-
                 // Stage and biome samples are owned by the shared WorldTerrainSampleCache.
 
                 if (ChunkMaskCodec.TryDecodeBase64(growth.settlementMaskBase64, out var settlement, out _))

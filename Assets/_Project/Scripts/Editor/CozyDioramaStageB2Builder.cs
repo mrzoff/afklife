@@ -106,11 +106,11 @@ namespace AfkIsland.EditorTools
             // Rear arc frames the clearing; side clusters leave both huts and the center readable.
             var positions = new[]
             {
-                new Vector3(-4.5f,0f,3.0f), new Vector3(-3.2f,0f,4.0f),
-                new Vector3(-1.7f,0f,4.45f), new Vector3(0.1f,0f,4.55f),
-                new Vector3(1.9f,0f,4.15f), new Vector3(3.55f,0f,3.2f),
-                new Vector3(4.45f,0f,1.75f), new Vector3(-4.75f,0f,0.9f),
-                new Vector3(4.65f,0f,-0.25f)
+                new Vector3(-4.15f,0f,2.45f), new Vector3(-3.05f,0f,3.10f),
+                new Vector3(-1.65f,0f,3.45f), new Vector3(0.10f,0f,3.55f),
+                new Vector3(1.85f,0f,3.35f), new Vector3(3.35f,0f,2.65f),
+                new Vector3(4.10f,0f,1.25f), new Vector3(-4.35f,0f,0.65f),
+                new Vector3(4.25f,0f,-0.35f)
             };
             for (var i = 0; i < Trees.Length; i++)
             {

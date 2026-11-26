@@ -1,0 +1,92 @@
+Stage C-3I — MainIsland starter settlement verification
+Mode: in-memory Save v8 copies; MainIsland.unity opened read-only; real save file only read.
+Real save: C:/Users/Евгений/AppData/LocalLow/AFKIsland/AFK Island\afk_island_save.json exists=True diskSha=E933BA500E36FCD8
+
+A1 fresh save is seeded exactly once with hut/pad/road: ok=True
+   seeded=True, hutCellIsHut=True, pathCells=True, padCells=True, roadCells=3, roadComponents=1, hutTouchesRoad=True
+A2 second seeding is a no-op (idempotent): ok=True (secondCallSeeded=False, maskUnchanged=True)
+A3 any existing settlement cell blocks seeding (no partial/duplicate starter): ok=True
+   [single Clearing far from starter: seeded=False, unchanged=True] [single Path only: seeded=False, unchanged=True] [single Hut only: seeded=False, unchanged=True]
+A4 starter is outside the pond scrub zone: ok=True (cellsScrubbed=0)
+A5 growth from starter (fresh-like save): ok=True
+   starting roadCells=3, growthStartedAtSession=1, totalPathsAdded=27, totalStonesAdded=0, totalHutsAdded=0, maxRoadComponents=1, starterHutKept=True, starterRoadKept=True, newHutsDisconnected=0
+   session 01: +paths=1 +stones=0 +huts=0 +clearings=13 roadCells=4 components=1 newHutsDisconnected=0
+   session 02: +paths=12 +stones=0 +huts=0 +clearings=2 roadCells=16 components=1 newHutsDisconnected=0
+   session 03: +paths=6 +stones=0 +huts=0 +clearings=8 roadCells=22 components=1 newHutsDisconnected=0
+   session 04: +paths=2 +stones=0 +huts=0 +clearings=12 roadCells=24 components=1 newHutsDisconnected=0
+   session 05: +paths=2 +stones=0 +huts=0 +clearings=12 roadCells=26 components=1 newHutsDisconnected=0
+   session 06: +paths=1 +stones=0 +huts=0 +clearings=13 roadCells=27 components=1 newHutsDisconnected=0
+   session 07: +paths=1 +stones=0 +huts=0 +clearings=13 roadCells=28 components=1 newHutsDisconnected=0
+   session 08: +paths=0 +stones=0 +huts=0 +clearings=14 roadCells=28 components=1 newHutsDisconnected=0
+   session 09: +paths=1 +stones=0 +huts=0 +clearings=13 roadCells=29 components=1 newHutsDisconnected=0
+   session 10: +paths=1 +stones=0 +huts=0 +clearings=13 roadCells=30 components=1 newHutsDisconnected=0
+   session 11: +paths=0 +stones=0 +huts=0 +clearings=14 roadCells=30 components=1 newHutsDisconnected=0
+   session 12: +paths=0 +stones=0 +huts=0 +clearings=14 roadCells=30 components=1 newHutsDisconnected=0
+A6 real-save copy: ok=True
+   before: clearings=0 paths=0 stones=0 huts=0; hadSettlement=False; seeded=True; after: roadCells=3 components=1 hutTouchesRoad=True
+A7 growth from starter (real-save copy): ok=True
+   starting roadCells=3, growthStartedAtSession=1, totalPathsAdded=19, totalStonesAdded=0, totalHutsAdded=0, maxRoadComponents=1, starterHutKept=True, starterRoadKept=True, newHutsDisconnected=0
+   session 01: +paths=4 +stones=0 +huts=0 +clearings=10 roadCells=7 components=1 newHutsDisconnected=0
+   session 02: +paths=9 +stones=0 +huts=0 +clearings=5 roadCells=16 components=1 newHutsDisconnected=0
+   session 03: +paths=1 +stones=0 +huts=0 +clearings=13 roadCells=17 components=1 newHutsDisconnected=0
+   session 04: +paths=2 +stones=0 +huts=0 +clearings=12 roadCells=19 components=1 newHutsDisconnected=0
+   session 05: +paths=1 +stones=0 +huts=0 +clearings=13 roadCells=20 components=1 newHutsDisconnected=0
+   session 06: +paths=0 +stones=0 +huts=0 +clearings=14 roadCells=20 components=1 newHutsDisconnected=0
+   session 07: +paths=1 +stones=0 +huts=0 +clearings=13 roadCells=21 components=1 newHutsDisconnected=0
+   session 08: +paths=0 +stones=0 +huts=0 +clearings=14 roadCells=21 components=1 newHutsDisconnected=0
+   session 09: +paths=0 +stones=0 +huts=0 +clearings=14 roadCells=21 components=1 newHutsDisconnected=0
+   session 10: +paths=0 +stones=0 +huts=0 +clearings=14 roadCells=21 components=1 newHutsDisconnected=0
+   session 11: +paths=1 +stones=0 +huts=0 +clearings=13 roadCells=22 components=1 newHutsDisconnected=0
+   session 12: +paths=0 +stones=0 +huts=0 +clearings=14 roadCells=22 components=1 newHutsDisconnected=0
+
+B scene: flag useContinuousPathNetworkRenderer default false=True
+B1 starter on fresh save: ok=True
+   renderer OFF: legacyPathTiles=4 (expect >0)
+   renderer ON : components=1, huts connected=1/1 [ConnectedWithVisualDoorCorrection], nodes=3, edges=2, starterIssues=0, pondIntrusions=0, legacyPathTiles=0, downwardTris=0, foldbacks=0
+   saveImmutable=True
+B2 starter on real-save copy: ok=True
+   renderer OFF: legacyPathTiles=4 (expect >0)
+   renderer ON : components=1, huts connected=1/1 [ConnectedWithVisualDoorCorrection], nodes=3, edges=2, starterIssues=0, pondIntrusions=0, legacyPathTiles=0, downwardTris=0, foldbacks=0
+   saveImmutable=True
+B3 after 12 x 7d growth (fresh-like): ok=True
+   renderer OFF: legacyPathTiles=31 (expect >0)
+   renderer ON : components=1, huts connected=1/1 [Connected], nodes=15, edges=14, starterIssues=0, pondIntrusions=0, legacyPathTiles=0, downwardTris=0, foldbacks=0
+   saveImmutable=True
+   home chunk map (z top=15 .. 0, x 0..15): R=road H=hut c=clearing .=none
+     ................
+     ................
+     ................
+     ................
+     ......cRR.......
+     .....RRRRc......
+     ....RRRRRR......
+     ....RRRRRR......
+     ....RRRR........
+     ....RRRH........
+     .....RRRR.......
+     .......R........
+     ................
+     ................
+     ................
+     ................
+B3s seed sweep (8 seeds, 12 x 7d, renderer ON): ok=True; seedsWithFoldbacks=4/8, totalFoldbacks=4, road cells inside 2x2 squares (sum)=217
+   seed 101: roadCells=24, cellsInside2x2RoadSquares=23, components=1, hutsConnected=1/1, downwardTris=0, foldbacks=1 ok
+   seed 102: roadCells=31, cellsInside2x2RoadSquares=31, components=1, hutsConnected=1/1, downwardTris=0, foldbacks=0 ok
+   seed 103: roadCells=30, cellsInside2x2RoadSquares=29, components=1, hutsConnected=1/1, downwardTris=0, foldbacks=0 ok
+   seed 104: roadCells=25, cellsInside2x2RoadSquares=21, components=1, hutsConnected=1/1, downwardTris=0, foldbacks=0 ok
+   seed 105: roadCells=34, cellsInside2x2RoadSquares=32, components=1, hutsConnected=1/1, downwardTris=0, foldbacks=1 ok
+   seed 106: roadCells=27, cellsInside2x2RoadSquares=24, components=1, hutsConnected=1/1, downwardTris=0, foldbacks=0 ok
+   seed 107: roadCells=30, cellsInside2x2RoadSquares=27, components=1, hutsConnected=1/1, downwardTris=0, foldbacks=1 ok
+   seed 108: roadCells=31, cellsInside2x2RoadSquares=30, components=1, hutsConnected=1/1, downwardTris=0, foldbacks=1 ok
+B4 OFF->ON->OFF zero leaks: ok=True (created=20, destroyed=20, live=0)
+
+C Disk integrity:
+   Assets/_Project/Scenes/MainIsland.unity: unchanged=True
+   Assets/_Project/Scenes/Prototypes/CozyDioramaStageB2.unity: unchanged=True
+   Assets/_Project/Scenes/Prototypes/CozyDioramaStageC2.unity: unchanged=True
+   Assets/_Project/Scenes/Prototypes/CozyDioramaStageC3C.unity: unchanged=True
+   Assets/_Project/Scenes/Prototypes/CozyDioramaStageC3D.unity: unchanged=True
+   Assets/_Project/Scenes/Prototypes/CozyDioramaStageC3E.unity: unchanged=True
+   real save: before=E933BA500E36FCD8 after=E933BA500E36FCD8 unchanged=True
+
+OVERALL STAGE C-3I VERIFICATION: PASS

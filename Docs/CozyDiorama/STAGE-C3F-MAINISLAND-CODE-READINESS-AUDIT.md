@@ -63,7 +63,7 @@ The Save v8 schema already contains the required source data: per-chunk stage, b
 ## 5. Recommended C-3F execution sequence
 
 1. Trace the production creation/configuration path for `HomeSettlementVisualizer`; do not add a second instance if one is already created dynamically.
-2. Add a read-only diagnostic entry point (or editor verifier) that reports: visualizer count, configured save/chunk references, current feature flag, authoritative save version, renderer chunk/mesh counts, topology hash, connected/unconnected hut counts, and current world-growth watermarks.
+2. Use the added read-only editor diagnostic: \`AFK Island → Cozy Diorama → Stage C-3F → Report MainIsland Runtime Wiring\`. It reports bootstrap/system counts, visualizer presence, feature flag, authoritative save version, world-growth chunk count and watermarks, topology node/edge/hut counts, connected huts, renderer chunks and owned meshes. It does not write or mutate the save.
 3. Run that diagnostic in `MainIsland` with the feature flag OFF first; compare the legacy visuals and ensure the scene starts without new objects.
 4. Enable the flag only for a controlled test session; capture a pre/post Save v8 hash and verify no serialized fields changed from visual rendering.
 5. Test an existing Save v8 load, then a controlled offline catch-up, then chunk add/remove/reload.
@@ -79,7 +79,7 @@ The Save v8 schema already contains the required source data: per-chunk stage, b
 
 ## 7. Validation status
 
-- Source inspection: completed for C-3E integration, terrain cache, renderer, topology, SaveService, WorldGrowthService, GrowthWorldPlacement and MainIsland scene YAML.
+- Source inspection: completed for C-3E integration, terrain cache, renderer, topology, SaveService, WorldGrowthService, GameBootstrap, GrowthWorldPlacement and MainIsland scene YAML.\n- Added read-only runtime diagnostic: \`Assets/_Project/Scripts/Editor/CozyDioramaStageC3FMainIslandDiagnostic.cs\` (menu: \`AFK Island → Cozy Diorama → Stage C-3F → Report MainIsland Runtime Wiring\`).
 - Unity compilation / Play Mode: **not run in this environment**.
 - Real Save v8 load / offline catch-up: **not run**.
 - Android build/device: **not run**.

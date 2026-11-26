@@ -40,10 +40,89 @@ namespace AfkIsland.World
             }
 
             UpgradeAuthoredNatureVisuals();
+            // C-3I: starter hut/pad/road live in the save mask; keep scene props off that footprint.
+            LiftAuthoredPropsOffStarterSettlement();
             LiftAuthoredPropsOutOfPond();
             UpgradeAuthoredSettlementVisuals();
             var water = GetComponent<WaterSurfaceApplicator>() ?? gameObject.AddComponent<WaterSurfaceApplicator>();
             water.Apply();
+        }
+
+        /// <summary>
+        /// C-3I: the authored starter settlement (see <see cref="StarterSettlementSeed"/>) is written into the
+        /// home chunk settlement mask, so scene props never know about it. Push any prop whose position falls
+        /// inside the starter footprint radially outward. Scene file is not modified; this runs at Awake only.
+        /// </summary>
+        private static void LiftAuthoredPropsOffStarterSettlement()
+        {
+            var props = GameObject.Find("NaturePackProps");
+            if (props == null)
+            {
+                return;
+            }
+
+            var centers = StarterSettlementSeed.GetFootprintCentersXZ();
+            var radius = StarterSettlementSeed.PropClearanceRadius;
+            for (var i = 0; i < props.transform.childCount; i++)
+            {
+                var child = props.transform.GetChild(i);
+                var position = child.position;
+                var nearest = -1;
+                var nearestSq = radius * radius;
+                for (var c = 0; c < centers.Count; c++)
+                {
+                    var dx = position.x - centers[c].x;
+                    var dz = position.z - centers[c].y;
+                    var sq = dx * dx + dz * dz;
+                    if (sq < nearestSq)
+                    {
+                        nearestSq = sq;
+                        nearest = c;
+                    }
+                }
+
+                if (nearest < 0)
+                {
+                    continue;
+                }
+
+                var away = new Vector2(position.x - centers[nearest].x, position.z - centers[nearest].y);
+                if (away.sqrMagnitude < 0.0001f)
+                {
+                    // Prop sits exactly on a cell centre: step west, away from the pond.
+                    away = Vector2.left;
+                }
+
+                away.Normalize();
+                // Step out from the nearest centre, then re-check all centres; a few small steps suffice.
+                var distance = radius + 0.05f;
+                for (var attempt = 0; attempt < 12; attempt++)
+                {
+                    var x = centers[nearest].x + away.x * distance;
+                    var z = centers[nearest].y + away.y * distance;
+                    var clear = true;
+                    for (var c = 0; c < centers.Count; c++)
+                    {
+                        var dx = x - centers[c].x;
+                        var dz = z - centers[c].y;
+                        if (dx * dx + dz * dz < radius * radius)
+                        {
+                            clear = false;
+                            break;
+                        }
+                    }
+
+                    if (clear)
+                    {
+                        position.x = x;
+                        position.z = z;
+                        child.position = position;
+                        break;
+                    }
+
+                    distance += 0.25f;
+                }
+            }
         }
 
         /// <summary>

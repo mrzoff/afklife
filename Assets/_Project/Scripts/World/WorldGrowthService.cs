@@ -104,6 +104,13 @@ namespace AfkIsland.World
                     data.worldGrowth.lastSimulationUtc = data.lastSaveUtc > 0 ? data.lastSaveUtc : now;
                 }
 
+                // C-3I: a save with no settlement at all gets the authored starter once. Growth rules are
+                // unchanged; later roads attach to this real road through the normal connectivity guard.
+                if (StarterSettlementSeed.SeedIfEmpty(data))
+                {
+                    Debug.Log("[AFK Island] C-3I: starter settlement seeded into the home chunk (hut + pad + road).");
+                }
+
                 var watermarkBefore = data.worldGrowth.lastSimulationUtc;
                 var worldElapsed = Math.Max(0, now - watermarkBefore);
                 var worldResult = _simulation.Simulate(data, TimeSpan.FromSeconds(worldElapsed), config);
@@ -280,6 +287,8 @@ namespace AfkIsland.World
             };
             data.worldGrowth.lastSimulationUtc = now;
             data.worldGrowth.chunks.Add(SaveMigrationService.CreateGrowthRecord(0, 0, true));
+            // C-3I: authored starter settlement (hut by the pond + pad + short road) is the root of the network.
+            StarterSettlementSeed.SeedIfEmpty(data);
             SaveMigrationService.EnsureCollectionAndFishingDefaults(data);
             EcosystemSimulation.Recalculate(data, raining: false);
             return data;

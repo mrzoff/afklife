@@ -27,6 +27,10 @@ namespace AfkIsland.Editor
             public string Name;
             public List<Vector2Int> Cells = new List<Vector2Int>();
             public List<Vector2Int> Huts = new List<Vector2Int>();
+            /// <summary>C-3L: when set, every hut of the case uses this yaw (degrees) instead of the per-cell default.</summary>
+            public float? YawOverride;
+            /// <summary>C-3L: 0 = footprint 0.675x0.575 / door 0.598, 1 = footprint 0.775x0.625 / door 0.65 (as HomeSettlementVisualizer picks by cell parity).</summary>
+            public int HutVariant;
         }
 
         private sealed class CaseResult
@@ -36,11 +40,17 @@ namespace AfkIsland.Editor
             public int Cells, Edges, Junctions;
             public int Foldbacks, FlipsRibbon, FlipsCap, FlipsJunction, Downward, Degenerate;
             public float MinUpDot;
+            public int RibbonSamples, NarrowSamples;
+            public float MaxFlipArea;
+            public int SteepLarge;
+            public float MinWidthRatio = 1f;
+            public List<string> NarrowSites;
+            public List<string> SteepSites;
             public int BorderPairs;
             public float MaxBorderPos, MaxBorderEdge, MaxAttach;
             public string Hash;
             public List<string> Sites;
-            public bool Clean => Foldbacks == 0 && FlipsRibbon == 0 && FlipsCap == 0 && FlipsJunction == 0 && Downward == 0
+            public bool Clean => Foldbacks == 0 && FlipsRibbon == 0 && FlipsCap == 0 && FlipsJunction == 0 && Downward == 0 && SteepLarge == 0
                                  && MaxBorderPos <= 1e-4f && MaxBorderEdge <= 1e-4f && MaxAttach <= 1e-4f;
         }
 
@@ -95,6 +105,41 @@ namespace AfkIsland.Editor
             }
 
             report.AppendLine($"   dirty={aDirty} / {shapes.Count * terrains.Length}");
+
+            // ---------- A2. Hut door sweep (C-3L): every hut yaw x both footprints x many road shapes, plus the real save ----------
+            var sweepBases = BuildHutSweepBases();
+            var yawStep = _quick ? 15 : 5;
+            report.AppendLine();
+            report.AppendLine($"A2. Hut door sweep: {sweepBases.Count} bases x {360 / yawStep} yaws x 2 footprints x {terrains.Length} terrains");
+            var a2Dirty = 0;
+            var a2Cases = 0;
+            var a2Totals = new CaseResult { Name = "A2-total" };
+            foreach (var baseCase in sweepBases)
+            {
+                for (var yaw = 0; yaw < 360; yaw += yawStep)
+                {
+                    for (var variant = 0; variant < 2; variant++)
+                    {
+                        var s = new ShapeCase { Name = $"{baseCase.Name}-yaw{yaw}-v{variant}", YawOverride = yaw, HutVariant = variant };
+                        s.Cells.AddRange(baseCase.Cells);
+                        s.Huts.AddRange(baseCase.Huts);
+                        foreach (var t in terrains)
+                        {
+                            var r = Evaluate(s, t.name, t.fn);
+                            all.Add(r);
+                            Accumulate(a2Totals, r);
+                            a2Cases++;
+                            if (!r.Clean)
+                            {
+                                a2Dirty++;
+                                if (a2Dirty <= 12) AppendResult(report, r);
+                            }
+                        }
+                    }
+                }
+            }
+
+            report.AppendLine($"   dirty={a2Dirty} / {a2Cases}; totals foldbacks={a2Totals.Foldbacks} flipsRibbon={a2Totals.FlipsRibbon} flipsCap={a2Totals.FlipsCap} flipsJunction={a2Totals.FlipsJunction} downward={a2Totals.Downward}");
 
             // ---------- B. Random dense / legacy blobs (also across chunk seams) ----------
             var randomCount = 160;
@@ -209,8 +254,26 @@ namespace AfkIsland.Editor
             }
 
             report.AppendLine();
-            report.AppendLine($"SUMMARY [{tag}]: cases={all.Count} clean={cleanCount} dirty={all.Count - cleanCount}; foldbacks={total.Foldbacks} flipsRibbon={total.FlipsRibbon} flipsCap={total.FlipsCap} flipsJunction={total.FlipsJunction} downward={total.Downward} degenerateSkipped={total.Degenerate} minUpwardNormalDot={minUp:F4}");
+            report.AppendLine($"SUMMARY [{tag}]: cases={all.Count} clean={cleanCount} dirty={all.Count - cleanCount}; foldbacks={total.Foldbacks} flipsRibbon={total.FlipsRibbon} flipsCap={total.FlipsCap} flipsJunction={total.FlipsJunction} downward={total.Downward} degenerateSkipped={total.Degenerate} minUpwardNormalDot={minUp:F4} maxFlipArea={total.MaxFlipArea:E2}m2 steepNonSliverTriangles={total.SteepLarge}");
             report.AppendLine($"   seams: sharedBorderPointPairs={total.BorderPairs} maxBorderCentreDelta={total.MaxBorderPos:F6} maxBorderLeftRightDelta={total.MaxBorderEdge:F6} maxJunctionAttachDelta={total.MaxAttach:F6}");
+            report.AppendLine($"   width (C-3L diagnostics): ribbonSamples={total.RibbonSamples} narrower-than-70%={total.NarrowSamples} ({(total.RibbonSamples > 0 ? 100.0 * total.NarrowSamples / total.RibbonSamples : 0):F3}%) minWidthRatio={total.MinWidthRatio:F3}");
+            var narrowCases = all.FindAll(c => c.NarrowSamples > 0);
+            narrowCases.Sort((a, b) => a.MinWidthRatio.CompareTo(b.MinWidthRatio));
+            for (var i = 0; i < narrowCases.Count && i < 8; i++)
+            {
+                var c = narrowCases[i];
+                report.AppendLine($"     narrow case {c.Name} [{c.Terrain}] minRatio={c.MinWidthRatio:F3} samples={c.NarrowSamples}" + (c.NarrowSites != null && c.NarrowSites.Count > 0 ? " first: " + c.NarrowSites[0] : string.Empty));
+            }
+
+            var steepCases = new List<CaseResult>(all);
+            steepCases.Sort((a, b) => a.MinUpDot.CompareTo(b.MinUpDot));
+            for (var i = 0; i < steepCases.Count && i < 6; i++)
+            {
+                var c = steepCases[i];
+                report.AppendLine($"   lowest upDot #{i + 1}: {c.Name} [{c.Terrain}] minUpDot={c.MinUpDot:F3}");
+                if (c.SteepSites != null && c.MinUpDot < 0.5f) foreach (var ss in c.SteepSites) report.AppendLine("        " + ss);
+            }
+
             var ok = cleanCount == all.Count && detOk && lifeOk;
             report.AppendLine($"ACCEPTANCE (zero foldbacks, zero winding flips, zero downward triangles, deterministic) [{tag}]: {(ok ? "PASS" : "FAIL")}");
 
@@ -325,10 +388,10 @@ namespace AfkIsland.Editor
                 {
                     Id = $"H_{h.x}_{h.y}",
                     Center = center,
-                    YawDegrees = (h.x * 37 + h.y * 91) % 360,
+                    YawDegrees = s.YawOverride ?? ((h.x * 37 + h.y * 91) % 360),
                     Scale = SettlementCellQuery.HutVisualUniformScale,
-                    FootprintHalfExtents = new Vector2(0.675f, 0.575f),
-                    DoorLocalZ = 0.598f,
+                    FootprintHalfExtents = s.HutVariant == 0 ? new Vector2(0.675f, 0.575f) : new Vector2(0.775f, 0.625f),
+                    DoorLocalZ = s.HutVariant == 0 ? 0.598f : 0.65f,
                     AllowVisualDoorCorrection = true
                 });
             }
@@ -356,6 +419,13 @@ namespace AfkIsland.Editor
                 Downward = build.DownwardTriangles,
                 Degenerate = build.DegenerateSkipped,
                 MinUpDot = build.MinUpwardNormalDot,
+                MaxFlipArea = build.MaxFlipAreaM2,
+                SteepLarge = build.SteepLargeTriangles,
+                RibbonSamples = build.RibbonSamples,
+                NarrowSamples = build.NarrowRibbonSamples,
+                MinWidthRatio = build.MinWidthRatio,
+                NarrowSites = build.NarrowSites,
+                SteepSites = build.SteepSites,
                 BorderPairs = build.BorderSharedPointPairs,
                 MaxBorderPos = build.MaxBorderPositionDelta,
                 MaxBorderEdge = build.MaxBorderEdgeDelta,
@@ -381,6 +451,11 @@ namespace AfkIsland.Editor
             total.FlipsJunction += r.FlipsJunction;
             total.Downward += r.Downward;
             total.Degenerate += r.Degenerate;
+            total.MaxFlipArea = Mathf.Max(total.MaxFlipArea, r.MaxFlipArea);
+            total.SteepLarge += r.SteepLarge;
+            total.RibbonSamples += r.RibbonSamples;
+            total.NarrowSamples += r.NarrowSamples;
+            total.MinWidthRatio = Mathf.Min(total.MinWidthRatio, r.MinWidthRatio);
             total.BorderPairs += r.BorderPairs;
             total.MaxBorderPos = Mathf.Max(total.MaxBorderPos, r.MaxBorderPos);
             total.MaxBorderEdge = Mathf.Max(total.MaxBorderEdge, r.MaxBorderEdge);
@@ -389,7 +464,7 @@ namespace AfkIsland.Editor
 
         private static void AppendResult(StringBuilder sb, CaseResult r)
         {
-            sb.AppendLine($"   DIRTY {r.Name} [{r.Terrain}] cells={r.Cells} edges={r.Edges} junctions={r.Junctions} foldbacks={r.Foldbacks} flips(ribbon/cap/junction)={r.FlipsRibbon}/{r.FlipsCap}/{r.FlipsJunction} downward={r.Downward} minUpDot={r.MinUpDot:F3} borderPos={r.MaxBorderPos:F5} borderEdge={r.MaxBorderEdge:F5} attach={r.MaxAttach:F5}");
+            sb.AppendLine($"   DIRTY {r.Name} [{r.Terrain}] cells={r.Cells} edges={r.Edges} junctions={r.Junctions} foldbacks={r.Foldbacks} flips(ribbon/cap/junction)={r.FlipsRibbon}/{r.FlipsCap}/{r.FlipsJunction} maxFlipArea={r.MaxFlipArea:E2}m2 downward={r.Downward} minUpDot={r.MinUpDot:F3} borderPos={r.MaxBorderPos:F5} borderEdge={r.MaxBorderEdge:F5} attach={r.MaxAttach:F5}");
             if (r.Sites != null)
             {
                 for (var i = 0; i < r.Sites.Count && i < 6; i++) sb.AppendLine("        " + r.Sites[i]);
@@ -467,6 +542,39 @@ namespace AfkIsland.Editor
             huts2.Cells.AddRange(Shape("l", 5,5, 6,5, 7,5, 7,6, 7,7).Cells);
             huts2.Huts.Add(new Vector2Int(8, 5));
             list.Add(huts2);
+            return list;
+        }
+
+        private const string RealSaveBackupPath = @"D:\afk\c3i-backup\afk_island_save.REAL-BACKUP-C3I.json";
+
+        private static List<ShapeCase> BuildHutSweepBases()
+        {
+            var list = new List<ShapeCase>();
+            ShapeCase WithHuts(string name, ShapeCase road, params int[] hutCoords)
+            {
+                var s = new ShapeCase { Name = name };
+                s.Cells.AddRange(road.Cells);
+                for (var i = 0; i + 1 < hutCoords.Length; i += 2) s.Huts.Add(new Vector2Int(hutCoords[i], hutCoords[i + 1]));
+                return s;
+            }
+
+            list.Add(WithHuts("sweep-hut-beside-straight", Shape("s", 5, 5, 6, 5, 7, 5, 8, 5), 6, 6));
+            list.Add(WithHuts("sweep-hut-gap-straight", Shape("s", 5, 5, 6, 5, 7, 5, 8, 5), 6, 7));
+            list.Add(WithHuts("sweep-hut-road-end", Shape("s", 5, 5, 6, 5, 7, 5, 8, 5), 9, 5));
+            list.Add(WithHuts("sweep-hut-at-bend", Shape("l", 5, 5, 6, 5, 7, 5, 7, 6, 7, 7), 8, 5));
+            list.Add(WithHuts("sweep-hut-inside-corner", Shape("l", 5, 5, 6, 5, 7, 5, 7, 6, 7, 7), 6, 6));
+            list.Add(WithHuts("sweep-hut-on-U", Shape("u", 5, 5, 5, 6, 5, 7, 6, 7, 7, 7, 7, 6, 7, 5), 6, 6));
+            list.Add(WithHuts("sweep-hut-near-T", Shape("t", 5, 5, 6, 5, 7, 5, 6, 6, 6, 7), 7, 6));
+
+            if (File.Exists(RealSaveBackupPath))
+            {
+                var real = JsonUtility.FromJson<GameSaveData>(File.ReadAllText(RealSaveBackupPath));
+                var s = new ShapeCase { Name = "sweep-real-save" };
+                foreach (var k in CozyDioramaStageC3IStarterSettlementVerifier.RoadSet(real)) s.Cells.Add(Unkey(k));
+                foreach (var k in CozyDioramaStageC3IStarterSettlementVerifier.HutSet(real)) s.Huts.Add(Unkey(k));
+                list.Add(s);
+            }
+
             return list;
         }
 

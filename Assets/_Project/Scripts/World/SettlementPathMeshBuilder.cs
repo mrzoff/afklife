@@ -80,8 +80,19 @@ namespace AfkIsland.World
             public int WindingFlipsJunction;
             /// <summary>C-3K diagnostics: core triangles dropped because they were degenerate (zero area).</summary>
             public int DegenerateSkipped;
+            /// <summary>C-3L diagnostics: area (m2, 3D) of the largest flipped core triangle.</summary>
+            public float MaxFlipAreaM2;
+            /// <summary>C-3L diagnostics: core triangles that stand steeper than ~60 degrees (upDot < 0.5), with their kind and position.</summary>
+            public List<string> SteepSites = new List<string>();
+            /// <summary>C-3L diagnostics: steep (upDot < 0.5) core triangles that are not slivers (2D area > 5e-4 m2). Must be 0 on the game's terrain.</summary>
+            public int SteepLargeTriangles;
             /// <summary>C-3K diagnostics: human-readable sites (edge id / index / position) of ribbon foldbacks and flips.</summary>
             public List<string> DefectSites = new List<string>();
+            /// <summary>C-3L diagnostics: ribbon width relative to nominal (2*halfWidth) over all core ribbon samples.</summary>
+            public int RibbonSamples;
+            public int NarrowRibbonSamples;
+            public float MinWidthRatio = float.MaxValue;
+            public List<string> NarrowSites = new List<string>();
             public int BorderSharedPointPairs;
             public float MaxBorderPositionDelta;
             /// <summary>C-3K: largest left/right ribbon-edge position delta between the two chunk pieces at a shared border point.</summary>
@@ -224,6 +235,7 @@ namespace AfkIsland.World
                 report.MinCoreGroundClearance = 0f;
                 report.MaxCoreGroundClearance = 0f;
                 report.MinRibbonWidthMeters = 0f;
+                report.MinWidthRatio = 1f;
                 report.MeshHash = ComputeHash(report);
                 return report;
             }
@@ -329,8 +341,12 @@ namespace AfkIsland.World
 
                 // C-3K: curvature-limited inner offset, computed ONCE on the whole trimmed edge (before the chunk split)
                 // so both neighbouring chunk pieces sample the identical profile at their shared border point.
-                var coreProfile = BuildWidthProfile(trimmed, edge.HalfWidth, cfg);
-                var fringeProfile = BuildWidthProfile(trimmed, edge.HalfWidth + cfg.FringeExtraWidth, cfg);
+                // Ends attached to a junction hub must keep their exact width (the hub fan attaches there); free ends
+                // (door / dead end, capped) may taper so a very tight bend right behind the end cannot fold the first strip.
+                var pinProfileStart = startTrim > 0.001f;
+                var pinProfileEnd = endTrim > 0.001f;
+                var coreProfile = BuildWidthProfile(trimmed, edge.HalfWidth, cfg, pinProfileStart, pinProfileEnd);
+                var fringeProfile = BuildWidthProfile(trimmed, edge.HalfWidth + cfg.FringeExtraWidth, cfg, pinProfileStart, pinProfileEnd);
 
                 // Record exact ribbon boundary attachment points at incident junctions (vertex-for-vertex!)
                 JunctionSpoke startCoreSpoke = null;
@@ -465,6 +481,11 @@ namespace AfkIsland.World
                 report.MinRibbonWidthMeters = 0f;
             }
 
+            if (report.MinWidthRatio == float.MaxValue)
+            {
+                report.MinWidthRatio = 1f;
+            }
+
             report.MeshHash = ComputeHash(report);
             return report;
         }
@@ -563,7 +584,7 @@ namespace AfkIsland.World
         /// The scale changes smoothly along the edge; both end vertices are pinned to 1 so junction hubs, end caps
         /// and chunk-border seams keep their exact attachment widths. Deterministic and purely geometric.
         /// </summary>
-        private static WidthProfile BuildWidthProfile(List<Vector2> pts, float halfWidth, MeshBuildConfig cfg)
+        private static WidthProfile BuildWidthProfile(List<Vector2> pts, float halfWidth, MeshBuildConfig cfg, bool pinStart = true, bool pinEnd = true)
         {
             var n = pts.Count;
             var prof = new WidthProfile { Cum = new float[n], ScaleL = new float[n], ScaleR = new float[n] };
@@ -635,19 +656,20 @@ namespace AfkIsland.World
                     // left strip: (l0,l1,c0) and (c0,l1,c1) both depend on the width at i + 1
                     if (Cross2D(l1 - l0, c0 - l0) > invertedEps || Cross2D(l1 - c0, c1 - c0) > invertedEps)
                     {
-                        changed |= ShrinkScale(prof.ScaleL, i + 1, minScale);
+                        changed |= ShrinkScale(prof.ScaleL, i + 1, minScale, pinStart, pinEnd);
+                        if (i == 0) changed |= ShrinkScale(prof.ScaleL, 0, minScale, pinStart, pinEnd);
                     }
 
                     // right strip: (c0,c1,r0) depends on the width at i, (r0,c1,r1) on both
                     if (Cross2D(c1 - c0, r0 - c0) > invertedEps)
                     {
-                        changed |= ShrinkScale(prof.ScaleR, i, minScale);
+                        changed |= ShrinkScale(prof.ScaleR, i, minScale, pinStart, pinEnd);
                     }
 
                     if (Cross2D(c1 - r0, r1 - r0) > invertedEps)
                     {
-                        changed |= ShrinkScale(prof.ScaleR, i, minScale);
-                        changed |= ShrinkScale(prof.ScaleR, i + 1, minScale);
+                        changed |= ShrinkScale(prof.ScaleR, i, minScale, pinStart, pinEnd);
+                        changed |= ShrinkScale(prof.ScaleR, i + 1, minScale, pinStart, pinEnd);
                     }
                 }
 
@@ -655,24 +677,26 @@ namespace AfkIsland.World
             }
 
             var rate = Mathf.Max(0.05f, cfg.InnerWidthChangePerMeter) / hwMax;
-            LimitScaleSlope(prof.ScaleL, prof.Cum, rate);
-            LimitScaleSlope(prof.ScaleR, prof.Cum, rate);
+            LimitScaleSlope(prof.ScaleL, prof.Cum, rate, pinStart, pinEnd);
+            LimitScaleSlope(prof.ScaleR, prof.Cum, rate, pinStart, pinEnd);
             return prof;
         }
 
         private static float Cross2D(Vector2 a, Vector2 b) => a.x * b.y - a.y * b.x;
 
-        /// <summary>Shrinks one scale entry; the two end vertices stay pinned at full width.</summary>
-        private static bool ShrinkScale(float[] scale, int index, float minScale)
+        /// <summary>Shrinks one scale entry; end vertices attached to a junction hub stay pinned at full width.</summary>
+        private static bool ShrinkScale(float[] scale, int index, float minScale, bool pinStart, bool pinEnd)
         {
-            if (index <= 0 || index >= scale.Length - 1) return false;
+            if (index < 0 || index >= scale.Length) return false;
+            if (index == 0 && pinStart) return false;
+            if (index == scale.Length - 1 && pinEnd) return false;
             var next = Mathf.Max(minScale, scale[index] * 0.75f);
             if (next >= scale[index] - 1e-5f) return false;
             scale[index] = next;
             return true;
         }
 
-        private static void LimitScaleSlope(float[] scale, float[] cum, float ratePerMeter)
+        private static void LimitScaleSlope(float[] scale, float[] cum, float ratePerMeter, bool pinStart, bool pinEnd)
         {
             var n = scale.Length;
             for (var i = 1; i < n; i++)
@@ -686,8 +710,8 @@ namespace AfkIsland.World
             }
 
             // Ends stay at full width: junction spokes, end caps and chunk-border points attach at the nominal width.
-            scale[0] = 1f;
-            scale[n - 1] = 1f;
+            if (pinStart) scale[0] = 1f;
+            if (pinEnd) scale[n - 1] = 1f;
         }
 
         private static void SampleWidthProfile(WidthProfile prof, float dist, out float scaleL, out float scaleR)
@@ -749,6 +773,10 @@ namespace AfkIsland.World
             var tangents = new Vector2[count];
             var dists = new float[count];
 
+            var startScaleL = 1f;
+            var startScaleR = 1f;
+            var endScaleL = 1f;
+            var endScaleR = 1f;
             var dist = distStartTrimmed;
             var edgePhase = edgeId != null ? (StableStringHash(edgeId) % 1024) * 0.0061f : 0f;
 
@@ -789,6 +817,8 @@ namespace AfkIsland.World
                 var scaleL = 1f;
                 var scaleR = 1f;
                 if (profile != null) SampleWidthProfile(profile, dist, out scaleL, out scaleR);
+                if (i == 0) { startScaleL = scaleL; startScaleR = scaleR; }
+                if (i == count - 1) { endScaleL = scaleL; endScaleR = scaleR; }
                 leftXZ[i] = p - side2 * (hw * scaleL);
                 rightXZ[i] = p + side2 * (hw * scaleR);
             }
@@ -857,6 +887,21 @@ namespace AfkIsland.World
                     var fullW = Vector2.Distance(lxz, rxz);
                     if (fullW < report.MinRibbonWidthMeters) report.MinRibbonWidthMeters = fullW;
                     if (fullW > report.MaxRibbonWidthMeters) report.MaxRibbonWidthMeters = fullW;
+
+                    // C-3L diagnostics only (no geometry effect): how much narrower than nominal the ribbon gets.
+                    var widthRatio = fullW / Mathf.Max(0.001f, 2f * baseHalfWidth);
+                    report.RibbonSamples++;
+                    if (widthRatio < report.MinWidthRatio) report.MinWidthRatio = widthRatio;
+                    if (widthRatio < NarrowRatioThreshold)
+                    {
+                        report.NarrowRibbonSamples++;
+                        if (report.NarrowSites.Count < 64)
+                        {
+                            report.NarrowSites.Add(string.Format(CultureInfo.InvariantCulture,
+                                "narrow edge={0} chunk=({1},{2}) step={3}/{4} width={5:F3} nominal={6:F3} ratio={7:F2} at=({8:F2},{9:F2})",
+                                edgeId, chunk.x, chunk.y, i, count - 1, fullW, 2f * baseHalfWidth, widthRatio, p.x, p.y));
+                        }
+                    }
 
                     if (i > 0)
                     {
@@ -953,12 +998,13 @@ namespace AfkIsland.World
             // Rounded end caps at free ends (door/dead-end), never at junctions or chunk borders
             if (capStart)
             {
-                EmitEndCap(buf, pts[0], -tangents[0], baseHalfWidth, yOffset, chunkOrigin, sampleWorldY, cfg, isCore, report);
+                // the start cap runs mirrored: its first ring point is the ribbon's right end point, its last one the left
+                EmitEndCap(buf, pts[0], -tangents[0], baseHalfWidth, startScaleR, startScaleL, yOffset, chunkOrigin, sampleWorldY, cfg, isCore, report);
             }
 
             if (capEnd)
             {
-                EmitEndCap(buf, pts[count - 1], tangents[count - 1], baseHalfWidth, yOffset, chunkOrigin, sampleWorldY, cfg, isCore, report);
+                EmitEndCap(buf, pts[count - 1], tangents[count - 1], baseHalfWidth, endScaleL, endScaleR, yOffset, chunkOrigin, sampleWorldY, cfg, isCore, report);
             }
         }
 
@@ -967,6 +1013,8 @@ namespace AfkIsland.World
             Vector2 centerXZ,
             Vector2 outDir,
             float halfWidth,
+            float scaleFirst,
+            float scaleLast,
             float yOffset,
             Vector3 chunkOrigin,
             Func<float, float, float> sampleWorldY,
@@ -990,7 +1038,8 @@ namespace AfkIsland.World
             {
                 var ang = -Mathf.PI * 0.5f + Mathf.PI * (k / (float)steps);
                 var dir = outDir * Mathf.Cos(ang) + side * Mathf.Sin(ang);
-                var p = centerXZ + dir * halfWidth;
+                // radius follows the ribbon's end widths so a tapered free end stays watertight (1,1 = plain semicircle)
+                var p = centerXZ + dir * (halfWidth * Mathf.Lerp(scaleFirst, scaleLast, k / (float)steps));
                 var py = sampleWorldY(p.x, p.y) + yOffset;
                 buf.Verts.Add(new Vector3(p.x, py, p.y) - chunkOrigin);
                 buf.Normals.Add(SampleTerrainNormal(p.x, p.y, sampleWorldY, cfg.NormalSampleDelta));
@@ -1070,6 +1119,19 @@ namespace AfkIsland.World
                         var sb = spokes[(i + 1) % spokeCount];
                         var sector = sb.PosAngle - sa.PosAngle;
                         if (sector <= 0f) sector += Mathf.PI * 2f;
+                        if (sector < Mathf.PI)
+                        {
+                            // C-3L: the two facing ribbon edges have already crossed (or touch) at the hub radius; their ring
+                            // vertices would run backwards (or stand on one ray) around the centre, so both are skipped.
+                            var la = sa.LeftPt - centerXZ;
+                            var rb = sb.RightPt - centerXZ;
+                            if (la.x * rb.y - la.y * rb.x < 2e-4f)
+                            {
+                                overlapNext[i] = true;
+                                continue;
+                            }
+                        }
+
                         if (sector >= Mathf.PI * 0.5f) continue;
                         var crotchDist = (sa.HalfWidth + sb.HalfWidth) / (2f * Mathf.Sin(sector * 0.5f));
                         var attachDist = 0.5f * (Vector2.Distance(centerXZ, sa.CenterPt) + Vector2.Distance(centerXZ, sb.CenterPt));
@@ -1470,6 +1532,9 @@ namespace AfkIsland.World
             return result;
         }
 
+        /// <summary>C-3L diagnostics: ribbon samples narrower than this fraction of nominal width are reported.</summary>
+        private const float NarrowRatioThreshold = 0.70f;
+
         private const int TriKindRibbon = 0;
         private const int TriKindCap = 1;
         private const int TriKindJunction = 2;
@@ -1495,6 +1560,8 @@ namespace AfkIsland.World
                     if (kind == TriKindRibbon) report.WindingFlipsRibbon++;
                     else if (kind == TriKindCap) report.WindingFlipsCap++;
                     else report.WindingFlipsJunction++;
+                    var flipArea = cross.magnitude * 0.5f;
+                    if (flipArea > report.MaxFlipAreaM2) report.MaxFlipAreaM2 = flipArea;
                 }
 
                 var tmp = i1;
@@ -1512,6 +1579,16 @@ namespace AfkIsland.World
                 var upDot = Vector3.Dot(cross.normalized, Vector3.up);
                 if (upDot < report.MinUpwardNormalDot) report.MinUpwardNormalDot = upDot;
                 if (upDot <= 0f) report.DownwardTriangles++;
+                if (upDot < 0.5f)
+                {
+                    var area2D = 0.5f * Mathf.Abs((v1.x - v0.x) * (v2.z - v0.z) - (v1.z - v0.z) * (v2.x - v0.x));
+                    if (area2D > 5e-4f) report.SteepLargeTriangles++;
+                    if (report.SteepSites.Count < 16)
+                    report.SteepSites.Add(string.Format(CultureInfo.InvariantCulture,
+                        "steep kind={0} upDot={1:F3} area2D={2:E2} v0=({3:F3},{4:F3},{5:F3}) v1=({6:F3},{7:F3},{8:F3}) v2=({9:F3},{10:F3},{11:F3}) (chunk-local)",
+                        kind == TriKindRibbon ? "ribbon" : kind == TriKindCap ? "cap" : "junction", upDot, area2D,
+                        v0.x, v0.y, v0.z, v1.x, v1.y, v1.z, v2.x, v2.y, v2.z));
+                }
             }
         }
 

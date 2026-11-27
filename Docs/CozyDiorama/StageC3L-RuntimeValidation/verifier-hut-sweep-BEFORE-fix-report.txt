@@ -1,0 +1,59 @@
+Stage C-3K foldback verification [c3l-sweep-before] — geometry only, in-memory (no scene, no save, no Play Mode)
+
+A. Synthetic shapes: 107 shapes x 2 terrains
+   dirty=0 / 214
+
+A2. Hut door sweep: 8 bases x 72 yaws x 2 footprints x 2 terrains
+   DIRTY sweep-hut-beside-straight-yaw85-v0 [flat] cells=4 edges=3 junctions=1 foldbacks=0 flips(ribbon/cap/junction)=1/0/0 downward=0 minUpDot=1,000 borderPos=0,00000 borderEdge=0,00000 attach=0,00000
+        flip edge=Branch_H_6_6 chunk=(0,0) step=0/8 at=(-1.07,-1.46) p0=(-1.071,-1.462) p1=(-0.978,-1.387) L0=(-1.210,-1.292) L1=(-1.008,-1.167) R0=(-0.932,-1.633) R1=(-0.967,-1.469)
+   DIRTY sweep-hut-beside-straight-yaw85-v0 [hilly] cells=4 edges=3 junctions=1 foldbacks=0 flips(ribbon/cap/junction)=1/0/0 downward=0 minUpDot=0,971 borderPos=0,00000 borderEdge=0,00000 attach=0,00000
+        flip edge=Branch_H_6_6 chunk=(0,0) step=0/8 at=(-1.07,-1.46) p0=(-1.071,-1.462) p1=(-0.978,-1.387) L0=(-1.210,-1.292) L1=(-1.008,-1.167) R0=(-0.932,-1.633) R1=(-0.967,-1.469)
+   DIRTY sweep-hut-beside-straight-yaw85-v1 [flat] cells=4 edges=3 junctions=1 foldbacks=0 flips(ribbon/cap/junction)=1/0/0 downward=0 minUpDot=1,000 borderPos=0,00000 borderEdge=0,00000 attach=0,00000
+        flip edge=Branch_H_6_6 chunk=(0,0) step=0/8 at=(-1.04,-1.46) p0=(-1.039,-1.460) p1=(-0.946,-1.384) L0=(-1.178,-1.289) L1=(-0.975,-1.164) R0=(-0.900,-1.630) R1=(-0.935,-1.464)
+   DIRTY sweep-hut-beside-straight-yaw85-v1 [hilly] cells=4 edges=3 junctions=1 foldbacks=0 flips(ribbon/cap/junction)=1/0/0 downward=0 minUpDot=0,971 borderPos=0,00000 borderEdge=0,00000 attach=0,00000
+        flip edge=Branch_H_6_6 chunk=(0,0) step=0/8 at=(-1.04,-1.46) p0=(-1.039,-1.460) p1=(-0.946,-1.384) L0=(-1.178,-1.289) L1=(-0.975,-1.164) R0=(-0.900,-1.630) R1=(-0.935,-1.464)
+   DIRTY sweep-hut-beside-straight-yaw90-v0 [flat] cells=4 edges=3 junctions=1 foldbacks=0 flips(ribbon/cap/junction)=1/0/0 downward=0 minUpDot=1,000 borderPos=0,00000 borderEdge=0,00000 attach=0,00000
+        flip edge=Branch_H_6_6 chunk=(0,0) step=0/8 at=(-1.07,-1.50) p0=(-1.069,-1.500) p1=(-0.970,-1.435) L0=(-1.189,-1.316) L1=(-0.969,-1.213) R0=(-0.949,-1.684) R1=(-0.970,-1.525)
+   DIRTY sweep-hut-beside-straight-yaw90-v0 [hilly] cells=4 edges=3 junctions=1 foldbacks=0 flips(ribbon/cap/junction)=1/0/0 downward=0 minUpDot=0,971 borderPos=0,00000 borderEdge=0,00000 attach=0,00000
+        flip edge=Branch_H_6_6 chunk=(0,0) step=0/8 at=(-1.07,-1.50) p0=(-1.069,-1.500) p1=(-0.970,-1.435) L0=(-1.189,-1.316) L1=(-0.969,-1.213) R0=(-0.949,-1.684) R1=(-0.970,-1.525)
+   DIRTY sweep-hut-beside-straight-yaw90-v1 [flat] cells=4 edges=3 junctions=1 foldbacks=0 flips(ribbon/cap/junction)=1/0/0 downward=0 minUpDot=1,000 borderPos=0,00000 borderEdge=0,00000 attach=0,00000
+        flip edge=Branch_H_6_6 chunk=(0,0) step=0/8 at=(-1.04,-1.50) p0=(-1.037,-1.500) p1=(-0.938,-1.436) L0=(-1.157,-1.315) L1=(-0.935,-1.213) R0=(-0.917,-1.685) R1=(-0.938,-1.523)
+   DIRTY sweep-hut-beside-straight-yaw90-v1 [hilly] cells=4 edges=3 junctions=1 foldbacks=0 flips(ribbon/cap/junction)=1/0/0 downward=0 minUpDot=0,971 borderPos=0,00000 borderEdge=0,00000 attach=0,00000
+        flip edge=Branch_H_6_6 chunk=(0,0) step=0/8 at=(-1.04,-1.50) p0=(-1.037,-1.500) p1=(-0.938,-1.436) L0=(-1.157,-1.315) L1=(-0.935,-1.213) R0=(-0.917,-1.685) R1=(-0.938,-1.523)
+   DIRTY sweep-hut-beside-straight-yaw95-v0 [flat] cells=4 edges=3 junctions=1 foldbacks=0 flips(ribbon/cap/junction)=1/0/0 downward=0 minUpDot=1,000 borderPos=0,00000 borderEdge=0,00000 attach=0,00000
+        flip edge=Branch_H_6_6 chunk=(0,0) step=0/7 at=(-1.07,-1.54) p0=(-1.071,-1.538) p1=(-0.966,-1.485) L0=(-1.169,-1.341) L1=(-0.936,-1.265) R0=(-0.973,-1.735) R1=(-0.979,-1.582)
+   DIRTY sweep-hut-beside-straight-yaw95-v0 [hilly] cells=4 edges=3 junctions=1 foldbacks=0 flips(ribbon/cap/junction)=1/0/0 downward=0 minUpDot=0,971 borderPos=0,00000 borderEdge=0,00000 attach=0,00000
+        flip edge=Branch_H_6_6 chunk=(0,0) step=0/7 at=(-1.07,-1.54) p0=(-1.071,-1.538) p1=(-0.966,-1.485) L0=(-1.169,-1.341) L1=(-0.936,-1.265) R0=(-0.973,-1.735) R1=(-0.979,-1.582)
+   DIRTY sweep-hut-beside-straight-yaw95-v1 [flat] cells=4 edges=3 junctions=1 foldbacks=0 flips(ribbon/cap/junction)=1/0/0 downward=0 minUpDot=1,000 borderPos=0,00000 borderEdge=0,00000 attach=0,00000
+        flip edge=Branch_H_6_6 chunk=(0,0) step=0/7 at=(-1.04,-1.54) p0=(-1.039,-1.540) p1=(-0.933,-1.488) L0=(-1.136,-1.343) L1=(-0.901,-1.268) R0=(-0.941,-1.737) R1=(-0.948,-1.583)
+   DIRTY sweep-hut-beside-straight-yaw95-v1 [hilly] cells=4 edges=3 junctions=1 foldbacks=0 flips(ribbon/cap/junction)=1/0/0 downward=0 minUpDot=0,971 borderPos=0,00000 borderEdge=0,00000 attach=0,00000
+        flip edge=Branch_H_6_6 chunk=(0,0) step=0/7 at=(-1.04,-1.54) p0=(-1.039,-1.540) p1=(-0.933,-1.488) L0=(-1.136,-1.343) L1=(-0.901,-1.268) R0=(-0.941,-1.737) R1=(-0.948,-1.583)
+   dirty=270 / 2304; totals foldbacks=0 flipsRibbon=192 flipsCap=0 flipsJunction=98 downward=0
+
+B. Random road sets (walks incl. dense blobs, shifted over chunk seams): 160 sets x 2 terrains
+   dirty=0 / 320; totals foldbacks=0 flipsRibbon=0 flipsCap=0 flipsJunction=0 downward=0
+
+C. Grown settlements (C-3J growth, 12 x 7d): 16 seeds x 2 terrains
+   dirty=0 / 32; totals foldbacks=0 flipsRibbon=0 flipsCap=0 flipsJunction=0 downward=0
+
+D. Determinism (each shape built twice, same hash): ok=True
+
+E. Renderer lifecycle: ok=True
+   full build=True; identical re-apply reuses all chunks, no new meshes=True; one changed chunk -> rebuilt 1, reused 1=True
+   force full rebuild equals fresh build hash=True; terrainVersion bump rebuilds all=True; sharedMaterialsOnly=True; foldbacks=0
+   Clear(): chunks=0, live meshes=0, created==destroyed (14/14), root children=0 -> True
+
+F. Build cost (Editor Mono JIT, 16 random networks x 10 repeats): legacy=2,03 ms/plan, C-3K=2,07 ms/plan, ratio=1,02x
+
+SUMMARY [c3l-sweep-before]: cases=2870 clean=2600 dirty=270; foldbacks=0 flipsRibbon=192 flipsCap=0 flipsJunction=98 downward=0 degenerateSkipped=0 minUpwardNormalDot=0,0803
+   seams: sharedBorderPointPairs=550 maxBorderCentreDelta=0,000000 maxBorderLeftRightDelta=0,000000 maxJunctionAttachDelta=0,000000
+   width (C-3L diagnostics): ribbonSamples=158820 narrower-than-70%=954 (0,601%) minWidthRatio=0,562
+     narrow case sweep-hut-near-T-yaw120-v1 [flat] minRatio=0,562 samples=2 first: narrow edge=Branch_H_7_6 chunk=(0,0) step=1/10 width=0.247 nominal=0.440 ratio=0.56 at=(0.02,-1.73)
+     narrow case sweep-hut-near-T-yaw120-v1 [hilly] minRatio=0,562 samples=2 first: narrow edge=Branch_H_7_6 chunk=(0,0) step=1/10 width=0.247 nominal=0.440 ratio=0.56 at=(0.02,-1.73)
+     narrow case sweep-hut-near-T-yaw120-v0 [hilly] minRatio=0,562 samples=2 first: narrow edge=Branch_H_7_6 chunk=(0,0) step=1/9 width=0.247 nominal=0.440 ratio=0.56 at=(-0.01,-1.72)
+     narrow case sweep-hut-near-T-yaw120-v0 [flat] minRatio=0,562 samples=2 first: narrow edge=Branch_H_7_6 chunk=(0,0) step=1/9 width=0.247 nominal=0.440 ratio=0.56 at=(-0.01,-1.72)
+     narrow case sweep-hut-road-end-yaw210-v1 [flat] minRatio=0,562 samples=2 first: narrow edge=Branch_H_9_5 chunk=(0,0) step=1/10 width=0.247 nominal=0.440 ratio=0.56 at=(1.27,-3.02)
+     narrow case sweep-hut-road-end-yaw210-v1 [hilly] minRatio=0,562 samples=2 first: narrow edge=Branch_H_9_5 chunk=(0,0) step=1/10 width=0.247 nominal=0.440 ratio=0.56 at=(1.27,-3.02)
+     narrow case sweep-hut-road-end-yaw210-v0 [flat] minRatio=0,562 samples=2 first: narrow edge=Branch_H_9_5 chunk=(0,0) step=1/9 width=0.247 nominal=0.440 ratio=0.56 at=(1.28,-2.99)
+     narrow case sweep-hut-road-end-yaw210-v0 [hilly] minRatio=0,562 samples=2 first: narrow edge=Branch_H_9_5 chunk=(0,0) step=1/9 width=0.247 nominal=0.440 ratio=0.56 at=(1.28,-2.99)
+ACCEPTANCE (zero foldbacks, zero winding flips, zero downward triangles, deterministic) [c3l-sweep-before]: FAIL

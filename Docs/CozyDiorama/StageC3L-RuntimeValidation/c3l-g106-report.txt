@@ -1,0 +1,139 @@
+Stage C-3L MainIsland runtime validation, scenario=g106
+  placed save settlement stages: [0,0 legacy=True none=215 other=1:19 2:21 3:0 4:1 5:0 6:0 7:0 ] [-1,0 legacy=False none=237 other=1:19 2:0 3:0 4:0 5:0 6:0 7:0 ] [1,0 legacy=False none=236 other=1:20 2:0 3:0 4:0 5:0 6:0 7:0 ] [0,-1 legacy=False none=238 other=1:18 2:0 3:0 4:0 5:0 6:0 7:0 ] [0,1 legacy=False none=238 other=1:18 2:0 3:0 4:0 5:0 6:0 7:0 ] [-1,1 legacy=False none=242 other=1:14 2:0 3:0 4:0 5:0 6:0 7:0 ] [1,-1 legacy=False none=244 other=1:12 2:0 3:0 4:0 5:0 6:0 7:0 ] [-1,-1 legacy=False none=248 other=1:8 2:0 3:0 4:0 5:0 6:0 7:0 ] [1,1 legacy=False none=248 other=1:8 2:0 3:0 4:0 5:0 6:0 7:0 ] 
+placed grown save (g106, 12 sessions) -> C:/Users/Евгений/AppData/LocalLow/AFKIsland/AFK Island\afk_island_save.json chunks=9
+  placed save settlement stages: [0,0 legacy=True none=215 other=1:19 2:21 3:0 4:1 5:0 6:0 7:0 ] [-1,0 legacy=False none=237 other=1:19 2:0 3:0 4:0 5:0 6:0 7:0 ] [1,0 legacy=False none=236 other=1:20 2:0 3:0 4:0 5:0 6:0 7:0 ] [0,-1 legacy=False none=238 other=1:18 2:0 3:0 4:0 5:0 6:0 7:0 ] [0,1 legacy=False none=238 other=1:18 2:0 3:0 4:0 5:0 6:0 7:0 ] [-1,1 legacy=False none=242 other=1:14 2:0 3:0 4:0 5:0 6:0 7:0 ] [1,-1 legacy=False none=244 other=1:12 2:0 3:0 4:0 5:0 6:0 7:0 ] [-1,-1 legacy=False none=248 other=1:8 2:0 3:0 4:0 5:0 6:0 7:0 ] [1,1 legacy=False none=248 other=1:8 2:0 3:0 4:0 5:0 6:0 7:0 ] 
+placed grown save (g106, 12 sessions) -> C:/Users/Евгений/AppData/LocalLow/AFKIsland/AFK Island\afk_island_save.json chunks=9
+GameBootstrap.ContinueGame() called
+snapshot: version=8 chunks=9 defaultFlag=False
+camera: ortho=True size=8,50 pos=(-20.00, 29.48, -20.00) rot=(45.00, 45.00, 0.00) components=Transform,Camera,AudioListener,UniversalAdditionalCameraData,IsometricCameraController,
+  hid 2 canvases, 0 UIDocuments and 1 OnGUI return-report HUDs
+== A: renderer OFF (legacy path objects) ==
+  snapshot sha256=9CE6C87A4FB39A72B180B318CFEEDBFDB195C7155A8AC7C7E3F7E076D8A0FCA5
+  visualizer: flag=False growthRootChildren=9 legacyPathObjects=22 legacyHutObjects=1 renderer=False
+  object counts: meshes=60 gameObjects=551
+  screenshot: Docs/CozyDiorama/StageC3L-RuntimeValidation/c3l-g106-01-A-off-player-view.png
+  RebuildFromSave(OFF, unchanged signature) ms: [0.1, 0.0, 0.0] median=0,0 max=0,1
+== B: renderer ON (first build) ==
+  visualizer: flag=True legacyPathObjects=0 legacyHutObjects=1
+  topology: nodes=11 edges=10 junctions=4 components=1 huts=1 starterIssues=0
+  hut status: Connected=1
+  mesh build (last apply): chunks=1 foldbacks=0 flips(ribbon/cap/junction)=0/0/0 downward=0 degenerate=0 minUpDot=0,934 ribbonWidth min/max=0,339/0,539 widthRatioMin=0,770 narrower70%=0/163 slopeMax=20,9 deg seams(pos/edge/height/attach)=0,000000/0,000000/0,000000/0,000000
+  renderer: activeChunks=1 activeMeshes=2 liveOwnedMeshes=2 created=2 destroyed=0 applyCalls=1 lastRebuilt=1 lastReused=0 lastRemoved=0 coreVerts=641 fringeVerts=593
+  pond core vertices inside the pond: 0
+  world core geometry: verts=1234 y range 1,44..1,88 (relief 0,44 m) steepest triangle edge=20,9 deg at (-0,52,3,76) world min upDot=0,934
+  chunk mesh hash: (0,0)=666191F966AE4C56/D84354A8CDDB5A10;
+  RebuildFromSave(first ON, full) ms: 134.4
+  screenshot: Docs/CozyDiorama/StageC3L-RuntimeValidation/c3l-g106-02-B-on-player-view-default.png
+  screenshot: Docs/CozyDiorama/StageC3L-RuntimeValidation/c3l-g106-03-B-on-overview-iso.png
+  screenshot: Docs/CozyDiorama/StageC3L-RuntimeValidation/c3l-g106-04-B-on-overview-top.png
+  hut door check [B]: scene huts=1 plan huts=1
+    view key=0 root=SettlementChunk_0_0 active=True huts: Hut_103(196) 
+    view key=-4294967296 root=SettlementChunk_-1_0 active=True huts: 
+    view key=4294967296 root=SettlementChunk_1_0 active=True huts: 
+    view key=4294967295 root=SettlementChunk_0_-1 active=True huts: 
+    view key=1 root=SettlementChunk_0_1 active=True huts: 
+    view key=-4294967295 root=SettlementChunk_-1_1 active=True huts: 
+    view key=8589934591 root=SettlementChunk_1_-1 active=True huts: 
+    view key=-1 root=SettlementChunk_-1_-1 active=True huts: 
+    view key=4294967297 root=SettlementChunk_1_1 active=True huts: 
+    MaskHut_0_0_103: status=Connected hutPos=(-0,50,-1,50) sceneYaw(world/local)=196/196 planYaw(original/effective)=196/196 planDoor=(-0,61,-1,89) planFwd=(-0,27,-0,96) hutFwdVsPlanFwd=0,0 deg modelDoor=model child 'Door' at (-0,61,-1,89) planDoor-vs-model=0,00 m nearestRoadVertexToModelDoor=0,06 m
+  close-up targets: 7
+    target hutdoor0 at (-1,55,1,87,-2,19) - hut MaskHut_0_0_103 door approach, status=Connected, variant=bezier-tight, route=2,20 m
+    target sharpjunction0 at (-2,50,1,87,-0,50) - junction Cell_5_7 with 3 spokes, narrowest sector 84 deg
+    target sharpjunction1 at (-3,50,1,87,0,50) - junction Cell_4_8 with 3 spokes, narrowest sector 84 deg
+    target widejunction at (-0,50,1,87,2,50) - junction Cell_7_10, widest-minimum sector 90 deg (reference)
+    target sharpturn0 at (-2,44,1,87,-2,26) - edge Branch_MaskHut_0_0_103: heading change 78 deg in one 0,12 m step, local radius 0,13 m
+    target sharpturn1 at (-0,57,1,87,-2,17) - edge Branch_MaskHut_0_0_103: heading change 56 deg in one 0,12 m step, local radius 0,11 m
+    target steepest at (-0,52,1,71,3,76) - steepest triangle edge on the road mesh 20,9 deg
+  screenshot: Docs/CozyDiorama/StageC3L-RuntimeValidation/c3l-g106-05-closeup-hutdoor0-iso.png
+  screenshot: Docs/CozyDiorama/StageC3L-RuntimeValidation/c3l-g106-06-closeup-hutdoor0-top.png
+  screenshot: Docs/CozyDiorama/StageC3L-RuntimeValidation/c3l-g106-07-closeup-sharpjunction0-iso.png
+  screenshot: Docs/CozyDiorama/StageC3L-RuntimeValidation/c3l-g106-08-closeup-sharpjunction0-top.png
+  screenshot: Docs/CozyDiorama/StageC3L-RuntimeValidation/c3l-g106-09-closeup-sharpjunction1-iso.png
+  screenshot: Docs/CozyDiorama/StageC3L-RuntimeValidation/c3l-g106-10-closeup-sharpjunction1-top.png
+  screenshot: Docs/CozyDiorama/StageC3L-RuntimeValidation/c3l-g106-11-closeup-widejunction-iso.png
+  screenshot: Docs/CozyDiorama/StageC3L-RuntimeValidation/c3l-g106-12-closeup-widejunction-top.png
+  screenshot: Docs/CozyDiorama/StageC3L-RuntimeValidation/c3l-g106-13-closeup-sharpturn0-iso.png
+  screenshot: Docs/CozyDiorama/StageC3L-RuntimeValidation/c3l-g106-14-closeup-sharpturn0-top.png
+  screenshot: Docs/CozyDiorama/StageC3L-RuntimeValidation/c3l-g106-15-closeup-sharpturn1-iso.png
+  screenshot: Docs/CozyDiorama/StageC3L-RuntimeValidation/c3l-g106-16-closeup-sharpturn1-top.png
+  screenshot: Docs/CozyDiorama/StageC3L-RuntimeValidation/c3l-g106-17-closeup-steepest-iso.png
+  screenshot: Docs/CozyDiorama/StageC3L-RuntimeValidation/c3l-g106-18-closeup-steepest-top.png
+  screenshot: Docs/CozyDiorama/StageC3L-RuntimeValidation/c3l-g106-19-player-mindzoom-hutdoor0.png
+== transitions OFF -> ON -> OFF (3 cycles) ==
+  cycle 1 OFF: 5,6 ms; renderer null=True lastCleared: activeChunks=0 activeMeshes=0 liveOwnedMeshes=0 created=2 destroyed=2 applyCalls=1 lastRebuilt=1 lastReused=0 lastRemoved=0 coreVerts=0 fringeVerts=0; counts meshes=60 (baseline 60) gameObjects=551 (baseline 551)
+  cycle 1 ON : 46,4 ms; hash equal to first build=True; activeChunks=1 activeMeshes=2 liveOwnedMeshes=2 created=2 destroyed=0 applyCalls=1 lastRebuilt=1 lastReused=0 lastRemoved=0 coreVerts=641 fringeVerts=593
+  cycle 2 OFF: 3,8 ms; renderer null=True lastCleared: activeChunks=0 activeMeshes=0 liveOwnedMeshes=0 created=2 destroyed=2 applyCalls=1 lastRebuilt=1 lastReused=0 lastRemoved=0 coreVerts=0 fringeVerts=0; counts meshes=60 (baseline 60) gameObjects=551 (baseline 551)
+  cycle 2 ON : 45,2 ms; hash equal to first build=True; activeChunks=1 activeMeshes=2 liveOwnedMeshes=2 created=2 destroyed=0 applyCalls=1 lastRebuilt=1 lastReused=0 lastRemoved=0 coreVerts=641 fringeVerts=593
+  cycle 3 OFF: 4,0 ms; renderer null=True lastCleared: activeChunks=0 activeMeshes=0 liveOwnedMeshes=0 created=2 destroyed=2 applyCalls=1 lastRebuilt=1 lastReused=0 lastRemoved=0 coreVerts=0 fringeVerts=0; counts meshes=60 (baseline 60) gameObjects=551 (baseline 551)
+  cycle 3 ON : 46,6 ms; hash equal to first build=True; activeChunks=1 activeMeshes=2 liveOwnedMeshes=2 created=2 destroyed=0 applyCalls=1 lastRebuilt=1 lastReused=0 lastRemoved=0 coreVerts=641 fringeVerts=593
+  RebuildFromSave(ON) ms (first + cycles; first includes JIT): [134.4, 46.4, 45.2, 46.6] median=46,6 max=134,4
+== incremental growth: 4 in-memory sessions (+7d each) with the renderer ON ==
+  session 1: roadCells 21->21 rebuild=46,4 ms nodes=11 edges=10 components=1 rebuiltChunks=1 reused=0 removed=0 live=2 created=4 destroyed=2 (dirty-chunk build: foldbacks=0 flips=0/0/0 downward=0)
+  session 2: roadCells 21->21 rebuild=47,9 ms nodes=11 edges=10 components=1 rebuiltChunks=1 reused=0 removed=0 live=2 created=6 destroyed=4 (dirty-chunk build: foldbacks=0 flips=0/0/0 downward=0)
+  session 3: roadCells 21->21 rebuild=46,6 ms nodes=11 edges=10 components=1 rebuiltChunks=1 reused=0 removed=0 live=2 created=8 destroyed=6 (dirty-chunk build: foldbacks=0 flips=0/0/0 downward=0)
+  session 4: roadCells 21->22 rebuild=49,9 ms nodes=13 edges=12 components=1 rebuiltChunks=1 reused=0 removed=0 live=2 created=10 destroyed=8 (dirty-chunk build: foldbacks=0 flips=0/0/0 downward=0)
+  incremental rebuild ms: [46.4, 47.9, 46.6, 49.9] median=47,9 max=49,9
+  fresh full rebuild after incremental: 49,9 ms; chunks=1 (incremental had 1)
+== final rollback to OFF ==
+  lastCleared: activeChunks=0 activeMeshes=0 liveOwnedMeshes=0 created=2 destroyed=2 applyCalls=1 lastRebuilt=1 lastReused=0 lastRemoved=0 coreVerts=0 fringeVerts=0; counts meshes=60 gameObjects=700
+  screenshot: Docs/CozyDiorama/StageC3L-RuntimeValidation/c3l-g106-20-Z-off-rollback.png
+
+CHECKS:
+  ok   save version is 8
+  ok   flag is OFF by default in MainIsland
+  ok   renderer exists after ON
+  ok   B: one connected road component
+  ok   B: every hut connected to the road
+  ok   B: no starter audit issues
+  ok   B: zero foldbacks / winding flips / downward triangles
+  ok   B: zero core vertices inside the pond
+  ok   B: owned-mesh accounting (live == created - destroyed)
+  ok   B: shared materials only
+  ok   snapshot unchanged by ON
+  ok   B: hut doors: plan door matches the visible hut door and the road reaches it
+  ok   cycle 1: no live owned meshes after OFF
+  ok   cycle 1: Mesh object count back to the baseline after OFF
+  ok   cycle 1: GameObject count back to the baseline after OFF
+  ok   cycle1: one connected road component
+  ok   cycle1: every hut connected to the road
+  ok   cycle1: no starter audit issues
+  ok   cycle1: zero foldbacks / winding flips / downward triangles
+  ok   cycle1: zero core vertices inside the pond
+  ok   cycle1: owned-mesh accounting (live == created - destroyed)
+  ok   cycle1: shared materials only
+  ok   cycle 2: no live owned meshes after OFF
+  ok   cycle 2: Mesh object count back to the baseline after OFF
+  ok   cycle 2: GameObject count back to the baseline after OFF
+  ok   cycle2: one connected road component
+  ok   cycle2: every hut connected to the road
+  ok   cycle2: no starter audit issues
+  ok   cycle2: zero foldbacks / winding flips / downward triangles
+  ok   cycle2: zero core vertices inside the pond
+  ok   cycle2: owned-mesh accounting (live == created - destroyed)
+  ok   cycle2: shared materials only
+  ok   cycle 3: no live owned meshes after OFF
+  ok   cycle 3: Mesh object count back to the baseline after OFF
+  ok   cycle 3: GameObject count back to the baseline after OFF
+  ok   cycle3: one connected road component
+  ok   cycle3: every hut connected to the road
+  ok   cycle3: no starter audit issues
+  ok   cycle3: zero foldbacks / winding flips / downward triangles
+  ok   cycle3: zero core vertices inside the pond
+  ok   cycle3: owned-mesh accounting (live == created - destroyed)
+  ok   cycle3: shared materials only
+  ok   mesh hash identical across every OFF->ON cycle (deterministic)
+  ok   snapshot unchanged by transitions
+  ok   re-apply of the same state creates no new meshes
+  ok   incremental sessions: no foldbacks/flips/downward, one road component, owned-mesh accounting consistent
+  ok   incremental result == fresh full rebuild (per-chunk mesh hashes)
+  ok   final-fresh: one connected road component
+  ok   final-fresh: every hut connected to the road
+  ok   final-fresh: no starter audit issues
+  ok   final-fresh: zero foldbacks / winding flips / downward triangles
+  ok   final-fresh: zero core vertices inside the pond
+  ok   final-fresh: owned-mesh accounting (live == created - destroyed)
+  ok   final-fresh: shared materials only
+  ok   final OFF: renderer destroyed, created == destroyed, nothing live
+RESULT [g106]: PASS
+PROBE FINISHED

@@ -749,7 +749,11 @@ namespace AfkIsland.World
         {
             for (var i = t.childCount - 1; i >= 0; i--)
             {
-                SafeDestroy(t.GetChild(i).gameObject);
+                var child = t.GetChild(i);
+                // Destroy() is deferred to the end of the frame; detach first so a rebuild in the same
+                // frame cannot find the doomed children by name (e.g. the hut visual door correction).
+                child.SetParent(null, false);
+                SafeDestroy(child.gameObject);
             }
         }
 

@@ -1,0 +1,54 @@
+Stage C-3K foldback verification [c3l-final] — geometry only, in-memory (no scene, no save, no Play Mode)
+
+A. Synthetic shapes: 107 shapes x 2 terrains
+   dirty=0 / 214
+
+A2. Hut door sweep: 8 bases x 72 yaws x 2 footprints x 2 terrains
+   dirty=0 / 2304; totals foldbacks=0 flipsRibbon=0 flipsCap=0 flipsJunction=0 downward=0
+
+B. Random road sets (walks incl. dense blobs, shifted over chunk seams): 160 sets x 2 terrains
+   dirty=0 / 320; totals foldbacks=0 flipsRibbon=0 flipsCap=0 flipsJunction=0 downward=0
+
+C. Grown settlements (C-3J growth, 12 x 7d): 16 seeds x 2 terrains
+   dirty=0 / 32; totals foldbacks=0 flipsRibbon=0 flipsCap=0 flipsJunction=0 downward=0
+
+D. Determinism (each shape built twice, same hash): ok=True
+
+E. Renderer lifecycle: ok=True
+   full build=True; identical re-apply reuses all chunks, no new meshes=True; one changed chunk -> rebuilt 1, reused 1=True
+   force full rebuild equals fresh build hash=True; terrainVersion bump rebuilds all=True; sharedMaterialsOnly=True; foldbacks=0
+   Clear(): chunks=0, live meshes=0, created==destroyed (14/14), root children=0 -> True
+
+F. Build cost (Editor Mono JIT, 16 random networks x 10 repeats): legacy=1,76 ms/plan, C-3K=1,86 ms/plan, ratio=1,06x
+
+SUMMARY [c3l-final]: cases=2870 clean=2870 dirty=0; foldbacks=0 flipsRibbon=0 flipsCap=0 flipsJunction=0 downward=0 degenerateSkipped=0 minUpwardNormalDot=0,0803 maxFlipArea=0,00E+000m2 steepNonSliverTriangles=0
+   seams: sharedBorderPointPairs=550 maxBorderCentreDelta=0,000000 maxBorderLeftRightDelta=0,000000 maxJunctionAttachDelta=0,000000
+   width (C-3L diagnostics): ribbonSamples=158820 narrower-than-70%=954 (0,601%) minWidthRatio=0,569
+     narrow case sweep-hut-road-end-yaw155-v0 [hilly] minRatio=0,569 samples=3 first: narrow edge=Branch_H_9_5 chunk=(0,0) step=1/15 width=0.269 nominal=0.440 ratio=0.61 at=(1.76,-2.98)
+     narrow case sweep-hut-road-end-yaw155-v0 [flat] minRatio=0,569 samples=3 first: narrow edge=Branch_H_9_5 chunk=(0,0) step=1/15 width=0.269 nominal=0.440 ratio=0.61 at=(1.76,-2.98)
+     narrow case sweep-hut-near-T-yaw65-v0 [hilly] minRatio=0,571 samples=3 first: narrow edge=Branch_H_7_6 chunk=(0,0) step=1/15 width=0.269 nominal=0.440 ratio=0.61 at=(-0.02,-1.24)
+     narrow case sweep-hut-near-T-yaw65-v0 [flat] minRatio=0,571 samples=3 first: narrow edge=Branch_H_7_6 chunk=(0,0) step=1/15 width=0.269 nominal=0.440 ratio=0.61 at=(-0.02,-1.24)
+     narrow case sweep-hut-road-end-yaw20-v0 [flat] minRatio=0,581 samples=3 first: narrow edge=Branch_H_9_5 chunk=(0,0) step=1/15 width=0.305 nominal=0.440 ratio=0.69 at=(1.72,-2.00)
+     narrow case sweep-hut-road-end-yaw20-v0 [hilly] minRatio=0,581 samples=3 first: narrow edge=Branch_H_9_5 chunk=(0,0) step=1/15 width=0.305 nominal=0.440 ratio=0.69 at=(1.72,-2.00)
+     narrow case sweep-hut-road-end-yaw160-v0 [flat] minRatio=0,581 samples=3 first: narrow edge=Branch_H_9_5 chunk=(0,0) step=1/15 width=0.268 nominal=0.440 ratio=0.61 at=(1.72,-3.00)
+     narrow case sweep-hut-road-end-yaw160-v0 [hilly] minRatio=0,581 samples=3 first: narrow edge=Branch_H_9_5 chunk=(0,0) step=1/15 width=0.268 nominal=0.440 ratio=0.61 at=(1.72,-3.00)
+   lowest upDot #1: sweep-hut-gap-straight-yaw100-v1 [hilly] minUpDot=0,080
+        steep kind=junction upDot=0.120 area2D=2.27E-005 v0=(8.020,-0.049,5.500) v1=(7.712,-0.052,5.734) v2=(7.695,-0.054,5.747) (chunk-local)
+        steep kind=junction upDot=0.323 area2D=2.40E-005 v0=(8.020,-0.049,5.500) v1=(7.720,-0.052,5.728) v2=(7.712,-0.052,5.734) (chunk-local)
+        steep kind=junction upDot=0.166 area2D=2.39E-005 v0=(8.020,-0.049,5.500) v1=(7.702,-0.053,5.741) v2=(7.716,-0.052,5.731) (chunk-local)
+        steep kind=junction upDot=0.080 area2D=2.26E-005 v0=(8.020,-0.049,5.500) v1=(7.677,-0.055,5.760) v2=(7.702,-0.053,5.741) (chunk-local)
+   lowest upDot #2: sweep-hut-near-T-yaw45-v0 [hilly] minUpDot=0,172
+        steep kind=junction upDot=0.172 area2D=7.33E-005 v0=(6.500,-0.365,7.180) v1=(6.825,-0.344,7.337) v2=(6.866,-0.339,7.357) (chunk-local)
+        steep kind=junction upDot=0.285 area2D=7.75E-005 v0=(6.500,-0.365,7.180) v1=(6.794,-0.348,7.323) v2=(6.825,-0.344,7.337) (chunk-local)
+        steep kind=junction upDot=0.457 area2D=7.88E-005 v0=(6.500,-0.365,7.180) v1=(6.773,-0.350,7.313) v2=(6.794,-0.348,7.323) (chunk-local)
+   lowest upDot #3: sweep-hut-gap-straight-yaw95-v0 [hilly] minUpDot=0,207
+        steep kind=junction upDot=0.298 area2D=5.91E-005 v0=(8.020,-0.049,5.500) v1=(7.713,-0.052,5.734) v2=(7.695,-0.054,5.748) (chunk-local)
+        steep kind=junction upDot=0.407 area2D=6.25E-005 v0=(8.020,-0.049,5.500) v1=(7.702,-0.053,5.741) v2=(7.716,-0.052,5.731) (chunk-local)
+        steep kind=junction upDot=0.207 area2D=5.91E-005 v0=(8.020,-0.049,5.500) v1=(7.677,-0.055,5.760) v2=(7.702,-0.053,5.741) (chunk-local)
+   lowest upDot #4: sweep-hut-beside-straight-yaw130-v1 [hilly] minUpDot=0,345
+        steep kind=junction upDot=0.345 area2D=7.13E-005 v0=(7.180,-0.022,5.500) v1=(6.837,-0.072,5.760) v2=(6.865,-0.067,5.739) (chunk-local)
+   lowest upDot #5: sweep-hut-near-T-yaw320-v1 [hilly] minUpDot=0,442
+        steep kind=junction upDot=0.442 area2D=7.13E-005 v0=(6.500,-0.365,7.180) v1=(6.739,-0.296,6.865) v2=(6.760,-0.289,6.837) (chunk-local)
+   lowest upDot #6: sweep-hut-on-U-yaw140-v1 [hilly] minUpDot=0,452
+        steep kind=junction upDot=0.452 area2D=1.13E-004 v0=(7.500,-0.065,5.822) v1=(7.261,-0.120,6.137) v2=(7.240,-0.126,6.165) (chunk-local)
+ACCEPTANCE (zero foldbacks, zero winding flips, zero downward triangles, deterministic) [c3l-final]: PASS

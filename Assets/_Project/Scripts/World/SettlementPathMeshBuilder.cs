@@ -33,6 +33,12 @@ namespace AfkIsland.World
             public float MaxAllowedSlopeDegrees = 28f;
             public float JunctionRadiusFactor = 1.32f;
             public int JunctionArcSteps = 5;
+            /// <summary>C-3K: inner ribbon offset is limited to this fraction of the local curvature radius (0 disables).</summary>
+            public float InnerOffsetRadiusFraction = 0.80f;
+            /// <summary>C-3K: the inner side never narrows below this fraction of the nominal half width.</summary>
+            public float MinInnerWidthScale = 0.12f;
+            /// <summary>C-3K: maximum change of inner half width per metre along the ribbon (metres per metre).</summary>
+            public float InnerWidthChangePerMeter = 0.90f;
             public bool LocalToChunkOrigin = true;
             public float LocalChunkYBase = GrowthWorldPlacement.VisualYBase;
         }
@@ -68,8 +74,18 @@ namespace AfkIsland.World
             public int DownwardTriangles;
             public int FoldbackTriangles;
             public int FoldbacksPrevented;
+            /// <summary>C-3K diagnostics: core triangles whose winding had to be inverted to face up (hidden overlap/fold), by origin.</summary>
+            public int WindingFlipsRibbon;
+            public int WindingFlipsCap;
+            public int WindingFlipsJunction;
+            /// <summary>C-3K diagnostics: core triangles dropped because they were degenerate (zero area).</summary>
+            public int DegenerateSkipped;
+            /// <summary>C-3K diagnostics: human-readable sites (edge id / index / position) of ribbon foldbacks and flips.</summary>
+            public List<string> DefectSites = new List<string>();
             public int BorderSharedPointPairs;
             public float MaxBorderPositionDelta;
+            /// <summary>C-3K: largest left/right ribbon-edge position delta between the two chunk pieces at a shared border point.</summary>
+            public float MaxBorderEdgeDelta;
             public float MaxBorderHeightDelta;
             public int JunctionAttachPairs;
             public float MaxJunctionAttachDelta;
@@ -89,12 +105,16 @@ namespace AfkIsland.World
             public Vector2Int Chunk;
             public Vector2 PlaneKey;
             public Vector3 WorldPos;
+            public Vector3 WorldLeft;
+            public Vector3 WorldRight;
             public Vector3 Tangent;
         }
 
         private sealed class JunctionSpoke
         {
             public float Angle;
+            /// <summary>C-3K: angle of the attach point around the hub centre (differs from Angle on strongly curved edges).</summary>
+            public float PosAngle;
             public Vector2 OutDir;
             public Vector2 CenterPt;
             public Vector2 LeftPt;
@@ -131,9 +151,10 @@ namespace AfkIsland.World
                 if (!chunkBuilders.TryGetValue(c, out var sb))
                 {
                     sb = new StringBuilder(512);
-                    sb.AppendFormat(ci, "CFG|{0:F3}|{1:F4}|{2:F4}|{3:F4}|{4:F4}|{5:F3}|{6}|{7:F3}\n",
+                    sb.AppendFormat(ci, "CFG|{0:F3}|{1:F4}|{2:F4}|{3:F4}|{4:F4}|{5:F3}|{6}|{7:F3}|{8:F3}|{9:F3}|{10:F3}\n",
                         cfg.ChunkSizeMeters, cfg.CoreYOffset, cfg.FringeYOffset, cfg.FringeExtraWidth,
-                        cfg.WidthVariationAmplitude, cfg.JunctionRadiusFactor, cfg.JunctionArcSteps, cfg.LocalChunkYBase);
+                        cfg.WidthVariationAmplitude, cfg.JunctionRadiusFactor, cfg.JunctionArcSteps, cfg.LocalChunkYBase,
+                        cfg.InnerOffsetRadiusFraction, cfg.MinInnerWidthScale, cfg.InnerWidthChangePerMeter);
                     chunkBuilders[c] = sb;
                 }
 
@@ -240,16 +261,28 @@ namespace AfkIsland.World
             {
                 var j = plan.Junctions[i];
                 var maxW = 0.22f;
+                var incident = new List<KeyValuePair<SettlementPathTopology.PathEdge, bool>>(4);
                 for (var e = 0; e < plan.Edges.Count; e++)
                 {
                     var edge = plan.Edges[e];
-                    if (edge.FromNodeId == j.NodeId || edge.ToNodeId == j.NodeId)
+                    var isFrom = edge.FromNodeId == j.NodeId;
+                    if (isFrom || edge.ToNodeId == j.NodeId)
                     {
                         if (edge.HalfWidth > maxW) maxW = edge.HalfWidth;
+                        if (edge.Points != null && edge.Points.Count >= 2)
+                        {
+                            incident.Add(new KeyValuePair<SettlementPathTopology.PathEdge, bool>(edge, isFrom));
+                        }
                     }
                 }
 
-                junctionTrim[j.NodeId] = maxW * cfg.JunctionRadiusFactor;
+                var hubTrim = maxW * cfg.JunctionRadiusFactor;
+                if (cfg.InnerOffsetRadiusFraction > 0f)
+                {
+                    hubTrim = ExpandTrimForAcuteSpokes(j.Position, incident, hubTrim);
+                }
+
+                junctionTrim[j.NodeId] = hubTrim;
                 junctionSpokesCore[j.NodeId] = new List<JunctionSpoke>(4);
                 junctionSpokesFringe[j.NodeId] = new List<JunctionSpoke>(4);
             }
@@ -268,12 +301,36 @@ namespace AfkIsland.World
                 endTrim = Mathf.Min(endTrim, maxTrim);
 
                 var trimmed = TrimPolyline(edge.Points, startTrim, endTrim);
+
+                // C-3K: trimming at a junction hub can leave a sliver segment (~0.01 m) before the exact hub attach point.
+                // Its direction differs wildly from the previous tangent and folds the ribbon end; drop the sample so the
+                // last segment is a regular one. The exact attach point itself never moves.
+                if (cfg.InnerOffsetRadiusFraction > 0f)
+                {
+                    var minEndSeg = 0.5f * 0.12f;
+                    while (startTrim > 0.001f && trimmed.Count > 2 && Vector2.Distance(trimmed[0], trimmed[1]) < minEndSeg)
+                    {
+                        trimmed.RemoveAt(1);
+                    }
+
+                    while (endTrim > 0.001f && trimmed.Count > 2 &&
+                           Vector2.Distance(trimmed[trimmed.Count - 1], trimmed[trimmed.Count - 2]) < minEndSeg)
+                    {
+                        trimmed.RemoveAt(trimmed.Count - 2);
+                    }
+                }
+
                 if (trimmed.Count < 2)
                 {
                     continue;
                 }
 
                 var trimmedLen = PolylineLength(trimmed);
+
+                // C-3K: curvature-limited inner offset, computed ONCE on the whole trimmed edge (before the chunk split)
+                // so both neighbouring chunk pieces sample the identical profile at their shared border point.
+                var coreProfile = BuildWidthProfile(trimmed, edge.HalfWidth, cfg);
+                var fringeProfile = BuildWidthProfile(trimmed, edge.HalfWidth + cfg.FringeExtraWidth, cfg);
 
                 // Record exact ribbon boundary attachment points at incident junctions (vertex-for-vertex!)
                 JunctionSpoke startCoreSpoke = null;
@@ -319,14 +376,14 @@ namespace AfkIsland.World
                             edge.HalfWidth, cfg.CoreYOffset, runningTrimDist, trimmedLen,
                             edge.Id, capStart, capEnd, isCore: true,
                             chunk, sampleWorldY, cfg, report, borderSamples,
-                            attachStartSpoke, attachEndSpoke);
+                            attachStartSpoke, attachEndSpoke, coreProfile);
 
                         EmitRibbonPiece(
                             fringeBuf, piece.Points, piece.StartTangent, piece.EndTangent,
                             edge.HalfWidth + cfg.FringeExtraWidth, cfg.FringeYOffset, runningTrimDist, trimmedLen,
                             edge.Id, capStart, capEnd, isCore: false,
                             chunk, sampleWorldY, cfg, report, null,
-                            null, null);
+                            null, null, fringeProfile);
                     }
 
                     runningTrimDist += pieceLen;
@@ -414,6 +471,246 @@ namespace AfkIsland.World
 
         // ------------------------------------------------------------------ 3-column terrain-hugging ribbon emission
 
+        // ------------------------------------------------------------------ C-3K acute junction hub radius
+
+        /// <summary>
+        /// Two spokes that leave a hub at an acute angle have ribbon edges that overlap when the hub radius is the
+        /// default 1.32 x half width: the junction fan then folds. Grow the hub radius just enough that adjacent
+        /// ribbon edges separate (d >= (w1 + w2) / (2 sin(phi / 2))). Only acute sectors (< 75 deg) are touched, so
+        /// the verified 90-degree / 180-degree hub geometry of T-junctions and crossroads stays identical.
+        /// </summary>
+        private static float ExpandTrimForAcuteSpokes(
+            Vector2 hubCenter,
+            List<KeyValuePair<SettlementPathTopology.PathEdge, bool>> incident,
+            float baseTrim)
+        {
+            if (incident.Count < 3) return baseTrim;
+
+            var cap = float.MaxValue;
+            for (var k = 0; k < incident.Count; k++)
+            {
+                cap = Mathf.Min(cap, incident[k].Key.Length * 0.40f);
+            }
+
+            var trim = baseTrim;
+            var angles = new List<KeyValuePair<float, float>>(incident.Count); // (angle, halfWidth)
+            for (var iter = 0; iter < 4; iter++)
+            {
+                angles.Clear();
+                for (var k = 0; k < incident.Count; k++)
+                {
+                    var edge = incident[k].Key;
+                    var fromStart = incident[k].Value;
+                    var q1 = PointAtDistance(edge.Points, fromStart, trim);
+                    var q2 = PointAtDistance(edge.Points, fromStart, trim + 0.12f);
+                    var dir = q2 - q1;
+                    if (dir.sqrMagnitude < 1e-8f) dir = q1 - hubCenter;
+                    if (dir.sqrMagnitude < 1e-8f) continue;
+                    angles.Add(new KeyValuePair<float, float>(Mathf.Atan2(dir.y, dir.x), edge.HalfWidth));
+                }
+
+                if (angles.Count < 3) return trim;
+                angles.Sort((a, b) => a.Key.CompareTo(b.Key));
+
+                var needed = trim;
+                for (var k = 0; k < angles.Count; k++)
+                {
+                    var a = angles[k];
+                    var b = angles[(k + 1) % angles.Count];
+                    var sector = b.Key - a.Key;
+                    if (sector <= 0f) sector += Mathf.PI * 2f;
+                    if (sector >= Mathf.PI * 75f / 180f) continue;
+                    var req = 0.95f * (a.Value + b.Value) / (2f * Mathf.Sin(sector * 0.5f));
+                    if (req > needed) needed = req;
+                }
+
+                needed = Mathf.Min(needed, cap);
+                if (needed <= trim + 1e-3f) break;
+                trim = needed;
+            }
+
+            return trim;
+        }
+
+        private static Vector2 PointAtDistance(List<Vector2> pts, bool fromStart, float distance)
+        {
+            var n = pts.Count;
+            var remaining = Mathf.Max(0f, distance);
+            for (var s = 0; s < n - 1; s++)
+            {
+                var a = fromStart ? pts[s] : pts[n - 1 - s];
+                var b = fromStart ? pts[s + 1] : pts[n - 2 - s];
+                var seg = Vector2.Distance(a, b);
+                if (seg >= remaining && seg > 1e-6f) return Vector2.Lerp(a, b, remaining / seg);
+                remaining -= seg;
+            }
+
+            return fromStart ? pts[n - 1] : pts[0];
+        }
+
+        // ------------------------------------------------------------------ C-3K curvature-limited inner offset
+
+        private sealed class WidthProfile
+        {
+            public float[] Cum;
+            public float[] ScaleL;
+            public float[] ScaleR;
+        }
+
+        /// <summary>
+        /// Per-vertex scale (0..1) of the left/right half width of a trimmed edge. On the inner side of a bend the
+        /// offset curve may not go beyond a fraction of the local circumradius, otherwise it self-intersects (foldback).
+        /// The scale changes smoothly along the edge; both end vertices are pinned to 1 so junction hubs, end caps
+        /// and chunk-border seams keep their exact attachment widths. Deterministic and purely geometric.
+        /// </summary>
+        private static WidthProfile BuildWidthProfile(List<Vector2> pts, float halfWidth, MeshBuildConfig cfg)
+        {
+            var n = pts.Count;
+            var prof = new WidthProfile { Cum = new float[n], ScaleL = new float[n], ScaleR = new float[n] };
+            for (var i = 0; i < n; i++)
+            {
+                prof.ScaleL[i] = 1f;
+                prof.ScaleR[i] = 1f;
+                if (i > 0) prof.Cum[i] = prof.Cum[i - 1] + Vector2.Distance(pts[i - 1], pts[i]);
+            }
+
+            if (n < 3 || cfg.InnerOffsetRadiusFraction <= 0f) return prof;
+
+            var hwMax = Mathf.Max(0.05f, halfWidth * (1f + cfg.WidthVariationAmplitude));
+            var minScale = Mathf.Clamp(cfg.MinInnerWidthScale, 0.05f, 1f);
+            // Vertex tangents exactly as EmitRibbonPiece builds them (bisector inside, end-segment direction at the ends).
+            var tan = new Vector2[n];
+            for (var i = 0; i < n; i++)
+            {
+                if (i == 0) tan[i] = (pts[1] - pts[0]).normalized;
+                else if (i == n - 1) tan[i] = (pts[i] - pts[i - 1]).normalized;
+                else
+                {
+                    var a = (pts[i] - pts[i - 1]).normalized;
+                    var b = (pts[i + 1] - pts[i]).normalized;
+                    tan[i] = (a + b).sqrMagnitude > 1e-6f ? (a + b).normalized : a;
+                }
+            }
+
+            // Exact per-step condition for a fold-free strip: with chord ds and tangent turn d between the two vertices,
+            // the inner offset may not exceed ds / (2 sin(d / 2)) (the step radius), otherwise the inner triangle inverts.
+            for (var i = 0; i < n - 1; i++)
+            {
+                var ds = prof.Cum[i + 1] - prof.Cum[i];
+                if (ds < 1e-6f) continue;
+                var cross = tan[i].x * tan[i + 1].y - tan[i].y * tan[i + 1].x;
+                var dot = Vector2.Dot(tan[i], tan[i + 1]);
+                var turn = Mathf.Atan2(Mathf.Abs(cross), dot);
+                var sinHalf = Mathf.Sin(Mathf.Min(turn, Mathf.PI) * 0.5f);
+                if (sinHalf < 1e-4f) continue;
+
+                var stepRadius = ds / (2f * sinHalf);
+                var s = Mathf.Clamp(cfg.InnerOffsetRadiusFraction * stepRadius / hwMax, minScale, 1f);
+
+                // cross > 0: left turn, centre of curvature on the left (left = p - side) -> left is the inner side
+                var inner = cross > 0f ? prof.ScaleL : prof.ScaleR;
+                inner[i] = Mathf.Min(inner[i], s);
+                inner[i + 1] = Mathf.Min(inner[i + 1], s);
+            }
+
+            // Exact refinement. Vertex tangents are bisectors of DIFFERENT turns, so the chord is not the average of the two
+            // tangents and the step radius above is only a first guess. Test the four strip triangles with the real offset
+            // points (same winding rule as AddVerifiedTriangle: a triangle is inverted when its XZ cross product > 0)
+            // and shrink the responsible side until none is inverted. Smaller widths never invert a triangle.
+            const float invertedEps = -1e-5f;
+            for (var iter = 0; iter < 24; iter++)
+            {
+                var changed = false;
+                for (var i = 0; i < n - 1; i++)
+                {
+                    var c0 = pts[i];
+                    var c1 = pts[i + 1];
+                    var side0 = new Vector2(tan[i].y, -tan[i].x);
+                    var side1 = new Vector2(tan[i + 1].y, -tan[i + 1].x);
+                    var l0 = c0 - side0 * (hwMax * prof.ScaleL[i]);
+                    var l1 = c1 - side1 * (hwMax * prof.ScaleL[i + 1]);
+                    var r0 = c0 + side0 * (hwMax * prof.ScaleR[i]);
+                    var r1 = c1 + side1 * (hwMax * prof.ScaleR[i + 1]);
+
+                    // left strip: (l0,l1,c0) and (c0,l1,c1) both depend on the width at i + 1
+                    if (Cross2D(l1 - l0, c0 - l0) > invertedEps || Cross2D(l1 - c0, c1 - c0) > invertedEps)
+                    {
+                        changed |= ShrinkScale(prof.ScaleL, i + 1, minScale);
+                    }
+
+                    // right strip: (c0,c1,r0) depends on the width at i, (r0,c1,r1) on both
+                    if (Cross2D(c1 - c0, r0 - c0) > invertedEps)
+                    {
+                        changed |= ShrinkScale(prof.ScaleR, i, minScale);
+                    }
+
+                    if (Cross2D(c1 - r0, r1 - r0) > invertedEps)
+                    {
+                        changed |= ShrinkScale(prof.ScaleR, i, minScale);
+                        changed |= ShrinkScale(prof.ScaleR, i + 1, minScale);
+                    }
+                }
+
+                if (!changed) break;
+            }
+
+            var rate = Mathf.Max(0.05f, cfg.InnerWidthChangePerMeter) / hwMax;
+            LimitScaleSlope(prof.ScaleL, prof.Cum, rate);
+            LimitScaleSlope(prof.ScaleR, prof.Cum, rate);
+            return prof;
+        }
+
+        private static float Cross2D(Vector2 a, Vector2 b) => a.x * b.y - a.y * b.x;
+
+        /// <summary>Shrinks one scale entry; the two end vertices stay pinned at full width.</summary>
+        private static bool ShrinkScale(float[] scale, int index, float minScale)
+        {
+            if (index <= 0 || index >= scale.Length - 1) return false;
+            var next = Mathf.Max(minScale, scale[index] * 0.75f);
+            if (next >= scale[index] - 1e-5f) return false;
+            scale[index] = next;
+            return true;
+        }
+
+        private static void LimitScaleSlope(float[] scale, float[] cum, float ratePerMeter)
+        {
+            var n = scale.Length;
+            for (var i = 1; i < n; i++)
+            {
+                scale[i] = Mathf.Min(scale[i], scale[i - 1] + ratePerMeter * (cum[i] - cum[i - 1]));
+            }
+
+            for (var i = n - 2; i >= 0; i--)
+            {
+                scale[i] = Mathf.Min(scale[i], scale[i + 1] + ratePerMeter * (cum[i + 1] - cum[i]));
+            }
+
+            // Ends stay at full width: junction spokes, end caps and chunk-border points attach at the nominal width.
+            scale[0] = 1f;
+            scale[n - 1] = 1f;
+        }
+
+        private static void SampleWidthProfile(WidthProfile prof, float dist, out float scaleL, out float scaleR)
+        {
+            var cum = prof.Cum;
+            var n = cum.Length;
+            if (dist <= cum[0]) { scaleL = prof.ScaleL[0]; scaleR = prof.ScaleR[0]; return; }
+            if (dist >= cum[n - 1]) { scaleL = prof.ScaleL[n - 1]; scaleR = prof.ScaleR[n - 1]; return; }
+
+            var lo = 0;
+            var hi = n - 1;
+            while (hi - lo > 1)
+            {
+                var mid = (lo + hi) >> 1;
+                if (cum[mid] <= dist) lo = mid; else hi = mid;
+            }
+
+            var span = cum[hi] - cum[lo];
+            var t = span > 1e-6f ? (dist - cum[lo]) / span : 0f;
+            scaleL = Mathf.Lerp(prof.ScaleL[lo], prof.ScaleL[hi], t);
+            scaleR = Mathf.Lerp(prof.ScaleR[lo], prof.ScaleR[hi], t);
+        }
+
         private sealed class ChunkPiece
         {
             public Vector2Int Chunk;
@@ -441,7 +738,8 @@ namespace AfkIsland.World
             MeshBuildReport report,
             List<BorderSample> borderSamples,
             JunctionSpoke startSpoke,
-            JunctionSpoke endSpoke)
+            JunctionSpoke endSpoke,
+            WidthProfile profile = null)
         {
             if (pts.Count < 2) return;
 
@@ -488,8 +786,11 @@ namespace AfkIsland.World
 
                 // Side vector on XZ perpendicular to tangent: Cross(+Up, +tangent) = (t.y, 0, -t.x) = +Right
                 var side2 = new Vector2(t2.y, -t2.x);
-                leftXZ[i] = p - side2 * hw;
-                rightXZ[i] = p + side2 * hw;
+                var scaleL = 1f;
+                var scaleR = 1f;
+                if (profile != null) SampleWidthProfile(profile, dist, out scaleL, out scaleR);
+                leftXZ[i] = p - side2 * (hw * scaleL);
+                rightXZ[i] = p + side2 * (hw * scaleR);
             }
 
             // Multi-pass inner-corner foldback prevention on tight bends
@@ -567,8 +868,16 @@ namespace AfkIsland.World
                         if (slopeDeg > cfg.MaxAllowedSlopeDegrees) report.SlopeViolations++;
 
                         var segDir = (p - prev).normalized;
-                        if (Vector2.Dot(lxz - leftXZ[i - 1], segDir) < -1e-4f) report.FoldbackTriangles++;
-                        if (Vector2.Dot(rxz - rightXZ[i - 1], segDir) < -1e-4f) report.FoldbackTriangles++;
+                        var foldL = Vector2.Dot(lxz - leftXZ[i - 1], segDir) < -1e-4f;
+                        var foldR = Vector2.Dot(rxz - rightXZ[i - 1], segDir) < -1e-4f;
+                        if (foldL) report.FoldbackTriangles++;
+                        if (foldR) report.FoldbackTriangles++;
+                        if ((foldL || foldR) && report.DefectSites.Count < 64)
+                        {
+                            report.DefectSites.Add(string.Format(CultureInfo.InvariantCulture,
+                                "foldback edge={0} chunk=({1},{2}) step={3}/{4} side={5}{6} at=({7:F2},{8:F2})",
+                                edgeId, chunk.x, chunk.y, i, count - 1, foldL ? "L" : "", foldR ? "R" : "", p.x, p.y));
+                        }
                     }
 
                     if (borderSamples != null && (i == 0 || i == count - 1) && IsOnChunkBorder(p, cfg.ChunkSizeMeters))
@@ -578,6 +887,8 @@ namespace AfkIsland.World
                             Chunk = chunk,
                             PlaneKey = new Vector2(Mathf.Round(p.x * 100f) * 0.01f, Mathf.Round(p.y * 100f) * 0.01f),
                             WorldPos = worldC,
+                            WorldLeft = worldL,
+                            WorldRight = worldR,
                             Tangent = new Vector3(tangents[i].x, 0f, tangents[i].y)
                         });
                     }
@@ -623,10 +934,20 @@ namespace AfkIsland.World
                 var c1 = l0 + 4;
                 var r1 = l0 + 5;
 
+                var flipsBefore = report.WindingFlipsRibbon;
                 AddVerifiedTriangle(buf, l0, l1, c0, isCore, report);
                 AddVerifiedTriangle(buf, c0, l1, c1, isCore, report);
                 AddVerifiedTriangle(buf, c0, c1, r0, isCore, report);
                 AddVerifiedTriangle(buf, r0, c1, r1, isCore, report);
+                if (isCore && report.WindingFlipsRibbon != flipsBefore && report.DefectSites.Count < 64)
+                {
+                    report.DefectSites.Add(string.Format(CultureInfo.InvariantCulture,
+                        "flip edge={0} chunk=({1},{2}) step={3}/{4} at=({5:F2},{6:F2}) p0=({7:F3},{8:F3}) p1=({9:F3},{10:F3}) L0=({11:F3},{12:F3}) L1=({13:F3},{14:F3}) R0=({15:F3},{16:F3}) R1=({17:F3},{18:F3})",
+                        edgeId, chunk.x, chunk.y, i, count - 1, pts[i].x, pts[i].y,
+                        pts[i].x, pts[i].y, pts[i + 1].x, pts[i + 1].y,
+                        leftXZ[i].x, leftXZ[i].y, leftXZ[i + 1].x, leftXZ[i + 1].y,
+                        rightXZ[i].x, rightXZ[i].y, rightXZ[i + 1].x, rightXZ[i + 1].y));
+                }
             }
 
             // Rounded end caps at free ends (door/dead-end), never at junctions or chunk borders
@@ -678,7 +999,7 @@ namespace AfkIsland.World
 
             for (var k = 0; k < steps; k++)
             {
-                AddVerifiedTriangle(buf, centerIdx, ringStart + k, ringStart + k + 1, isCore, report);
+                AddVerifiedTriangle(buf, centerIdx, ringStart + k, ringStart + k + 1, isCore, report, TriKindCap);
             }
         }
 
@@ -726,19 +1047,47 @@ namespace AfkIsland.World
             {
                 // Sort spokes counter-clockwise by outgoing angle in XZ.
                 // Looking outward along OutDir, RightPt is clockwise (smaller angle) and LeftPt is CCW (larger angle).
-                spokes.Sort((a, b) => a.Angle.CompareTo(b.Angle));
+                for (var pa = 0; pa < spokes.Count; pa++)
+                {
+                    var pv = spokes[pa].CenterPt - centerXZ;
+                    spokes[pa].PosAngle = pv.sqrMagnitude > 1e-8f ? Mathf.Atan2(pv.y, pv.x) : spokes[pa].Angle;
+                }
+
+                spokes.Sort((a, b) => a.PosAngle.CompareTo(b.PosAngle));
 
                 var filletSteps = Mathf.Max(2, cfg.JunctionArcSteps);
+
+                // C-3K: adjacent spokes at a very acute angle have ribbons that overlap each other at the hub radius
+                // (their crotch lies beyond the attach points). Skipping the overlapping side vertices keeps the fan
+                // monotonic; the overlapped area is already covered by the neighbouring ribbon.
+                var spokeCount = spokes.Count;
+                var overlapNext = new bool[spokeCount];
+                if (cfg.InnerOffsetRadiusFraction > 0f && spokeCount >= 3)
+                {
+                    for (var i = 0; i < spokeCount; i++)
+                    {
+                        var sa = spokes[i];
+                        var sb = spokes[(i + 1) % spokeCount];
+                        var sector = sb.PosAngle - sa.PosAngle;
+                        if (sector <= 0f) sector += Mathf.PI * 2f;
+                        if (sector >= Mathf.PI * 0.5f) continue;
+                        var crotchDist = (sa.HalfWidth + sb.HalfWidth) / (2f * Mathf.Sin(sector * 0.5f));
+                        var attachDist = 0.5f * (Vector2.Distance(centerXZ, sa.CenterPt) + Vector2.Distance(centerXZ, sb.CenterPt));
+                        if (crotchDist > attachDist * 1.25f) overlapNext[i] = true;
+                    }
+                }
 
                 for (var i = 0; i < spokes.Count; i++)
                 {
                     var cur = spokes[i];
                     var next = spokes[(i + 1) % spokes.Count];
+                    var skipLeft = overlapNext[i];
+                    var skipRight = overlapNext[(i + spokeCount - 1) % spokeCount];
 
                     // Share ALL THREE ribbon boundary vertices (Right, Center, Left) so zero T-crack on sloped terrain!
-                    AddRingPoint(ring, cur.RightPt);
+                    if (!skipRight) AddRingPoint(ring, cur.RightPt);
                     AddRingPoint(ring, cur.CenterPt);
-                    AddRingPoint(ring, cur.LeftPt);
+                    if (!skipLeft) AddRingPoint(ring, cur.LeftPt);
 
                     if (isCore && cur.HasRibbonWorld)
                     {
@@ -747,24 +1096,39 @@ namespace AfkIsland.World
                         VerifyJunctionAttach(cur.LeftPt, cur.RibbonLeftWorld, yOffset, sampleWorldY, report);
                     }
 
+                    if (skipLeft) continue;
+
                     // Build smooth concave Bezier corner fillet from cur.LeftPt to next.RightPt
                     var p0 = cur.LeftPt;
                     var p1 = next.RightPt;
                     if (Vector2.Distance(p0, p1) < 0.02f) continue;
 
-                    var sectorAngle = next.Angle - cur.Angle;
+                    var sectorAngle = next.PosAngle - cur.PosAngle;
                     if (sectorAngle <= 0f) sectorAngle += Mathf.PI * 2f;
 
                     var t0 = -cur.OutDir;
                     var t1 = -next.OutDir;
                     var ctrl = ComputeFilletControlPoint(centerXZ, p0, t0, p1, t1, sectorAngle, hubRadius);
 
+                    var fillet = new List<Vector2>(filletSteps);
                     for (var k = 1; k < filletSteps; k++)
                     {
                         var t = k / (float)filletSteps;
                         var inv = 1f - t;
-                        var q = inv * inv * p0 + 2f * inv * t * ctrl + t * t * p1;
-                        AddRingPoint(ring, q);
+                        fillet.Add(inv * inv * p0 + 2f * inv * t * ctrl + t * t * p1);
+                    }
+
+                    // C-3K: the fan is triangulated from the hub centre, so the boundary must advance counter-clockwise
+                    // around it. A Bezier whose control point swings outside that order inverts fan triangles;
+                    // in that case use the straight chord between the two ribbon edges instead.
+                    if (cfg.InnerOffsetRadiusFraction > 0f && !FilletKeepsFanOrder(centerXZ, p0, fillet, p1))
+                    {
+                        fillet.Clear();
+                    }
+
+                    for (var k = 0; k < fillet.Count; k++)
+                    {
+                        AddRingPoint(ring, fillet[k]);
                     }
                 }
             }
@@ -801,12 +1165,50 @@ namespace AfkIsland.World
             }
 
             // Counter-clockwise in XZ means Cross(ring[i+1]-C, ring[i]-C) points +Up
+            var junctionFlipsBefore = report.WindingFlipsJunction;
             for (var i = 0; i < ring.Count; i++)
             {
                 var a = ringStart + i;
                 var b = ringStart + ((i + 1) % ring.Count);
-                AddVerifiedTriangle(buf, centerIdx, b, a, isCore, report);
+                AddVerifiedTriangle(buf, centerIdx, b, a, isCore, report, TriKindJunction);
             }
+
+            if (isCore && report.WindingFlipsJunction != junctionFlipsBefore && report.DefectSites.Count < 64)
+            {
+                var sbj = new StringBuilder();
+                sbj.AppendFormat(CultureInfo.InvariantCulture, "junction-flip chunk=({0},{1}) centre=({2:F3},{3:F3}) spokes={4} ring={5} flips={6}:",
+                    chunk.x, chunk.y, centerXZ.x, centerXZ.y, spokes != null ? spokes.Count : 0, ring.Count, report.WindingFlipsJunction - junctionFlipsBefore);
+                if (spokes != null)
+                {
+                    for (var s = 0; s < spokes.Count; s++)
+                    {
+                        sbj.AppendFormat(CultureInfo.InvariantCulture, " [ang={0:F0} hw={1:F2} dist={2:F2}]",
+                            spokes[s].Angle * Mathf.Rad2Deg, spokes[s].HalfWidth, Vector2.Distance(centerXZ, spokes[s].CenterPt));
+                    }
+                }
+
+                sbj.Append(" ring(angle@dist):");
+                for (var rI = 0; rI < ring.Count; rI++)
+                {
+                    var rv = ring[rI] - centerXZ;
+                    sbj.AppendFormat(CultureInfo.InvariantCulture, " {0:F0}@{1:F2}", Mathf.Atan2(rv.y, rv.x) * Mathf.Rad2Deg, rv.magnitude);
+                }
+
+                report.DefectSites.Add(sbj.ToString());
+            }
+        }
+
+        private static bool FilletKeepsFanOrder(Vector2 center, Vector2 start, List<Vector2> mid, Vector2 end)
+        {
+            var prev = start - center;
+            for (var i = 0; i <= mid.Count; i++)
+            {
+                var cur = (i < mid.Count ? mid[i] : end) - center;
+                if (prev.x * cur.y - prev.y * cur.x < 1e-6f) return false;
+                prev = cur;
+            }
+
+            return true;
         }
 
         private static Vector2 ComputeFilletControlPoint(
@@ -1068,18 +1470,33 @@ namespace AfkIsland.World
             return result;
         }
 
+        private const int TriKindRibbon = 0;
+        private const int TriKindCap = 1;
+        private const int TriKindJunction = 2;
+
         private static void AddVerifiedTriangle(
-            MeshBuffers buf, int i0, int i1, int i2, bool isCore, MeshBuildReport report)
+            MeshBuffers buf, int i0, int i1, int i2, bool isCore, MeshBuildReport report, int kind = TriKindRibbon)
         {
             var v0 = buf.Verts[i0];
             var v1 = buf.Verts[i1];
             var v2 = buf.Verts[i2];
             var cross = Vector3.Cross(v1 - v0, v2 - v0);
-            if (cross.sqrMagnitude < 1e-10f) return;
+            if (cross.sqrMagnitude < 1e-10f)
+            {
+                if (isCore) report.DegenerateSkipped++;
+                return;
+            }
 
             // Enforce upward winding if a curved fillet inverted order
             if (cross.y < 0f)
             {
+                if (isCore)
+                {
+                    if (kind == TriKindRibbon) report.WindingFlipsRibbon++;
+                    else if (kind == TriKindCap) report.WindingFlipsCap++;
+                    else report.WindingFlipsJunction++;
+                }
+
                 var tmp = i1;
                 i1 = i2;
                 i2 = tmp;
@@ -1128,6 +1545,8 @@ namespace AfkIsland.World
                     var posDelta = Vector3.Distance(samples[i].WorldPos, samples[j].WorldPos);
                     var hDelta = Mathf.Abs(samples[i].WorldPos.y - samples[j].WorldPos.y);
                     if (posDelta > report.MaxBorderPositionDelta) report.MaxBorderPositionDelta = posDelta;
+                    var edgeDelta = Mathf.Max(Vector3.Distance(samples[i].WorldLeft, samples[j].WorldLeft), Vector3.Distance(samples[i].WorldRight, samples[j].WorldRight));
+                    if (edgeDelta > report.MaxBorderEdgeDelta) report.MaxBorderEdgeDelta = edgeDelta;
                     if (hDelta > report.MaxBorderHeightDelta) report.MaxBorderHeightDelta = hDelta;
                 }
             }

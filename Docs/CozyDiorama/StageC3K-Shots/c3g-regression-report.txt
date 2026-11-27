@@ -1,0 +1,32 @@
+﻿Stage C-3G — Junction Preservation, Offline Determinism & Post-Growth Connectivity Report
+Execution mode: Isolated empty editor scene + in-memory SaveClone copies (zero disk save writes)
+
+Check 1 — C-3G 15 Junction, Bridge & End-to-End Regression Tests: ok=True (passed=15, failed=0)
+
+Check 2 — Deterministic Offline Growth (+48h on 2 Identical Copies): ok=True
+  appliedSecondsA=172800, appliedSecondsB=172800
+  shaCopyA=2067700B150E11FA, shaCopyB=2067700B150E11FA, identical=True
+
+Check 3 — Pre-Existing Path Junctions Protected & Hut Growth Delta: ok=True
+  preJunctionsTotal=4, preservedAsRoad=4, promotedToHut=0
+  keyJunctionsAfter48h: chunk(1,0)@(5,8)=Path, chunk(1,0)@(9,8)=Path, chunk(0,1)@(8,5)=Path, chunk(1,1)@(5,5)=Path
+  maskHuts: before=5 -> after=5 (newMaskHuts=0, newHutsOnPreJunction=0)
+
+Check 4a — Post-Growth Visual, Geometry, Immutability & Hut Health: ok=True
+  defaultFlagFalse=True, saveImmutabilityAfterVisual=True
+  huts: before=6 -> after=6, connectedHuts=6/6
+  topology: nodes=27, edges=26, tJunctions=6, fourWayJunctions=3, starterIssues=0
+  geometry: chunks=4, legacyPaths=0, pondIntrusions=0, downwardTris=0, foldbacks=0, maxBorderPos=0.00000m, maxBorderHeight=0.00000m, sharedMaterialsOnly=True, rollbackZeroLeaks=True
+
+Check 4b — Post-Growth Single-Component Path Network Connectivity: ok=True
+  connectedComponents: before48h=1 -> after48h=1 (expected 1)
+
+Check 5 — Protected Scenes Unchanged:
+  Assets/_Project/Scenes/MainIsland.unity: before=5F00F6BFDFBB7ADE after=5F00F6BFDFBB7ADE unchanged=True
+  Assets/_Project/Scenes/Prototypes/CozyDioramaStageB2.unity: before=4C6B9304E1BCDA9C after=4C6B9304E1BCDA9C unchanged=True
+  Assets/_Project/Scenes/Prototypes/CozyDioramaStageC2.unity: before=00780E3BD19BC9CF after=00780E3BD19BC9CF unchanged=True
+  Assets/_Project/Scenes/Prototypes/CozyDioramaStageC3C.unity: before=ED292B269EBB7AE6 after=ED292B269EBB7AE6 unchanged=True
+  Assets/_Project/Scenes/Prototypes/CozyDioramaStageC3D.unity: before=F67070735D396F60 after=F67070735D396F60 unchanged=True
+  Assets/_Project/Scenes/Prototypes/CozyDioramaStageC3E.unity: before=747168BD56D247C1 after=747168BD56D247C1 unchanged=True
+
+OVERALL STAGE C-3G VERIFICATION: PASS

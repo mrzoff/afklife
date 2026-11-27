@@ -1,0 +1,205 @@
+Stage C-3K foldback verification [baseline] — geometry only, in-memory (no scene, no save, no Play Mode)
+
+A. Synthetic shapes: 107 shapes x 2 terrains
+   DIRTY staircase [flat] cells=9 edges=1 junctions=0 foldbacks=0 flips(ribbon/cap/junction)=2/0/0 downward=0 minUpDot=1,000
+        flip edge=MaskRoad_3_3_to_7_7 chunk=(0,0) step=26/69 at=(-2.48,-3.46)
+        flip edge=MaskRoad_3_3_to_7_7 chunk=(0,0) step=44/69 at=(-1.46,-2.36)
+   DIRTY staircase [hilly] cells=9 edges=1 junctions=0 foldbacks=0 flips(ribbon/cap/junction)=2/0/0 downward=0 minUpDot=0,912
+        flip edge=MaskRoad_3_3_to_7_7 chunk=(0,0) step=26/69 at=(-2.48,-3.46)
+        flip edge=MaskRoad_3_3_to_7_7 chunk=(0,0) step=44/69 at=(-1.46,-2.36)
+   DIRTY staircase@seamX [flat] cells=9 edges=1 junctions=0 foldbacks=0 flips(ribbon/cap/junction)=2/0/0 downward=0 minUpDot=1,000
+        flip edge=MaskRoad_15_3_to_19_7 chunk=(1,0) step=22/65 at=(9.52,-3.46)
+        flip edge=MaskRoad_15_3_to_19_7 chunk=(1,0) step=39/65 at=(10.51,-2.47)
+   DIRTY staircase@seamX [hilly] cells=9 edges=1 junctions=0 foldbacks=0 flips(ribbon/cap/junction)=2/0/0 downward=0 minUpDot=0,115
+        flip edge=MaskRoad_15_3_to_19_7 chunk=(1,0) step=22/65 at=(9.52,-3.46)
+        flip edge=MaskRoad_15_3_to_19_7 chunk=(1,0) step=39/65 at=(10.51,-2.47)
+   DIRTY staircase@seamZ [flat] cells=9 edges=1 junctions=0 foldbacks=0 flips(ribbon/cap/junction)=3/0/0 downward=0 minUpDot=1,000
+        flip edge=MaskRoad_3_15_to_7_19 chunk=(0,1) step=14/57 at=(-2.48,8.54)
+        flip edge=MaskRoad_3_15_to_7_19 chunk=(0,1) step=31/57 at=(-1.49,9.53)
+        flip edge=MaskRoad_3_15_to_7_19 chunk=(0,1) step=48/57 at=(-0.49,10.51)
+   DIRTY staircase@seamZ [hilly] cells=9 edges=1 junctions=0 foldbacks=0 flips(ribbon/cap/junction)=3/0/0 downward=0 minUpDot=0,800
+        flip edge=MaskRoad_3_15_to_7_19 chunk=(0,1) step=14/57 at=(-2.48,8.54)
+        flip edge=MaskRoad_3_15_to_7_19 chunk=(0,1) step=31/57 at=(-1.49,9.53)
+        flip edge=MaskRoad_3_15_to_7_19 chunk=(0,1) step=48/57 at=(-0.49,10.51)
+   DIRTY staircase@seamXZ [flat] cells=9 edges=1 junctions=0 foldbacks=0 flips(ribbon/cap/junction)=2/0/0 downward=0 minUpDot=1,000
+        flip edge=MaskRoad_15_15_to_19_19 chunk=(1,1) step=14/57 at=(9.52,8.54)
+        flip edge=MaskRoad_15_15_to_19_19 chunk=(1,1) step=32/57 at=(10.54,9.64)
+   DIRTY staircase@seamXZ [hilly] cells=9 edges=1 junctions=0 foldbacks=0 flips(ribbon/cap/junction)=2/0/0 downward=0 minUpDot=0,907
+        flip edge=MaskRoad_15_15_to_19_19 chunk=(1,1) step=14/57 at=(9.52,8.54)
+        flip edge=MaskRoad_15_15_to_19_19 chunk=(1,1) step=32/57 at=(10.54,9.64)
+   DIRTY staircase@neg [flat] cells=9 edges=1 junctions=0 foldbacks=0 flips(ribbon/cap/junction)=2/0/0 downward=0 minUpDot=1,000
+        flip edge=MaskRoad_-11_-11_to_-7_-7 chunk=(-1,-1) step=26/69 at=(-16.48,-17.46)
+        flip edge=MaskRoad_-11_-11_to_-7_-7 chunk=(-1,-1) step=43/69 at=(-15.49,-16.47)
+   DIRTY staircase@neg [hilly] cells=9 edges=1 junctions=0 foldbacks=0 flips(ribbon/cap/junction)=2/0/0 downward=0 minUpDot=0,556
+        flip edge=MaskRoad_-11_-11_to_-7_-7 chunk=(-1,-1) step=26/69 at=(-16.48,-17.46)
+        flip edge=MaskRoad_-11_-11_to_-7_-7 chunk=(-1,-1) step=43/69 at=(-15.49,-16.47)
+   DIRTY hut-on-U [flat] cells=7 edges=3 junctions=1 foldbacks=1 flips(ribbon/cap/junction)=1/0/5 downward=0 minUpDot=1,000
+        foldback edge=MaskRoad_5_5_to_7_5_a chunk=(0,0) step=34/34 side=R at=(-0.58,-0.46)
+        flip edge=MaskRoad_5_5_to_7_5_a chunk=(0,0) step=33/34 at=(-0.59,-0.45)
+   DIRTY hut-on-U [hilly] cells=7 edges=3 junctions=1 foldbacks=1 flips(ribbon/cap/junction)=1/0/5 downward=0 minUpDot=0,954
+        foldback edge=MaskRoad_5_5_to_7_5_a chunk=(0,0) step=34/34 side=R at=(-0.58,-0.46)
+        flip edge=MaskRoad_5_5_to_7_5_a chunk=(0,0) step=33/34 at=(-0.59,-0.45)
+   DIRTY hut-at-bend [flat] cells=5 edges=3 junctions=1 foldbacks=1 flips(ribbon/cap/junction)=4/0/0 downward=0 minUpDot=1,000
+        foldback edge=MaskRoad_5_5_to_7_7_a chunk=(0,0) step=18/18 side=L at=(-0.48,-2.47)
+        flip edge=MaskRoad_5_5_to_7_7_a chunk=(0,0) step=17/18 at=(-0.49,-2.48)
+        flip edge=Branch_H_8_5 chunk=(0,0) step=2/11 at=(0.89,-1.97)
+        flip edge=Branch_H_8_5 chunk=(0,0) step=3/11 at=(0.77,-1.96)
+   DIRTY hut-at-bend [hilly] cells=5 edges=3 junctions=1 foldbacks=1 flips(ribbon/cap/junction)=4/0/0 downward=0 minUpDot=0,957
+        foldback edge=MaskRoad_5_5_to_7_7_a chunk=(0,0) step=18/18 side=L at=(-0.48,-2.47)
+        flip edge=MaskRoad_5_5_to_7_7_a chunk=(0,0) step=17/18 at=(-0.49,-2.48)
+        flip edge=Branch_H_8_5 chunk=(0,0) step=2/11 at=(0.89,-1.97)
+        flip edge=Branch_H_8_5 chunk=(0,0) step=3/11 at=(0.77,-1.96)
+   dirty=14 / 214
+
+B. Random road sets (walks incl. dense blobs, shifted over chunk seams): 160 sets x 2 terrains
+   DIRTY rand004 [flat] cells=16 edges=9 junctions=4 foldbacks=0 flips(ribbon/cap/junction)=1/0/0 downward=0 minUpDot=1,000
+        flip edge=MaskRoad_7_20_to_8_21 chunk=(0,1) step=7/15 at=(0.53,12.55)
+   DIRTY rand004 [hilly] cells=16 edges=9 junctions=4 foldbacks=0 flips(ribbon/cap/junction)=1/0/0 downward=0 minUpDot=0,888
+        flip edge=MaskRoad_7_20_to_8_21 chunk=(0,1) step=7/15 at=(0.53,12.55)
+   DIRTY rand009 [flat] cells=30 edges=15 junctions=7 foldbacks=0 flips(ribbon/cap/junction)=1/0/0 downward=0 minUpDot=1,000
+        flip edge=MaskRoad_3_18_to_1_19 chunk=(0,1) step=15/24 at=(-5.50,11.49)
+   DIRTY rand009 [hilly] cells=30 edges=15 junctions=7 foldbacks=0 flips(ribbon/cap/junction)=1/0/0 downward=0 minUpDot=0,949
+        flip edge=MaskRoad_3_18_to_1_19 chunk=(0,1) step=15/24 at=(-5.50,11.49)
+   DIRTY rand021 [flat] cells=34 edges=15 junctions=7 foldbacks=0 flips(ribbon/cap/junction)=1/0/0 downward=0 minUpDot=1,000
+        flip edge=MaskRoad_18_3_to_16_4 chunk=(1,0) step=16/24 at=(9.40,-3.45)
+   DIRTY rand021 [hilly] cells=34 edges=15 junctions=7 foldbacks=0 flips(ribbon/cap/junction)=1/0/0 downward=0 minUpDot=0,947
+        flip edge=MaskRoad_18_3_to_16_4 chunk=(1,0) step=16/24 at=(9.40,-3.45)
+   DIRTY rand026 [flat] cells=19 edges=13 junctions=6 foldbacks=0 flips(ribbon/cap/junction)=1/0/0 downward=0 minUpDot=1,000
+        flip edge=MaskRoad_19_7_to_20_9 chunk=(1,0) step=7/24 at=(12.53,-0.45)
+   DIRTY rand026 [hilly] cells=19 edges=13 junctions=6 foldbacks=0 flips(ribbon/cap/junction)=1/0/0 downward=0 minUpDot=0,511
+        flip edge=MaskRoad_19_7_to_20_9 chunk=(1,0) step=7/24 at=(12.53,-0.45)
+   DIRTY rand029 [flat] cells=26 edges=8 junctions=3 foldbacks=0 flips(ribbon/cap/junction)=1/0/0 downward=0 minUpDot=1,000
+        flip edge=MaskRoad_9_14_to_11_20 chunk=(0,1) step=39/56 at=(2.53,11.56)
+   DIRTY rand029 [hilly] cells=26 edges=8 junctions=3 foldbacks=0 flips(ribbon/cap/junction)=1/0/0 downward=0 minUpDot=0,950
+        flip edge=MaskRoad_9_14_to_11_20 chunk=(0,1) step=39/56 at=(2.53,11.56)
+   DIRTY rand035 [flat] cells=43 edges=20 junctions=9 foldbacks=0 flips(ribbon/cap/junction)=1/0/0 downward=0 minUpDot=1,000
+        flip edge=MaskRoad_0_5_to_3_5 chunk=(0,0) step=33/38 at=(-5.40,-2.55)
+   DIRTY rand035 [hilly] cells=43 edges=20 junctions=9 foldbacks=0 flips(ribbon/cap/junction)=1/0/0 downward=0 minUpDot=0,951
+        flip edge=MaskRoad_0_5_to_3_5 chunk=(0,0) step=33/38 at=(-5.40,-2.55)
+   dirty=56 / 320; totals foldbacks=0 flipsRibbon=56 flipsCap=0 flipsJunction=0 downward=0
+
+C. Grown settlements (C-3J growth, 12 x 7d): 16 seeds x 2 terrains
+   DIRTY grown-seed301 [flat] cells=16 edges=9 junctions=4 foldbacks=0 flips(ribbon/cap/junction)=3/0/0 downward=0 minUpDot=1,000
+        flip edge=Branch_H_7_6 chunk=(0,0) step=2/9 at=(0.12,-1.48)
+        flip edge=Branch_H_7_6 chunk=(0,0) step=3/9 at=(0.08,-1.37)
+   DIRTY grown-seed301 [hilly] cells=16 edges=9 junctions=4 foldbacks=0 flips(ribbon/cap/junction)=3/0/0 downward=0 minUpDot=0,924
+        flip edge=Branch_H_7_6 chunk=(0,0) step=2/9 at=(0.12,-1.48)
+        flip edge=Branch_H_7_6 chunk=(0,0) step=3/9 at=(0.08,-1.37)
+   DIRTY grown-seed302 [flat] cells=17 edges=9 junctions=4 foldbacks=0 flips(ribbon/cap/junction)=2/0/0 downward=0 minUpDot=1,000
+        flip edge=Branch_H_7_6 chunk=(0,0) step=3/11 at=(0.21,-1.40)
+        flip edge=Branch_H_7_6 chunk=(0,0) step=4/11 at=(0.13,-1.31)
+   DIRTY grown-seed302 [hilly] cells=17 edges=9 junctions=4 foldbacks=0 flips(ribbon/cap/junction)=2/0/0 downward=0 minUpDot=0,952
+        flip edge=Branch_H_7_6 chunk=(0,0) step=3/11 at=(0.21,-1.40)
+        flip edge=Branch_H_7_6 chunk=(0,0) step=4/11 at=(0.13,-1.31)
+   DIRTY grown-seed303 [flat] cells=19 edges=9 junctions=4 foldbacks=0 flips(ribbon/cap/junction)=2/0/0 downward=0 minUpDot=1,000
+        flip edge=Branch_H_7_6 chunk=(0,0) step=3/11 at=(0.21,-1.40)
+        flip edge=Branch_H_7_6 chunk=(0,0) step=4/11 at=(0.13,-1.31)
+   DIRTY grown-seed303 [hilly] cells=19 edges=9 junctions=4 foldbacks=0 flips(ribbon/cap/junction)=2/0/0 downward=0 minUpDot=0,952
+        flip edge=Branch_H_7_6 chunk=(0,0) step=3/11 at=(0.21,-1.40)
+        flip edge=Branch_H_7_6 chunk=(0,0) step=4/11 at=(0.13,-1.31)
+   DIRTY grown-seed304 [flat] cells=18 edges=11 junctions=5 foldbacks=1 flips(ribbon/cap/junction)=3/0/5 downward=0 minUpDot=1,000
+        foldback edge=MaskRoad_6_5_to_7_9_a chunk=(0,0) step=24/24 side=L at=(-0.53,-0.51)
+        flip edge=MaskRoad_6_5_to_7_9_a chunk=(0,0) step=23/24 at=(-0.54,-0.52)
+        flip edge=Branch_H_7_6 chunk=(0,0) step=3/12 at=(0.16,-1.42)
+        flip edge=Branch_H_7_6 chunk=(0,0) step=4/12 at=(0.11,-1.31)
+   DIRTY grown-seed304 [hilly] cells=18 edges=11 junctions=5 foldbacks=1 flips(ribbon/cap/junction)=3/0/5 downward=0 minUpDot=0,952
+        foldback edge=MaskRoad_6_5_to_7_9_a chunk=(0,0) step=24/24 side=L at=(-0.53,-0.51)
+        flip edge=MaskRoad_6_5_to_7_9_a chunk=(0,0) step=23/24 at=(-0.54,-0.52)
+        flip edge=Branch_H_7_6 chunk=(0,0) step=3/12 at=(0.16,-1.42)
+        flip edge=Branch_H_7_6 chunk=(0,0) step=4/12 at=(0.11,-1.31)
+   DIRTY grown-seed305 [flat] cells=21 edges=13 junctions=6 foldbacks=0 flips(ribbon/cap/junction)=2/0/0 downward=0 minUpDot=1,000
+        flip edge=Branch_H_7_6 chunk=(0,0) step=3/10 at=(0.20,-1.39)
+        flip edge=Branch_H_7_6 chunk=(0,0) step=4/10 at=(0.13,-1.30)
+   DIRTY grown-seed305 [hilly] cells=21 edges=13 junctions=6 foldbacks=0 flips(ribbon/cap/junction)=2/0/0 downward=0 minUpDot=0,950
+        flip edge=Branch_H_7_6 chunk=(0,0) step=3/10 at=(0.20,-1.39)
+        flip edge=Branch_H_7_6 chunk=(0,0) step=4/10 at=(0.13,-1.30)
+   DIRTY grown-seed306 [flat] cells=16 edges=9 junctions=4 foldbacks=1 flips(ribbon/cap/junction)=3/0/5 downward=0 minUpDot=1,000
+        foldback edge=MaskRoad_6_5_to_7_9_a chunk=(0,0) step=24/24 side=L at=(-0.53,-0.51)
+        flip edge=MaskRoad_6_5_to_7_9_a chunk=(0,0) step=23/24 at=(-0.54,-0.52)
+        flip edge=Branch_H_7_6 chunk=(0,0) step=3/12 at=(0.16,-1.42)
+        flip edge=Branch_H_7_6 chunk=(0,0) step=4/12 at=(0.11,-1.31)
+   DIRTY grown-seed306 [hilly] cells=16 edges=9 junctions=4 foldbacks=1 flips(ribbon/cap/junction)=3/0/5 downward=0 minUpDot=0,952
+        foldback edge=MaskRoad_6_5_to_7_9_a chunk=(0,0) step=24/24 side=L at=(-0.53,-0.51)
+        flip edge=MaskRoad_6_5_to_7_9_a chunk=(0,0) step=23/24 at=(-0.54,-0.52)
+        flip edge=Branch_H_7_6 chunk=(0,0) step=3/12 at=(0.16,-1.42)
+        flip edge=Branch_H_7_6 chunk=(0,0) step=4/12 at=(0.11,-1.31)
+   DIRTY grown-seed307 [flat] cells=18 edges=11 junctions=5 foldbacks=1 flips(ribbon/cap/junction)=3/0/5 downward=0 minUpDot=1,000
+        foldback edge=MaskRoad_6_5_to_7_8_a chunk=(0,0) step=24/24 side=L at=(-0.53,-0.51)
+        flip edge=MaskRoad_6_5_to_7_8_a chunk=(0,0) step=23/24 at=(-0.54,-0.52)
+        flip edge=Branch_H_7_6 chunk=(0,0) step=3/12 at=(0.16,-1.42)
+        flip edge=Branch_H_7_6 chunk=(0,0) step=4/12 at=(0.11,-1.31)
+   DIRTY grown-seed307 [hilly] cells=18 edges=11 junctions=5 foldbacks=1 flips(ribbon/cap/junction)=3/0/5 downward=0 minUpDot=0,040
+        foldback edge=MaskRoad_6_5_to_7_8_a chunk=(0,0) step=24/24 side=L at=(-0.53,-0.51)
+        flip edge=MaskRoad_6_5_to_7_8_a chunk=(0,0) step=23/24 at=(-0.54,-0.52)
+        flip edge=Branch_H_7_6 chunk=(0,0) step=3/12 at=(0.16,-1.42)
+        flip edge=Branch_H_7_6 chunk=(0,0) step=4/12 at=(0.11,-1.31)
+   DIRTY grown-seed308 [flat] cells=21 edges=11 junctions=5 foldbacks=0 flips(ribbon/cap/junction)=2/0/0 downward=0 minUpDot=1,000
+        flip edge=Branch_H_7_6 chunk=(0,0) step=3/11 at=(0.21,-1.40)
+        flip edge=Branch_H_7_6 chunk=(0,0) step=4/11 at=(0.13,-1.31)
+   DIRTY grown-seed308 [hilly] cells=21 edges=11 junctions=5 foldbacks=0 flips(ribbon/cap/junction)=2/0/0 downward=0 minUpDot=0,952
+        flip edge=Branch_H_7_6 chunk=(0,0) step=3/11 at=(0.21,-1.40)
+        flip edge=Branch_H_7_6 chunk=(0,0) step=4/11 at=(0.13,-1.31)
+   DIRTY grown-seed309 [flat] cells=20 edges=13 junctions=6 foldbacks=0 flips(ribbon/cap/junction)=2/0/0 downward=0 minUpDot=1,000
+        flip edge=Branch_H_7_6 chunk=(0,0) step=3/10 at=(0.20,-1.39)
+        flip edge=Branch_H_7_6 chunk=(0,0) step=4/10 at=(0.13,-1.30)
+   DIRTY grown-seed309 [hilly] cells=20 edges=13 junctions=6 foldbacks=0 flips(ribbon/cap/junction)=2/0/0 downward=0 minUpDot=0,952
+        flip edge=Branch_H_7_6 chunk=(0,0) step=3/10 at=(0.20,-1.39)
+        flip edge=Branch_H_7_6 chunk=(0,0) step=4/10 at=(0.13,-1.30)
+   DIRTY grown-seed310 [flat] cells=19 edges=11 junctions=5 foldbacks=0 flips(ribbon/cap/junction)=3/0/0 downward=0 minUpDot=1,000
+        flip edge=Branch_H_7_6 chunk=(0,0) step=2/9 at=(0.12,-1.48)
+        flip edge=Branch_H_7_6 chunk=(0,0) step=3/9 at=(0.08,-1.37)
+   DIRTY grown-seed310 [hilly] cells=19 edges=11 junctions=5 foldbacks=0 flips(ribbon/cap/junction)=3/0/0 downward=0 minUpDot=0,040
+        flip edge=Branch_H_7_6 chunk=(0,0) step=2/9 at=(0.12,-1.48)
+        flip edge=Branch_H_7_6 chunk=(0,0) step=3/9 at=(0.08,-1.37)
+   DIRTY grown-seed311 [flat] cells=16 edges=11 junctions=5 foldbacks=1 flips(ribbon/cap/junction)=3/0/5 downward=0 minUpDot=1,000
+        foldback edge=MaskRoad_6_5_to_7_9_a chunk=(0,0) step=24/24 side=L at=(-0.53,-0.51)
+        flip edge=MaskRoad_6_5_to_7_9_a chunk=(0,0) step=23/24 at=(-0.54,-0.52)
+        flip edge=Branch_H_7_6 chunk=(0,0) step=3/12 at=(0.16,-1.42)
+        flip edge=Branch_H_7_6 chunk=(0,0) step=4/12 at=(0.11,-1.31)
+   DIRTY grown-seed311 [hilly] cells=16 edges=11 junctions=5 foldbacks=1 flips(ribbon/cap/junction)=3/0/5 downward=0 minUpDot=0,952
+        foldback edge=MaskRoad_6_5_to_7_9_a chunk=(0,0) step=24/24 side=L at=(-0.53,-0.51)
+        flip edge=MaskRoad_6_5_to_7_9_a chunk=(0,0) step=23/24 at=(-0.54,-0.52)
+        flip edge=Branch_H_7_6 chunk=(0,0) step=3/12 at=(0.16,-1.42)
+        flip edge=Branch_H_7_6 chunk=(0,0) step=4/12 at=(0.11,-1.31)
+   DIRTY grown-seed312 [flat] cells=15 edges=7 junctions=3 foldbacks=1 flips(ribbon/cap/junction)=2/0/0 downward=0 minUpDot=1,000
+        foldback edge=MaskRoad_6_6_to_8_10_a chunk=(0,0) step=14/14 side=L at=(-0.73,-0.54)
+        flip edge=MaskRoad_6_6_to_8_10_a chunk=(0,0) step=13/14 at=(-0.74,-0.54)
+        flip edge=Branch_H_7_6 chunk=(0,0) step=3/10 at=(0.10,-1.38)
+   DIRTY grown-seed312 [hilly] cells=15 edges=7 junctions=3 foldbacks=1 flips(ribbon/cap/junction)=2/0/0 downward=0 minUpDot=0,931
+        foldback edge=MaskRoad_6_6_to_8_10_a chunk=(0,0) step=14/14 side=L at=(-0.73,-0.54)
+        flip edge=MaskRoad_6_6_to_8_10_a chunk=(0,0) step=13/14 at=(-0.74,-0.54)
+        flip edge=Branch_H_7_6 chunk=(0,0) step=3/10 at=(0.10,-1.38)
+   DIRTY grown-seed313 [flat] cells=16 edges=11 junctions=5 foldbacks=0 flips(ribbon/cap/junction)=2/0/0 downward=0 minUpDot=1,000
+        flip edge=Branch_H_7_6 chunk=(0,0) step=3/11 at=(0.21,-1.40)
+        flip edge=Branch_H_7_6 chunk=(0,0) step=4/11 at=(0.13,-1.31)
+   DIRTY grown-seed313 [hilly] cells=16 edges=11 junctions=5 foldbacks=0 flips(ribbon/cap/junction)=2/0/0 downward=0 minUpDot=0,952
+        flip edge=Branch_H_7_6 chunk=(0,0) step=3/11 at=(0.21,-1.40)
+        flip edge=Branch_H_7_6 chunk=(0,0) step=4/11 at=(0.13,-1.31)
+   DIRTY grown-seed314 [flat] cells=17 edges=7 junctions=3 foldbacks=0 flips(ribbon/cap/junction)=3/0/0 downward=0 minUpDot=1,000
+        flip edge=Branch_H_7_6 chunk=(0,0) step=2/9 at=(0.12,-1.48)
+        flip edge=Branch_H_7_6 chunk=(0,0) step=3/9 at=(0.07,-1.37)
+   DIRTY grown-seed314 [hilly] cells=17 edges=7 junctions=3 foldbacks=0 flips(ribbon/cap/junction)=3/0/0 downward=0 minUpDot=0,950
+        flip edge=Branch_H_7_6 chunk=(0,0) step=2/9 at=(0.12,-1.48)
+        flip edge=Branch_H_7_6 chunk=(0,0) step=3/9 at=(0.07,-1.37)
+   DIRTY grown-seed315 [flat] cells=15 edges=9 junctions=4 foldbacks=1 flips(ribbon/cap/junction)=3/0/5 downward=0 minUpDot=1,000
+        foldback edge=MaskRoad_6_5_to_7_8_a chunk=(0,0) step=24/24 side=L at=(-0.53,-0.51)
+        flip edge=MaskRoad_6_5_to_7_8_a chunk=(0,0) step=23/24 at=(-0.54,-0.52)
+        flip edge=Branch_H_7_6 chunk=(0,0) step=3/12 at=(0.16,-1.42)
+        flip edge=Branch_H_7_6 chunk=(0,0) step=4/12 at=(0.11,-1.31)
+   DIRTY grown-seed315 [hilly] cells=15 edges=9 junctions=4 foldbacks=1 flips(ribbon/cap/junction)=3/0/5 downward=0 minUpDot=0,894
+        foldback edge=MaskRoad_6_5_to_7_8_a chunk=(0,0) step=24/24 side=L at=(-0.53,-0.51)
+        flip edge=MaskRoad_6_5_to_7_8_a chunk=(0,0) step=23/24 at=(-0.54,-0.52)
+        flip edge=Branch_H_7_6 chunk=(0,0) step=3/12 at=(0.16,-1.42)
+        flip edge=Branch_H_7_6 chunk=(0,0) step=4/12 at=(0.11,-1.31)
+   DIRTY grown-seed316 [flat] cells=17 edges=9 junctions=4 foldbacks=0 flips(ribbon/cap/junction)=2/0/0 downward=0 minUpDot=1,000
+        flip edge=Branch_H_7_6 chunk=(0,0) step=3/11 at=(0.21,-1.40)
+        flip edge=Branch_H_7_6 chunk=(0,0) step=4/11 at=(0.13,-1.31)
+   DIRTY grown-seed316 [hilly] cells=17 edges=9 junctions=4 foldbacks=0 flips(ribbon/cap/junction)=2/0/0 downward=0 minUpDot=0,952
+        flip edge=Branch_H_7_6 chunk=(0,0) step=3/11 at=(0.21,-1.40)
+        flip edge=Branch_H_7_6 chunk=(0,0) step=4/11 at=(0.13,-1.31)
+   dirty=32 / 32; totals foldbacks=12 flipsRibbon=80 flipsCap=0 flipsJunction=50 downward=0
+
+D. Determinism (each shape built twice, same hash): ok=True
+
+SUMMARY [baseline]: cases=566 clean=464 dirty=102; foldbacks=16 flipsRibbon=168 flipsCap=0 flipsJunction=60 downward=0 degenerateSkipped=2 minUpwardNormalDot=0,0397
+ACCEPTANCE (zero foldbacks, zero winding flips, zero downward triangles, deterministic) [baseline]: FAIL

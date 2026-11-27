@@ -1,0 +1,48 @@
+﻿Stage C-3H — Real MainIsland.unity & Real Save v8 Verification Report
+Execution mode: Read-only MainIsland.unity open (never saved) + in-memory SaveClone copies (zero disk save writes)
+Real save path: C:/Users/Евгений/AppData/LocalLow/AFKIsland/AFK Island\afk_island_save.json (exists=True, diskShaBefore=E933BA500E36FCD8)
+
+Step 1 — Real MainIsland.unity Scene Wiring & Default Flag: ok=True
+  bootstrap=True, saveService=True, chunkManager=True, growthService=False
+  islandMeshVisualizer=True, homeVisualizer=True, defaultFlagFalse=True
+  WaterSource=True (pos=(1.80,1.90,-1.40)), PlantPlots=True, CentralMeadow=True (pos=(0.00,1.55,0.00))
+  AuthoredSettlement=False, Hut_A=False, Hut_B=False, Path_Main=False, Path_Cross=False
+
+Real Save v8 Snapshot (in-memory copy):
+  version=8, chunks=1, lastSimUtc=1795687614, settleWatermarkUtc=0
+  stages: clearings=0, paths=0, stones=0, huts=0, sha=C271F14530D98962
+
+Step 2 — Real MainIsland.unity WITHOUT Growth (OFF vs ON): ok=True
+  saveImmutability: off=True, on=True, noPhantomStarterPaths=True
+  authoredPathsSuppressed=True, legacyPaths=0, pondIntrusions=0
+  topology: connectedComponents=0, connectedHuts=0/0, nodes=0, edges=0, starterIssues=0
+  geometry: chunks=0, downwardTris=0, foldbacks=0, maxBorderPos=0.00000m, sharedMaterialsOnly=True, liveOwnedMeshes=0
+
+Step 3 — Controlled Offline Growth on Real Save v8 Clones (+48h & +21d): ok=True
+  +48h: deterministic=True (sha=5B05AB293B86783A), chunks=5, stages(C/P/S/H)=6/0/0/0, advances=6, elapsed=72.38ms
+  +48h visual: saveImmutable=True, connectedComponents=0, connectedHuts=0/0, pondIntrusions=0, legacyPaths=0, foldbacks=0, maxBorderPos=0.00000m
+  session+1w: chunks=7, clearings=20, paths=0, stones=0, huts=0, advances=14, hutsAdded=0, elapsed=72.80ms
+  session+2w: chunks=8, clearings=34, paths=0, stones=0, huts=0, advances=14, hutsAdded=0, elapsed=155.16ms
+  session+3w: chunks=9, clearings=48, paths=0, stones=0, huts=0, advances=14, hutsAdded=0, elapsed=188.84ms
+  +21d: deterministic=True (sha=0882A334E5779EEB), chunks=9, stages(C/P/S/H)=48/0/0/0
+  +21d visual: saveImmutable=True, connectedComponents=0, connectedHuts=0/0, nodes=0, edges=0, starterIssues=0, pondIntrusions=0, legacyPaths=0, downwardTris=0, foldbacks=0, maxBorderPos=0.00000m, maxBorderHeight=0.00000m
+
+Step 4 — OFF -> ON -> OFF Toggle & Zero-Leak Rollback on MainIsland: ok=True
+  rootGone=True, zeroLeaks=True (created=0, destroyed=0, liveOwned=0)
+  authoredPathsRestored=True, legacyPathTilesRestored=0, saveImmutable=True
+
+Step 5 — WouldDisconnectRoadNetwork vs Single-Pass Tarjan FindRoadArticulationPoints Benchmark:
+  Real Save v8 (+21d grown): chunks=9, pathCells=0 (deg2=0, cutVertices=0), tarjanPass=0.045ms vs bfsScan=0.00ms (0.0x faster, mismatches=0), fullApply(+7d)=62.62ms (advances=14, hutsAdded=0)
+  Stress 3x3 (9 chunks mature network): chunks=9, pathCells=315 (deg2=276, cutVertices=170), tarjanPass=0.311ms vs bfsScan=53.31ms (171.5x faster, mismatches=0), fullApply(+7d)=506.79ms (advances=14, hutsAdded=1)
+  Stress 5x5 (25 chunks late-game network): chunks=25, pathCells=875 (deg2=780, cutVertices=296), tarjanPass=0.893ms vs bfsScan=337.42ms (377.9x faster, mismatches=0), fullApply(+7d)=1710.43ms (advances=14, hutsAdded=6)
+
+Step 6 — Disk Integrity (Protected Scenes & Real Save File Unchanged):
+  Assets/_Project/Scenes/MainIsland.unity: before=5F00F6BFDFBB7ADE after=5F00F6BFDFBB7ADE unchanged=True
+  Assets/_Project/Scenes/Prototypes/CozyDioramaStageB2.unity: before=4C6B9304E1BCDA9C after=4C6B9304E1BCDA9C unchanged=True
+  Assets/_Project/Scenes/Prototypes/CozyDioramaStageC2.unity: before=00780E3BD19BC9CF after=00780E3BD19BC9CF unchanged=True
+  Assets/_Project/Scenes/Prototypes/CozyDioramaStageC3C.unity: before=ED292B269EBB7AE6 after=ED292B269EBB7AE6 unchanged=True
+  Assets/_Project/Scenes/Prototypes/CozyDioramaStageC3D.unity: before=F67070735D396F60 after=F67070735D396F60 unchanged=True
+  Assets/_Project/Scenes/Prototypes/CozyDioramaStageC3E.unity: before=747168BD56D247C1 after=747168BD56D247C1 unchanged=True
+  realSaveDisk(C:/Users/Евгений/AppData/LocalLow/AFKIsland/AFK Island\afk_island_save.json): before=E933BA500E36FCD8 after=E933BA500E36FCD8 unchanged=True
+
+OVERALL STAGE C-3H VERIFICATION: PASS

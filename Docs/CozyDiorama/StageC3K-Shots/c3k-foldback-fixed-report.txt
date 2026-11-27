@@ -1,0 +1,23 @@
+Stage C-3K foldback verification [fixed] — geometry only, in-memory (no scene, no save, no Play Mode)
+
+A. Synthetic shapes: 107 shapes x 2 terrains
+   dirty=0 / 214
+
+B. Random road sets (walks incl. dense blobs, shifted over chunk seams): 160 sets x 2 terrains
+   dirty=0 / 320; totals foldbacks=0 flipsRibbon=0 flipsCap=0 flipsJunction=0 downward=0
+
+C. Grown settlements (C-3J growth, 12 x 7d): 16 seeds x 2 terrains
+   dirty=0 / 32; totals foldbacks=0 flipsRibbon=0 flipsCap=0 flipsJunction=0 downward=0
+
+D. Determinism (each shape built twice, same hash): ok=True
+
+E. Renderer lifecycle: ok=True
+   full build=True; identical re-apply reuses all chunks, no new meshes=True; one changed chunk -> rebuilt 1, reused 1=True
+   force full rebuild equals fresh build hash=True; terrainVersion bump rebuilds all=True; sharedMaterialsOnly=True; foldbacks=0
+   Clear(): chunks=0, live meshes=0, created==destroyed (14/14), root children=0 -> True
+
+F. Build cost (Editor Mono JIT, 16 random networks x 10 repeats): legacy=1,93 ms/plan, C-3K=2,00 ms/plan, ratio=1,04x
+
+SUMMARY [fixed]: cases=566 clean=566 dirty=0; foldbacks=0 flipsRibbon=0 flipsCap=0 flipsJunction=0 downward=0 degenerateSkipped=0 minUpwardNormalDot=0,9064
+   seams: sharedBorderPointPairs=550 maxBorderCentreDelta=0,000000 maxBorderLeftRightDelta=0,000000 maxJunctionAttachDelta=0,000000
+ACCEPTANCE (zero foldbacks, zero winding flips, zero downward triangles, deterministic) [fixed]: PASS

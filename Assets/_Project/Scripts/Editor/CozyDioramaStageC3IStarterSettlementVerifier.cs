@@ -243,7 +243,7 @@ namespace AfkIsland.Editor
             return working;
         }
 
-        private static GameSaveData GrowthSession(GameSaveData source, TimeSpan elapsed, out SettlementSimulationResult settle)
+        internal static GameSaveData GrowthSession(GameSaveData source, TimeSpan elapsed, out SettlementSimulationResult settle)
         {
             var copy = SaveClone.DeepClone(source);
             var sim = new WorldGrowthSimulation();
@@ -431,7 +431,7 @@ namespace AfkIsland.Editor
 
         // ---------------- fixtures / analysis ----------------
 
-        private static GameSaveData CreateFreshLikeSave(int growthSeed = 20260101)
+        internal static GameSaveData CreateFreshLikeSave(int growthSeed = 20260101)
         {
             var now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
             var data = new GameSaveData
@@ -459,7 +459,7 @@ namespace AfkIsland.Editor
             return data;
         }
 
-        private static GameSaveData StarterSeeded(int growthSeed)
+        internal static GameSaveData StarterSeeded(int growthSeed)
         {
             var s = CreateFreshLikeSave(growthSeed);
             StarterSettlementSeed.SeedIfEmpty(s);
@@ -467,7 +467,7 @@ namespace AfkIsland.Editor
         }
 
         /// <summary>Counts road cells that belong to at least one 2x2 block of road cells (a "plaza" instead of a road).</summary>
-        private static int CountCellsInRoadSquares(HashSet<long> roads)
+        internal static int CountCellsInRoadSquares(HashSet<long> roads)
         {
             var inSquare = new HashSet<long>();
             foreach (var k in roads)
@@ -486,7 +486,7 @@ namespace AfkIsland.Editor
             return inSquare.Count;
         }
 
-        private static GameSaveData GrowSilently(GameSaveData seeded, int sessions)
+        internal static GameSaveData GrowSilently(GameSaveData seeded, int sessions)
         {
             const long sevenDays = 7L * 24 * 3600;
             var working = SaveClone.DeepClone(seeded);
@@ -532,11 +532,11 @@ namespace AfkIsland.Editor
         private static byte HomeStage(GameSaveData save, Vector2Int cell) =>
             SettlementSimulation.SampleSettlementStage(save, cell.x, cell.y);
 
-        private static long Key(int wx, int wz) => ((long)wx << 32) | (long)(uint)wz;
+        internal static long Key(int wx, int wz) => ((long)wx << 32) | (long)(uint)wz;
 
-        private static HashSet<long> RoadSet(GameSaveData save) => StageSet(save, true);
+        internal static HashSet<long> RoadSet(GameSaveData save) => StageSet(save, true);
 
-        private static HashSet<long> HutSet(GameSaveData save) => StageSet(save, false);
+        internal static HashSet<long> HutSet(GameSaveData save) => StageSet(save, false);
 
         private static HashSet<long> StageSet(GameSaveData save, bool roads)
         {
@@ -561,7 +561,7 @@ namespace AfkIsland.Editor
             return set;
         }
 
-        private static int Degree(HashSet<long> roads, long k)
+        internal static int Degree(HashSet<long> roads, long k)
         {
             var x = (int)(k >> 32);
             var z = (int)(uint)(k & 0xFFFFFFFFL);
@@ -573,7 +573,7 @@ namespace AfkIsland.Editor
             return d;
         }
 
-        private static int Components(HashSet<long> set)
+        internal static int Components(HashSet<long> set)
         {
             var visited = new HashSet<long>();
             var stack = new Stack<long>();
@@ -598,7 +598,7 @@ namespace AfkIsland.Editor
             return count;
         }
 
-        private static int CountConnectedHuts(SettlementPathTopology.TopologyPlan plan)
+        internal static int CountConnectedHuts(SettlementPathTopology.TopologyPlan plan)
         {
             if (plan == null) return 0;
             var count = 0;
@@ -653,7 +653,7 @@ namespace AfkIsland.Editor
             return inside;
         }
 
-        private static Camera CreateCamera()
+        internal static Camera CreateCamera()
         {
             var go = new GameObject("StageC3I_VerifyCamera");
             var cam = go.AddComponent<Camera>();
@@ -664,7 +664,7 @@ namespace AfkIsland.Editor
             return cam;
         }
 
-        private static void Shot(Camera cam, Vector3 pos, Vector3 target, float fov, string fileName)
+        internal static void Shot(Camera cam, Vector3 pos, Vector3 target, float fov, string fileName)
         {
             const int width = 1280;
             const int height = 720;

@@ -165,6 +165,7 @@ namespace AfkIsland.World
             {
                 var candidates = new List<UpgradeCandidate>(128);
                 var articulationPoints = FindRoadArticulationPoints(save);
+                var roadComponentIds = BuildRoadComponentIds(save);
                 foreach (var growth in save.worldGrowth.chunks)
                 {
                     if (growth == null)
@@ -179,7 +180,7 @@ namespace AfkIsland.World
                     }
 
                     CollectCandidates(
-                        save, growth, land, settle, candidates, stoneCount, stoneCap, articulationPoints);
+                        save, growth, land, settle, candidates, stoneCount, stoneCap, articulationPoints, roadComponentIds);
                 }
 
                 if (candidates.Count == 0)
@@ -539,7 +540,8 @@ namespace AfkIsland.World
             List<UpgradeCandidate> list,
             int stoneCount,
             int stoneCap,
-            HashSet<long> articulationPoints)
+            HashSet<long> articulationPoints,
+            Dictionary<long, int> roadComponentIds)
         {
             for (var i = 0; i < settle.Length; i++)
             {
@@ -657,6 +659,13 @@ namespace AfkIsland.World
                     continue;
                 }
 
+                // C-3J: roads grow as branches, not as filled areas.
+                if (next == (byte)SettlementStage.Path &&
+                    !IsBranchingPathAllowed(save, growth.chunkX, growth.chunkZ, i, roadComponentIds))
+                {
+                    continue;
+                }
+
                 var score = NeighborSettlementScore(save, growth.chunkX, growth.chunkZ, i);
 
                 if (next == (byte)SettlementStage.Clearing)
@@ -671,7 +680,7 @@ namespace AfkIsland.World
                 }
                 else if (next == (byte)SettlementStage.Path)
                 {
-                    score += 12;
+                    score += 12 + BranchExtensionBonus(save, growth.chunkX, growth.chunkZ, i);
                 }
                 else if (next == (byte)SettlementStage.Stone)
                 {
@@ -751,6 +760,13 @@ namespace AfkIsland.World
 
             if (c.toStage == (byte)SettlementStage.Path &&
                 !HasCardinalRoadNeighbor(save, c.chunkX, c.chunkZ, c.cellIndex))
+            {
+                return false;
+            }
+
+            // C-3J: earlier upgrades in this pass may have turned a branch tip into a filled area.
+            if (c.toStage == (byte)SettlementStage.Path &&
+                !IsBranchingPathAllowed(save, c.chunkX, c.chunkZ, c.cellIndex, null))
             {
                 return false;
             }
@@ -1243,6 +1259,162 @@ namespace AfkIsland.World
 
         private static long PackWorldCell(int worldX, int worldZ) =>
             ((long)worldX << 32) ^ (uint)worldZ;
+
+        private static bool IsRoadAt(GameSaveData save, int worldX, int worldZ) =>
+            IsRoadStage(SampleSettlementStage(save, worldX, worldZ));
+
+        private static int RoadDegreeAt(GameSaveData save, int worldX, int worldZ)
+        {
+            var d = 0;
+            if (IsRoadAt(save, worldX + 1, worldZ)) d++;
+            if (IsRoadAt(save, worldX - 1, worldZ)) d++;
+            if (IsRoadAt(save, worldX, worldZ + 1)) d++;
+            if (IsRoadAt(save, worldX, worldZ - 1)) d++;
+            return d;
+        }
+
+        /// <summary>
+        /// C-3J branch bonus for a prospective Path cell: extending a branch tip (the one road neighbour
+        /// has degree 1) is preferred over thickening the middle of a road or a junction.
+        /// </summary>
+        private static int BranchExtensionBonus(GameSaveData save, int chunkX, int chunkZ, int cellIndex)
+        {
+            ChunkMaskCodec.IndexToLocal(cellIndex, out var lx, out var lz);
+            var wx = chunkX * ChunkMaskCodec.GridSize + lx;
+            var wz = chunkZ * ChunkMaskCodec.GridSize + lz;
+            if (CountCardinalRoadNeighbors(save, chunkX, chunkZ, cellIndex) != 1)
+            {
+                return 0;
+            }
+
+            int nx = wx, nz = wz;
+            if (IsRoadAt(save, wx + 1, wz)) nx = wx + 1;
+            else if (IsRoadAt(save, wx - 1, wz)) nx = wx - 1;
+            else if (IsRoadAt(save, wx, wz + 1)) nz = wz + 1;
+            else nz = wz - 1;
+
+            var neighbourDegree = RoadDegreeAt(save, nx, nz);
+            if (neighbourDegree <= 1) return 10;   // branch tip: extend it
+            if (neighbourDegree == 2) return 0;    // side branch off a straight/bend: allowed, not preferred
+            return -4;                             // junction already: do not fatten it
+        }
+
+        /// <summary>
+        /// C-3J: shape rule for a new Path cell that already touches the road graph.
+        ///  - One road neighbour: a branch tip extension or a side branch (T / crossing arms stay possible),
+        ///    unless it would run parallel to an existing road with exactly one empty cell between them.
+        ///  - Two or more road neighbours: the cell would fill a corner or close a 2x2 square, which is never
+        ///    needed for connectivity, so it is rejected unless it joins two different road components.
+        /// Pass roadComponentIds from the start of a pass, or null to compute on demand.
+        /// </summary>
+        public static bool IsBranchingPathAllowed(
+            GameSaveData save,
+            int chunkX,
+            int chunkZ,
+            int cellIndex,
+            Dictionary<long, int> roadComponentIds)
+        {
+            ChunkMaskCodec.IndexToLocal(cellIndex, out var lx, out var lz);
+            var wx = chunkX * ChunkMaskCodec.GridSize + lx;
+            var wz = chunkZ * ChunkMaskCodec.GridSize + lz;
+            var east = IsRoadAt(save, wx + 1, wz);
+            var west = IsRoadAt(save, wx - 1, wz);
+            var north = IsRoadAt(save, wx, wz + 1);
+            var south = IsRoadAt(save, wx, wz - 1);
+            var degree = (east ? 1 : 0) + (west ? 1 : 0) + (north ? 1 : 0) + (south ? 1 : 0);
+            if (degree == 0)
+            {
+                return false;
+            }
+
+            if (degree >= 2)
+            {
+                roadComponentIds ??= BuildRoadComponentIds(save);
+                var firstId = -1;
+                var neighbours = new[]
+                {
+                    east ? new Vector2Int(wx + 1, wz) : new Vector2Int(int.MinValue, 0),
+                    west ? new Vector2Int(wx - 1, wz) : new Vector2Int(int.MinValue, 0),
+                    north ? new Vector2Int(wx, wz + 1) : new Vector2Int(int.MinValue, 0),
+                    south ? new Vector2Int(wx, wz - 1) : new Vector2Int(int.MinValue, 0)
+                };
+                for (var i = 0; i < neighbours.Length; i++)
+                {
+                    if (neighbours[i].x == int.MinValue ||
+                        !roadComponentIds.TryGetValue(PackWorldCell(neighbours[i].x, neighbours[i].y), out var id))
+                    {
+                        continue;
+                    }
+
+                    if (firstId < 0)
+                    {
+                        firstId = id;
+                    }
+                    else if (id != firstId)
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+
+            // Single attachment: no parallel lane one empty cell away on any side.
+            if (!east && IsRoadAt(save, wx + 2, wz)) return false;
+            if (!west && IsRoadAt(save, wx - 2, wz)) return false;
+            if (!north && IsRoadAt(save, wx, wz + 2)) return false;
+            if (!south && IsRoadAt(save, wx, wz - 2)) return false;
+            return true;
+        }
+
+        private static Dictionary<long, int> BuildRoadComponentIds(GameSaveData save)
+        {
+            var cells = BuildNavigableRoadCells(save, long.MinValue, out var coords);
+            var ids = new Dictionary<long, int>(cells.Count);
+            var stack = new Stack<Vector2Int>();
+            var next = 0;
+            for (var i = 0; i < coords.Count; i++)
+            {
+                var startKey = PackWorldCell(coords[i].x, coords[i].y);
+                if (ids.ContainsKey(startKey))
+                {
+                    continue;
+                }
+
+                ids[startKey] = next;
+                stack.Push(coords[i]);
+                while (stack.Count > 0)
+                {
+                    var cur = stack.Pop();
+                    TryLabelRoadNeighbor(cells, ids, stack, cur.x + 1, cur.y, next);
+                    TryLabelRoadNeighbor(cells, ids, stack, cur.x - 1, cur.y, next);
+                    TryLabelRoadNeighbor(cells, ids, stack, cur.x, cur.y + 1, next);
+                    TryLabelRoadNeighbor(cells, ids, stack, cur.x, cur.y - 1, next);
+                }
+
+                next++;
+            }
+
+            return ids;
+        }
+
+        private static void TryLabelRoadNeighbor(
+            HashSet<long> cells,
+            Dictionary<long, int> ids,
+            Stack<Vector2Int> stack,
+            int wx,
+            int wz,
+            int id)
+        {
+            var key = PackWorldCell(wx, wz);
+            if (!cells.Contains(key) || ids.ContainsKey(key))
+            {
+                return;
+            }
+
+            ids[key] = id;
+            stack.Push(new Vector2Int(wx, wz));
+        }
 
         private static bool IsRoadStage(byte stage) =>
             stage == (byte)SettlementStage.Path ||
